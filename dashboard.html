@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - المحاسب المالي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --danger-color: #f72585;
+            --warning-color: #f77f00;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+            --gray-color: #6c757d;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .dashboard-page {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* تحسينات الهيدر */
+        .dashboard-header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 0.75rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sidebar-toggle {
+            display: flex;
+            flex-direction: column;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+        }
+
+        .sidebar-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark-color);
+            margin: 2px 0;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .sidebar-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .sidebar-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .sidebar-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .header-logo h1 {
+            margin-bottom: 0;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .header-search {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 1rem;
+            position: relative;
+        }
+
+        .header-search input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .header-search input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 1rem;
+            font-size: 1.25rem;
+            color: var(--gray-color);
+            transition: var(--transition);
+        }
+
+        .notification-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-right: 0.5rem;
+            cursor: pointer;
+        }
+
+        .user-profile span {
+            margin-left: 0.5rem;
+            font-weight: 500;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
+
+        /* تحسينات المحتوى الرئيسي */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--dark-color);
+            color: white;
+            padding: 1.5rem 0;
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .sidebar-nav {
+            padding: 0 1rem;
+        }
+
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-section h3 {
+            color: var(--gray-color);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: white;
+            border-radius: 0.5rem;
+            margin-bottom: 0.25rem;
+            transition: var(--transition);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-color);
+        }
+
+        .nav-item .icon {
+            margin-left: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .nav-item.logout {
+            color: var(--danger-color);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .dashboard-content {
+            margin-top: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-left: 1rem;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-info h3 {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--dark-color);
+        }
+
+        .stat-change {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        .stat-change.negative {
+            color: var(--danger-color);
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+        }
+
+        .chart-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+
+        .chart-placeholder {
+            height: 250px;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-color);
+            font-weight: 500;
+        }
+
+        .recent-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .recent-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+        }
+
+        .recent-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.75rem;
+            text-align: right;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--gray-color);
+        }
+
+        .data-table tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status.paid {
+            background-color: rgba(76, 201, 240, 0.15);
+            color: var(--success-color);
+        }
+
+        .status.pending {
+            background-color: rgba(247, 127, 0, 0.15);
+            color: var(--warning-color);
+        }
+
+        .status.overdue {
+            background-color: rgba(247, 37, 133, 0.15);
+            color: var(--danger-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .table-actions {
+            text-align: left;
+        }
+
+        .table-actions a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .table-actions a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* تنسيقات الاستجابة للشاشات الصغيرة */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 220px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-search {
+                display: none;
+            }
+            
+            .sidebar {
+                position: fixed;
+                top: 0;
+                right: -280px;
+                height: 100vh;
+                z-index: 1000;
+                width: 280px;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            .sidebar.open {
+                right: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-section,
+            .recent-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                margin-top: 1rem;
+                width: 100%;
+            }
+            
+            .page-header .btn-primary {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-logo h1 {
+                font-size: 1.25rem;
+            }
+            
+            .header-actions .user-profile span {
+                display: none;
+            }
+            
+            .stat-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .stat-icon {
+                margin-left: 0;
+                margin-bottom: 0.5rem;
+            }
+            
+            .chart-placeholder {
+                height: 200px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .header-container {
+                padding: 0 0.5rem;
+            }
+            
+            .header-logo h1 {
+                font-size: 1.1rem;
+            }
+            
+            .notification-btn {
+                margin-left: 0.5rem;
+            }
+            
+            .main-content {
+                padding: 0.75rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .chart-card, .recent-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-container">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <div class="header-logo">
+                <h1>المحاسب المالي</h1>
+            </div>
+
+            <div class="header-search">
+                <input type="text" placeholder="بحث...">
+            </div>
+
+            <div class="header-actions">
+                <button class="notification-btn">
+                    <span class="icon">🔔</span>
+                    <span class="badge">3</span>
+                </button>
+                
+                <div class="user-profile">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM2Yzc1N2QiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMXYtMmE0IDQgMCAwIDAtNC00SDhhNCA0IDAgMCAwLTQgNHYyIj48L3BhdGg+PGNpcmNsZSBjeD0iMTIiIGN5PSI3IiByPSI0Ij48L2NpcmNsZT48L3N2Zz4=" alt="صورة المستخدم">
+                    <span>محمد أحمد</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="overlay" id="overlay"></div>
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3>الرئيسية</h3>
+                    <a href="dashboard.html" class="nav-item active">
+                        <span class="icon">📊</span>
+                        <span>لوحة التحكم</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>الفواتير</h3>
+                    <a href="invoices/list.html" class="nav-item">
+                        <span class="icon">🧾</span>
+                        <span>قائمة الفواتير</span>
+                    </a>
+                    <a href="invoices/create.html" class="nav-item">
+                        <span class="icon">➕</span>
+                        <span>إنشاء فاتورة</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>العملاء</h3>
+                    <a href="customers/list.html" class="nav-item">
+                        <span class="icon">👥</span>
+                        <span>قائمة العملاء</span>
+                    </a>
+                    <a href="customers/create.html" class="nav-item">
+                        <span class="icon">➕</span>
+                        <span>إضافة عميل</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>المنتجات</h3>
+                    <a href="products/list.html" class="nav-item">
+                        <span class="icon">📦</span>
+                        <span>قائمة المنتجات</span>
+                    </a>
+                    <a href="products/create.html" class="nav-item">
+                        <span class="icon">➕</span>
+                        <span>إضافة منتج</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>المصروفات</h3>
+                    <a href="expenses/list.html" class="nav-item">
+                        <span class="icon">💸</span>
+                        <span>قائمة المصروفات</span>
+                    </a>
+                    <a href="expenses/create.html" class="nav-item">
+                        <span class="icon">➕</span>
+                        <span>إضافة مصروف</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>التقارير</h3>
+                    <a href="reports/financial.html" class="nav-item">
+                        <span class="icon">📈</span>
+                        <span>تقارير مالية</span>
+                    </a>
+                    <a href="reports/sales.html" class="nav-item">
+                        <span class="icon">💰</span>
+                        <span>تقارير المبيعات</span>
+                    </a>
+                    <a href="reports/tax.html" class="nav-item">
+                        <span class="icon">📋</span>
+                        <span>تقارير الضرائب</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>الإعدادات</h3>
+                    <a href="settings/company.html" class="nav-item">
+                        <span class="icon">🏢</span>
+                        <span>إعدادات الشركة</span>
+                    </a>
+                    <a href="settings/users.html" class="nav-item">
+                        <span class="icon">👤</span>
+                        <span>المستخدمين</span>
+                    </a>
+                    <a href="settings/preferences.html" class="nav-item">
+                        <span class="icon">⚙️</span>
+                        <span>التفضيلات</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <a href="auth/login.html" class="nav-item logout">
+                        <span class="icon">🚪</span>
+                        <span>تسجيل الخروج</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>لوحة التحكم</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary">إنشاء فاتورة</button>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <h3>الإيرادات</h3>
+                            <p class="stat-value">25,000 ر.س</p>
+                            <p class="stat-change positive">+12% عن الشهر الماضي</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">💸</div>
+                        <div class="stat-info">
+                            <h3>المصروفات</h3>
+                            <p class="stat-value">8,500 ر.س</p>
+                            <p class="stat-change negative">+5% عن الشهر الماضي</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <h3>صافي الربح</h3>
+                            <p class="stat-value">16,500 ر.س</p>
+                            <p class="stat-change positive">+15% عن الشهر الماضي</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🧾</div>
+                        <div class="stat-info">
+                            <h3>الفواتير</h3>
+                            <p class="stat-value">42 فاتورة</p>
+                            <p class="stat-change">8 فواتير معلقة</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <h3>الإيرادات والمصروفات</h3>
+                        <div class="chart-placeholder">
+                            <p>رسم بياني سيظهر هنا</p>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>أفضل العملاء</h3>
+                        <div class="chart-placeholder">
+                            <p>رسم بياني سيظهر هنا</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-section">
+                    <div class="recent-card">
+                        <h3>آخر الفواتير</h3>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الفاتورة</th>
+                                        <th>العميل</th>
+                                        <th>التاريخ</th>
+                                        <th>المبلغ</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>INV-2023-001</td>
+                                        <td>شركة التقنية المحدودة</td>
+                                        <td>2023-10-15</td>
+                                        <td>5,000 ر.س</td>
+                                        <td><span class="status paid">مدفوعة</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>INV-2023-002</td>
+                                        <td>أحمد محمد</td>
+                                        <td>2023-10-14</td>
+                                        <td>3,200 ر.س</td>
+                                        <td><span class="status pending">معلقة</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>INV-2023-003</td>
+                                        <td>مؤسسة النهضة</td>
+                                        <td>2023-10-13</td>
+                                        <td>7,800 ر.س</td>
+                                        <td><span class="status paid">مدفوعة</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>INV-2023-004</td>
+                                        <td>عبدالله سعيد</td>
+                                        <td>2023-10-12</td>
+                                        <td>2,500 ر.س</td>
+                                        <td><span class="status overdue">متأخرة</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-actions">
+                            <a href="invoices/list.html">عرض جميع الفواتير</a>
+                        </div>
+                    </div>
+
+                    <div class="recent-card">
+                        <h3>آخر المصروفات</h3>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>التاريخ</th>
+                                        <th>الوصف</th>
+                                        <th>المبلغ</th>
+                                        <th>الفئة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2023-10-15</td>
+                                        <td>فاتورة كهرباء</td>
+                                        <td>450 ر.س</td>
+                                        <td>مرافق</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2023-10-14</td>
+                                        <td>شراء مواد مكتبية</td>
+                                        <td>320 ر.س</td>
+                                        <td>مصاريف مكتب</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2023-10-13</td>
+                                        <td>إعلانات على الإنترنت</td>
+                                        <td>1,200 ر.س</td>
+                                        <td>تسويق</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2023-10-12</td>
+                                        <td>صيانة المعدات</td>
+                                        <td>650 ر.س</td>
+                                        <td>صيانة</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-actions">
+                            <a href="expenses/list.html">عرض جميع المصروفات</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+                sidebarToggle.classList.toggle('active');
+            });
+            
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                sidebarToggle.classList.remove('active');
+            });
+            
+            // إغلاق القائمة عند النقر على رابط
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth < 768) {
+                        sidebar.classList.remove('open');
+                        overlay.classList.remove('active');
+                        sidebarToggle.classList.remove('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

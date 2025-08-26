@@ -1,0 +1,6 @@
+
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px}
+.kpi{display:flex;align-items:center;justify-content:space-between}
+.kpi .value{font-size:28px;font-weight:800}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.empty{padding:24px;text-align:center;color:var(--muted)}

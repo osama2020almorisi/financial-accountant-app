@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات الشركة - المحاسب المالي</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-container">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <div class="header-logo">
+                <h1>المحاسب المالي</h1>
+            </div>
+
+            <div class="header-search">
+                <input type="text" placeholder="بحث...">
+            </div>
+
+            <div class="header-actions">
+                <button class="notification-btn">
+                    <span class="icon">🔔</span>
+                    <span class="badge">3</span>
+                </button>
+                
+                <div class="user-profile">
+                    <img src="../assets/images/avatar.png" alt="User Avatar">
+                    <span>محمد أحمد</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <h3>الرئيسية</h3>
+                <a href="../dashboard.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>لوحة التحكم</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>الفواتير</h3>
+                <a href="../invoices/list.html" class="nav-item">
+                    <span class="icon">🧾</span>
+                    <span>قائمة الفواتير</span>
+                </a>
+                <a href="../invoices/create.html" class="nav-item">
+                    <span class="icon">➕</span>
+                    <span>إنشاء فاتورة</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>العملاء</h3>
+                <a href="../customers/list.html" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>قائمة العملاء</span>
+                </a>
+                <a href="../customers/create.html" class="nav-item">
+                    <span class="icon">➕</span>
+                    <span>إضافة عميل</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>المنتجات</h3>
+                <a href="../products/list.html" class="nav-item">
+                    <span class="icon">📦</span>
+                    <span>قائمة المنتجات</span>
+                </a>
+                <a href="../products/create.html" class="nav-item">
+                    <span class="icon">➕</span>
+                    <span>إضافة منتج</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>المصروفات</h3>
+                <a href="../expenses/list.html" class="nav-item">
+                    <span class="icon">💸</span>
+                    <span>قائمة المصروفات</span>
+                </a>
+                <a href="../expenses/create.html" class="nav-item">
+                    <span class="icon">➕</span>
+                    <span>إضافة مصروف</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>التقارير</h3>
+                <a href="../reports/financial.html" class="nav-item">
+                    <span class="icon">📈</span>
+                    <span>تقارير مالية</span>
+                </a>
+                <a href="../reports/sales.html" class="nav-item">
+                    <span class="icon">💰</span>
+                    <span>تقارير المبيعات</span>
+                </a>
+                <a href="../reports/tax.html" class="nav-item">
+                    <span class="icon">📋</span>
+                    <span>تقارير الضرائب</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>الإعدادات</h3>
+                <a href="company.html" class="nav-item active">
+                    <span class="icon">🏢</span>
+                    <span>إعدادات الشركة</span>
+                </a>
+                <a href="users.html" class="nav-item">
+                    <span class="icon">👤</span>
+                    <span>المستخدمين</span>
+                </a>
+                <a href="preferences.html" class="nav-item">
+                    <span class="icon">⚙️</span>
+                    <span>التفضيلات</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <a href="../auth/login.html" class="nav-item logout">
+                    <span class="icon">🚪</span>
+                    <span>تسجيل الخروج</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>إعدادات الشركة</h1>
+            <div class="header-actions">
+                <button type="submit" form="companyForm" class="btn-primary">حفظ التغييرات</button>
+            </div>
+        </div>
+
+        <form id="companyForm" class="settings-form">
+            <div class="settings-tabs">
+                <div class="tab-buttons">
+                    <button type="button" class="tab-btn active" data-tab="basic">المعلومات الأساسية</button>
+                    <button type="button" class="tab-btn" data-tab="address">العنوان والاتصال</button>
+                    <button type="button" class="tab-btn" data-tab="financial">المعلومات المالية</button>
+                    <button type="button" class="tab-btn" data-tab="invoice">إعدادات الفواتير</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- تبويب المعلومات الأساسية -->
+                    <div class="tab-pane active" id="basic">
+                        <div class="form-card">
+                            <h3>المعلومات الأساسية</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="companyName">اسم الشركة *</label>
+                                    <input type="text" id="companyName" name="companyName" value="شركة التقنية المحدودة" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="commercialNo">السجل التجاري *</label>
+                                    <input type="text" id="commercialNo" name="commercialNo" value="1234567890" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="taxNo">الرقم الضريبي *</label>
+                                    <input type="text" id="taxNo" name="taxNo" value="310123456789" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="industry">مجال العمل</label>
+                                    <select id="industry" name="industry">
+                                        <option value="technology">تقنية المعلومات</option>
+                                        <option value="consulting">استشارات</option>
+                                        <option value="retail">تجارة التجزئة</option>
+                                        <option value="services">خدمات</option>
+                                        <option value="other">أخرى</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="companyLogo">شعار الشركة</label>
+                                <div class="file-upload">
+                                    <div class="logo-preview">
+                                        <img src="../assets/images/company-logo.png" alt="Company Logo" id="logoPreview">
+                                        <span>الشعار الحالي</span>
+                                    </div>
+                                    <input type="file" id="companyLogo" name="companyLogo" accept="image/*" class="file-input">
+                                    <label for="companyLogo" class="btn-secondary">اختر صورة</label>
+                                    <span class="file-name" id="logoFileName">لم يتم اختيار ملف</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- تبويب العنوان والاتصال -->
+                    <div class="tab-pane" id="address">
+                        <div class="form-card">
+                            <h3>معلومات العنوان والاتصال</h3>
+                            
+                            <div class="form-group">
+                                <label for="address">العنوان *</label>
+                                <textarea id="address" name="address" rows="3" required>الرياض، حي العليا، شارع الملك فهد</textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="city">المدينة *</label>
+                                    <input type="text" id="city" name="city" value="الرياض" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="country">البلد *</label>
+                                    <select id="country" name="country" required>
+                                        <option value="SA">المملكة العربية السعودية</option>
+                                        <option value="AE">الإمارات العربية المتحدة</option>
+                                        <option value="BH">البحرين</option>
+                                        <option value="KW">الكويت</option>
+                                        <option value="OM">عمان</option>
+                                        <option value="QA">قطر</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">رقم الهاتف *</label>
+                                    <input type="tel" id="phone" name="phone" value="+966112345678" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email">البريد الإلكتروني *</label>
+                                    <input type="email" id="email" name="email" value="info@techcompany.com" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="website">الموقع الإلكتروني</label>
+                                <input type="url" id="website" name="website" value="https://www.techcompany.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- تبويب المعلومات المالية -->
+                    <div class="tab-pane" id="financial">
+                        <div class="form-card">
+                            <h3>المعلومات المالية</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="currency">العملة الأساسية *</label>
+                                    <select id="currency" name="currency" required>
+                                        <option value="SAR">ريال سعودي (ر.س)</option>
+                                        <option value="USD">دولار أمريكي ($)</option>
+                                        <option value="EUR">يورو (€)</option>
+                                        <option value="AED">درهم إماراتي (د.إ)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="taxRate">معدل الضريبة الافتراضي (%) *</label>
+                                    <input type="number" id="taxRate" name="taxRate" value="15" min="0" max="100" step="0.01" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fiscalYear">بداية السنة المالية *</label>
+                                    <select id="fiscalYear" name="fiscalYear" required>
+                                        <option value="01-01">1 يناير</option>
+                                        <option value="04-01">1 أبريل</option>
+                                        <option value="07-01">1 يوليو</option>
+                                        <option value="10-01">1 أكتوبر</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="paymentTerms">شروط الدفع الافتراضية *</label>
+                                    <select id="paymentTerms" name="paymentTerms" required>
+                                        <option value="0">الدفع فوري</option>
+                                        <option value="7">صافي 7 أيام</option>
+                                        <option value="15" selected>صافي 15 يوم</option>
+                                        <option value="30">صافي 30 يوم</option>
+                                        <option value="45">صافي 45 يوم</option>
+                                        <option value="60">صافي 60 يوم</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bankAccount">معلومات الحساب البنكي</label>
+                                <textarea id="bankAccount" name="bankAccount" rows="3">البنك الأهلي السعودي
+رقم الحساب: SA0380000000608010167879
+IBAN: SA0380000000608010167879</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- تبويب إعدادات الفواتير -->
+                    <div class="tab-pane" id="invoice">
+                        <div class="form-card">
+                            <h3>إعدادات الفواتير</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="invoicePrefix">بادئة رقم الفاتورة *</label>
+                                    <input type="text" id="invoicePrefix" name="invoicePrefix" value="INV" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="nextInvoiceNumber">رقم الفاتورة التالي *</label>
+                                    <input type="number" id="nextInvoiceNumber" name="nextInvoiceNumber" value="006" min="1" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="invoiceNotes">ملاحظات افتراضية على الفواتير</label>
+                                <textarea id="invoiceNotes" name="invoiceNotes" rows="3">شكراً لتعاملكم معنا
+يرجى السداد خلال 15 يوم من تاريخ الفاتورة
+للاستفسارات، يرجى الاتصال على 0112345678</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="invoiceTerms">الشروط والأحكام الافتراضية</label>
+                                <textarea id="invoiceTerms" name="invoiceTerms" rows="4">1. جميع الأسعار تشمل الضريبة المضافة إن وجدت
+2. الدفع خلال 15 يوم من تاريخ الفاتورة
+3. يتضمن السعر جميع الخدمات المتفق عليها
+4. للاستفسارات يرجى الاتصال خلال أوقات العمل الرسمية</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>تذييل الفاتورة</label>
+                                <div class="checkbox-container">
+                                    <input type="checkbox" id="showSignature" name="showSignature" checked>
+                                    <label for="showSignature">إظهار مكان للتوقيع</label>
+                                </div>
+                                <div class="checkbox-container">
+                                    <input type="checkbox" id="showStamp" name="showStamp" checked>
+                                    <label for="showStamp">إظهار مكان للختم</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary">إعادة تعيين</button>
+                <button type="submit" class="btn-primary">حفظ التغييرات</button>
+            </div>
+        </form>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/settings.js"></script>
+</body>
+</html>

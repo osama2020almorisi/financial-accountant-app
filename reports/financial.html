@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التقارير المالية - المحاسب المالي</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/reports.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-container">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <div class="header-logo">
+                <h1>المحاسب المالي</h1>
+            </div>
+
+            <div class="header-search">
+                <input type="text" placeholder="بحث...">
+            </div>
+
+            <div class="header-actions">
+                <button class="notification-btn">
+                    <span class="icon">🔔</span>
+                    <span class="badge">3</span>
+                </button>
+                
+                <div class="user-profile">
+                    <img src="../assets/images/avatar.png" alt="User Avatar">
+                    <span>محمد أحمد</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <h3>الرئيسية</h3>
+                <a href="../dashboard.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>لوحة التحكم</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>الفواتير</h3>
+                <a href="../invoices/list.html" class="nav-item">
+                    <span class="icon">🧾</span>
+                    <span>قائمة الفواتير</span>
+                </a>
+                <a href="../invoices/create.html" class="nav-item">
+                    <span class="icon">➕</span>
+                    <span>إنشاء فاتورة</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>العملاء</h3>
+                <a href="../customers/list.html" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>قائمة العملاء</span>
+                </a>
+                <a href="../customers/create.html" class="nav-item">
+                    <span class="icon">➕</span>
+                    <span>إضافة عميل</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>المنتجات</h3>
+                <a href="../products/list.html" class="nav-item">
+                    <span class="icon">📦</span>
+                    <span>قائمة المنتجات</span>
+                </a>
+                <a href="../products/create.html" class="nav-item">
+                    <span class="icon">➕</span>
+                    <span>إضافة منتج</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>المصروفات</h3>
+                <a href="../expenses/list.html" class="nav-item">
+                    <span class="icon">💸</span>
+                    <span>قائمة المصروفات</span>
+                </a>
+                <a href="../expenses/create.html" class="nav-item">
+                    <span class="icon">➕</span>
+                    <span>إضافة مصروف</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>التقارير</h3>
+                <a href="financial.html" class="nav-item active">
+                    <span class="icon">📈</span>
+                    <span>تقارير مالية</span>
+                </a>
+                <a href="sales.html" class="nav-item">
+                    <span class="icon">💰</span>
+                    <span>تقارير المبيعات</span>
+                </a>
+                <a href="tax.html" class="nav-item">
+                    <span class="icon">📋</span>
+                    <span>تقارير الضرائب</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <h3>الإعدادات</h3>
+                <a href="../settings/company.html" class="nav-item">
+                    <span class="icon">🏢</span>
+                    <span>إعدادات الشركة</span>
+                </a>
+                <a href="../settings/users.html" class="nav-item">
+                    <span class="icon">👤</span>
+                    <span>المستخدمين</span>
+                </a>
+                <a href="../settings/preferences.html" class="nav-item">
+                    <span class="icon">⚙️</span>
+                    <span>التفضيلات</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <a href="../auth/login.html" class="nav-item logout">
+                    <span class="icon">🚪</span>
+                    <span>تسجيل الخروج</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>التقارير المالية</h1>
+            <div class="header-actions">
+                <button class="btn-secondary" id="printReport">طباعة التقرير</button>
+                <button class="btn-secondary" id="exportReport">تصدير PDF</button>
+            </div>
+        </div>
+
+        <div class="filters-card card">
+            <h3>معايير التقرير</h3>
+            <div class="filters-grid">
+                <div class="form-group">
+                    <label for="reportType">نوع التقرير</label>
+                    <select id="reportType">
+                        <option value="profit-loss">قائمة الدخل (أرباح وخسائر)</option>
+                        <option value="balance-sheet">الميزانية العمومية</option>
+                        <option value="cash-flow">قائمة التدفق النقدي</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="period">الفترة</label>
+                    <select id="period">
+                        <option value="monthly">شهري</option>
+                        <option value="quarterly">ربع سنوي</option>
+                        <option value="yearly">سنوي</option>
+                        <option value="custom">مخصص</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="monthField">
+                    <label for="month">الشهر</label>
+                    <select id="month">
+                        <option value="1">يناير</option>
+                        <option value="2">فبراير</option>
+                        <option value="3">مارس</option>
+                        <option value="4">أبريل</option>
+                        <option value="5">مايو</option>
+                        <option value="6">يونيو</option>
+                        <option value="7">يوليو</option>
+                        <option value="8">أغسطس</option>
+                        <option value="9">سبتمبر</option>
+                        <option value="10">أكتوبر</option>
+                        <option value="11">نوفمبر</option>
+                        <option value="12">ديسمبر</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="yearField">
+                    <label for="year">السنة</label>
+                    <select id="year">
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="customDateField" style="display: none;">
+                    <label for="customDate">الفترة المخصصة</label>
+                    <div class="date-range">
+                        <input type="date" id="startDate" placeholder="من تاريخ">
+                        <span>إلى</span>
+                        <input type="date" id="endDate" placeholder="إلى تاريخ">
+                    </div>
+                </div>
+                
+                <div class="form-group filter-actions">
+                    <button class="btn-primary">عرض التقرير</button>
+                    <button class="btn-secondary">إعادة تعيين</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="report-summary">
+            <div class="summary-card">
+                <h3>ملخص الأداء المالي</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="label">الإيرادات</span>
+                        <span class="value positive">25,000 ر.س</span>
+                        <span class="change positive">+12% عن الشهر الماضي</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">المصروفات</span>
+                        <span class="value negative">8,500 ر.س</span>
+                        <span class="change negative">+5% عن الشهر الماضي</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">صافي الربح</span>
+                        <span class="value positive">16,500 ر.س</span>
+                        <span class="change positive">+15% عن الشهر الماضي</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">هامش الربح</span>
+                        <span class="value">66%</span>
+                        <span class="change positive">+2% عن الشهر الماضي</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="report-content">
+            <div class="report-section">
+                <h3>قائمة الدخل - أكتوبر 2023</h3>
+                
+                <div class="financial-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>البند</th>
+                                <th>المبلغ (ر.س)</th>
+                                <th>النسبة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="header">
+                                <td colspan="3">الإيرادات</td>
+                            </tr>
+                            <tr>
+                                <td>مبيعات المنتجات</td>
+                                <td>15,000 ر.س</td>
+                                <td>60%</td>
+                            </tr>
+                            <tr>
+                                <td>إيرادات الخدمات</td>
+                                <td>10,000 ر.س</td>
+                                <td>40%</td>
+                            </tr>
+                            <tr class="total">
+                                <td>إجمالي الإيرادات</td>
+                                <td>25,000 ر.س</td>
+                                <td>100%</td>
+                            </tr>
+                            
+                            <tr class="header">
+                                <td colspan="3">المصروفات</td>
+                            </tr>
+                            <tr>
+                                <td>مرافق</td>
+                                <td>1,200 ر.س</td>
+                                <td>14%</td>
+                            </tr>
+                            <tr>
+                                <td>رواتب</td>
+                                <td>4,500 ر.س</td>
+                                <td>53%</td>
+                            </tr>
+                            <tr>
+                                <td>تسويق</td>
+                                <td>1,500 ر.س</td>
+                                <td>18%</td>
+                            </tr>
+                            <tr>
+                                <td>صيانة</td>
+                                <td>800 ر.س</td>
+                                <td>9%</td>
+                            </tr>
+                            <tr>
+                                <td>مصاريف أخرى</td>
+                                <td>500 ر.س</td>
+                                <td>6%</td>
+                            </tr>
+                            <tr class="total">
+                                <td>إجمالي المصروفات</td>
+                                <td>8,500 ر.س</td>
+                                <td>100%</td>
+                            </tr>
+                            
+                            <tr class="header">
+                                <td colspan="3">صافي الربح</td>
+                            </tr>
+                            <tr class="total profit">
+                                <td>صافي الربح قبل الضرائب</td>
+                                <td>16,500 ر.س</td>
+                                <td>66%</td>
+                            </tr>
+                            <tr>
+                                <td>الضرائب (15%)</td>
+                                <td>2,475 ر.س</td>
+                                <td>10%</td>
+                            </tr>
+                            <tr class="total profit">
+                                <td>صافي الربح بعد الضرائب</td>
+                                <td>14,025 ر.س</td>
+                                <td>56%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-card">
+                    <h4>توزيع الإيرادات</h4>
+                    <div class="chart-placeholder">
+                        <p>رسم بياني دائري سيظهر هنا</p>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h4>توزيع المصروفات</h4>
+                    <div class="chart-placeholder">
+                        <p>رسم بياني دائري سيظهر هنا</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trends-section">
+                <h4>اتجاهات الأداء المالي</h4>
+                <div class="chart-card full-width">
+                    <div class="chart-placeholder">
+                        <p>رسم بياني خطي سيظهر هنا</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/reports.js"></script>
+</body>
+</html>
