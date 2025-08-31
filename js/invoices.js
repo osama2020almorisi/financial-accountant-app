@@ -1,306 +1,381 @@
-// js/invoices.js
+// Invoices management functions
 
-// تهيئة صفحات الفواتير
-function initInvoices() {
-    console.log('تم تحميل صفحة الفواتير');
+// Load invoices list
+function loadInvoices() {
+    const invoices = getData('invoices');
+    const tableBody = document.getElementById('invoicesTable');
     
-    // التحقق من تسجيل الدخول
-    if (!isUserLoggedIn()) {
-        window.location.href = '../auth/login.html';
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = '';
+    
+    if (invoices.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="table-empty">
+                    <i class="fas fa-file-invoice"></i>
+                    <p>لا يوجد فواتير مسجلة بعد</p>
+                    <a href="create.html" class="btn btn-primary">إنشاء فاتورة أولى</a>
+                </td>
+            </tr>
+        `;
         return;
     }
     
-    // تحميل بيانات المستخدم
-    loadUserData();
+    // Sort invoices by date (newest first)
+    const sortedInvoices = invoices.sort((a, b) => 
+        new Date(b.createdAt) - new Date(a.createdAt)
+    );
     
-    // تهيئة القائمة الجانبية
-    initSidebar();
-    
-    // تهيئة أحداث خاصة بصفحات الفواتير
-    initInvoiceEvents();
-}
-
-// تهيئة أحداث الفواتير
-function initInvoiceEvents() {
-    // تحديد إذا كنا في صفحة إنشاء فاتورة
-    const invoiceForm = document.getElementById('invoiceForm');
-    if (invoiceForm) {
-        initInvoiceForm();
-    }
-    
-    // تحديد إذا كنا في صفحة قائمة الفواتير
-    const invoicesTable = document.getElementById('invoicesTable');
-    if (invoicesTable) {
-        initInvoicesList();
-    }
-}
-
-// تهيئة نموذج إنشاء الفاتورة
-function initInvoiceForm() {
-    console.log('تهيئة نموذج إنشاء الفاتورة');
-    
-    // تعيين التاريخ الحالي كتاريخ افتراضي
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('invoiceDate').value = today;
-    
-    // تعيين تاريخ الاستحقاق بعد 15 يوم
-    const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 15);
-    document.getElementById('dueDate').value = dueDate.toISOString().split('T')[0];
-    
-    // أحداث اختيار العميل
-    const clientSelect = document.getElementById('clientSelect');
-    if (clientSelect) {
-        clientSelect.addEventListener('change', handleClientSelect);
-    }
-    
-    // أحداث إضافة عنصر جديد
-    const addItemBtn = document.getElementById('addItem');
-    if (addItemBtn) {
-        addItemBtn.addEventListener('click', addInvoiceItem);
-    }
-    
-    // أحداث الحذف للعناصر الموجودة
-    const deleteButtons = document.querySelectorAll('.delete-row');
-    deleteButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            deleteInvoiceItem(this);
-        });
+    sortedInvoices.forEach(invoice => {
+        const statusClass = getStatusClass(invoice.status);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${invoice.invoiceNumber || 'غير محدد'}</td>
+            <td>${invoice.customerName || 'عميل'}</td>
+            <td>${formatDate(invoice.invoiceDate)}</td>
+            <td>${formatDate(invoice.dueDate)}</td>
+            <td>${formatCurrency(invoice.totalAmount || 0)}</td>
+            <td><span class="status-badge ${statusClass}">${getStatusText(invoice.status)}</span></td>
+            <td class="actions">
+                <button class="btn btn-sm btn-primary" onclick="viewInvoice(${invoice.id})" title="عرض">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="editInvoice(${invoice.id})" title="تعديل">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${invoice.id})" title="حذف">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn btn-sm btn-success" onclick="printInvoice(${invoice.id})" title="طباعة">
+                    <i class="fas fa-print"></i>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
     });
-    
-    // أحداث حساب المبالغ
-    initCalculations();
 }
 
-// التعامل مع اختيار العميل
-function handleClientSelect(e) {
-    const clientId = e.target.value;
-    const clientInfo = document.getElementById('clientInfo');
-    
-    if (clientId) {
-        // في التطبيق الحقيقي، سيتم جلب بيانات العميل من الخادم
-        // هنا نقوم بمحاكاة البيانات
-        const clients = {
-            '1': {
-                name: 'شركة التقنية المحدودة',
-                email: 'info@techcompany.com',
-                phone: '+966112345678',
-                address: 'الرياض، حي العليا، شارع الملك فهد'
-            },
-            '2': {
-                name: 'أحمد محمد',
-                email: 'ahmed@example.com',
-                phone: '+966501234567',
-                address: 'جدة، حي الصفا'
-            },
-            '3': {
-                name: 'مؤسسة النهضة',
-                email: 'contact@nahda.com',
-                phone: '+966112345679',
-                address: 'الدمام، حي المدينة'
-            },
-            '4': {
-                name: 'عبدالله سعيد',
-                email: 'abdullah@example.com',
-                phone: '+966502345678',
-                address: 'الرياض، حي النخيل'
-            },
-            '5': {
-                name: 'شركة الأصالة',
-                email: 'info@asala.com',
-                phone: '+966112345680',
-                address: 'الرياض، حي السليمانية'
-            }
-        };
+// Get status class for styling
+function getStatusClass(status) {
+    switch (status) {
+        case 'paid': return 'status-paid';
+        case 'pending': return 'status-pending';
+        case 'overdue': return 'status-overdue';
+        case 'cancelled': return 'status-cancelled';
+        default: return 'status-pending';
+    }
+}
+
+// Get status text in Arabic
+function getStatusText(status) {
+    switch (status) {
+        case 'paid': return 'مدفوعة';
+        case 'pending': return ' pending';
+        case 'overdue': return 'متأخرة';
+        case 'cancelled': return 'ملغاة';
+        default: return ' pending';
+    }
+}
+
+// View invoice details
+function viewInvoice(invoiceId) {
+    window.location.href = `view.html?id=${invoiceId}`;
+}
+
+// Edit invoice
+function editInvoice(invoiceId) {
+    window.location.href = `edit.html?id=${invoiceId}`;
+}
+
+// Delete invoice
+function deleteInvoice(invoiceId) {
+    showConfirmation('هل أنت متأكد من حذف هذه الفاتورة؟', function() {
+        const invoices = getData('invoices');
+        const updatedInvoices = invoices.filter(i => i.id !== invoiceId);
+        saveData('invoices', updatedInvoices);
         
-        const client = clients[clientId];
-        if (client) {
-            document.getElementById('clientName').textContent = client.name;
-            document.getElementById('clientEmail').textContent = client.email;
-            document.getElementById('clientPhone').textContent = client.phone;
-            document.getElementById('clientAddress').textContent = client.address;
-            clientInfo.style.display = 'block';
-        }
-    } else {
-        clientInfo.style.display = 'none';
-    }
-}
-
-// إضافة عنصر جديد للفاتورة
-function addInvoiceItem() {
-    const tbody = document.querySelector('#itemsTable tbody');
-    const newRow = document.createElement('tr');
-    
-    newRow.innerHTML = `
-        <td>
-            <select class="product-select" required>
-                <option value="">اختر منتج أو خدمة</option>
-                <option value="1">تصميم موقع إلكتروني</option>
-                <option value="2">استضافة سنوية</option>
-                <option value="3">صيانة دورية</option>
-                <option value="4">استشارة تقنية</option>
-            </select>
-        </td>
-        <td><input type="number" class="quantity" min="1" value="1" required></td>
-        <td><input type="number" class="unit-price" min="0" step="0.01" required></td>
-        <td class="amount">0.00 ر.س</td>
-        <td>
-            <button type="button" class="btn-icon delete-row" title="حذف">
-                <span>🗑️</span>
-            </button>
-        </td>
-    `;
-    
-    tbody.insertBefore(newRow, tbody.lastElementChild);
-    
-    // إضافة الأحداث للعنصر الجديد
-    const deleteBtn = newRow.querySelector('.delete-row');
-    deleteBtn.addEventListener('click', function() {
-        deleteInvoiceItem(this);
-    });
-    
-    const quantityInput = newRow.querySelector('.quantity');
-    const priceInput = newRow.querySelector('.unit-price');
-    
-    quantityInput.addEventListener('input', calculateRowTotal);
-    priceInput.addEventListener('input', calculateRowTotal);
-    
-    // إضافة حدث لاختيار المنتج
-    const productSelect = newRow.querySelector('.product-select');
-    productSelect.addEventListener('change', function() {
-        // في التطبيق الحقيقي، سيتم جلب سعر المنتج من الخادم
-        // هنا نقوم بمحاكاة الأسعار
-        const prices = {
-            '1': 2500,
-            '2': 1200,
-            '3': 800,
-            '4': 300
-        };
-        
-        const price = prices[this.value] || 0;
-        priceInput.value = price;
-        calculateRowTotal.call(priceInput);
+        showAlert('success', 'تم حذف الفاتورة بنجاح');
+        loadInvoices();
     });
 }
 
-// حذف عنصر من الفاتورة
-function deleteInvoiceItem(button) {
-    const row = button.closest('tr');
-    if (document.querySelectorAll('#itemsTable tbody tr').length > 1) {
-        row.remove();
-        calculateInvoiceTotal();
-    } else {
-        alert('يجب أن تحتوي الفاتورة على عنصر واحد على الأقل');
-    }
+// Print invoice
+function printInvoice(invoiceId) {
+    window.open(`view.html?id=${invoiceId}&print=true`, '_blank');
 }
 
-// تهيئة الحسابات
-function initCalculations() {
-    // أحداث لحساب المبالغ عند تغيير القيم
-    const quantityInputs = document.querySelectorAll('.quantity');
-    const priceInputs = document.querySelectorAll('.unit-price');
-    const taxInput = document.getElementById('tax');
-    const discountInput = document.getElementById('discount');
+// Load invoice data for view/edit
+function loadInvoiceData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const invoiceId = parseInt(urlParams.get('id'));
     
-    quantityInputs.forEach(input => {
-        input.addEventListener('input', calculateRowTotal);
-    });
-    
-    priceInputs.forEach(input => {
-        input.addEventListener('input', calculateRowTotal);
-    });
-    
-    if (taxInput) {
-        taxInput.addEventListener('input', calculateInvoiceTotal);
+    if (!invoiceId) {
+        showAlert('error', 'معرف الفاتورة غير صحيح');
+        setTimeout(() => window.location.href = 'list.html', 2000);
+        return null;
     }
     
-    if (discountInput) {
-        discountInput.addEventListener('input', calculateInvoiceTotal);
+    const invoices = getData('invoices');
+    const invoice = invoices.find(i => i.id === invoiceId);
+    
+    if (!invoice) {
+        showAlert('error', 'الفاتورة غير موجودة');
+        setTimeout(() => window.location.href = 'list.html', 2000);
+        return null;
     }
     
-    // حساب المبالغ الأولية
-    calculateInvoiceTotal();
+    return invoice;
 }
 
-// حساب المجموع للصف
-function calculateRowTotal() {
-    const row = this.closest('tr');
-    const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
-    const price = parseFloat(row.querySelector('.unit-price').value) || 0;
-    const amountCell = row.querySelector('.amount');
+// Generate invoice number
+function generateInvoiceNumber() {
+    const invoices = getData('invoices');
+    const year = new Date().getFullYear();
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const count = invoices.filter(i => {
+        const invoiceDate = new Date(i.createdAt);
+        return invoiceDate.getFullYear() === year && 
+               invoiceDate.getMonth() + 1 === parseInt(month);
+    }).length + 1;
     
-    const total = quantity * price;
-    amountCell.textContent = total.toFixed(2) + ' ر.س';
-    
-    calculateInvoiceTotal();
+    return `INV-${year}${month}-${count.toString().padStart(4, '0')}`;
 }
 
-// حساب الإجمالي للفاتورة
-function calculateInvoiceTotal() {
-    let subtotal = 0;
+// Calculate invoice totals
+function calculateInvoiceTotals(items, taxRate = 0) {
+    const subtotal = items.reduce((total, item) => {
+        return total + (item.price * item.quantity);
+    }, 0);
     
-    // جمع مبالغ جميع العناصر
-    const amountCells = document.querySelectorAll('.amount');
-    amountCells.forEach(cell => {
-        const amount = parseFloat(cell.textContent) || 0;
-        subtotal += amount;
-    });
-    
-    // حساب الضريبة
-    const taxRate = parseFloat(document.getElementById('tax').value) || 0;
     const taxAmount = subtotal * (taxRate / 100);
+    const totalAmount = subtotal + taxAmount;
     
-    // حساب الخصم
-    const discountInput = document.getElementById('discount').value;
-    let discountAmount = 0;
-    
-    if (discountInput) {
-        if (discountInput.includes('%')) {
-            const discountRate = parseFloat(discountInput) || 0;
-            discountAmount = subtotal * (discountRate / 100);
-        } else {
-            discountAmount = parseFloat(discountInput) || 0;
-        }
-    }
-    
-    // حساب الإجمالي النهائي
-    const totalAmount = subtotal + taxAmount - discountAmount;
-    
-    // تحديث واجهة المستخدم
-    document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' ر.س';
-    document.getElementById('taxAmount').textContent = taxAmount.toFixed(2) + ' ر.س';
-    document.getElementById('discountAmount').textContent = discountAmount.toFixed(2) + ' ر.س';
-    document.getElementById('totalAmount').textContent = totalAmount.toFixed(2) + ' ر.س';
+    return {
+        subtotal: Math.round(subtotal * 100) / 100,
+        taxAmount: Math.round(taxAmount * 100) / 100,
+        totalAmount: Math.round(totalAmount * 100) / 100
+    };
 }
 
-// تهيئة قائمة الفواتير
-function initInvoicesList() {
-    console.log('تهيئة قائمة الفواتير');
+// Save invoice (create or update)
+function saveInvoice(invoiceData, isEdit = false) {
+    const invoices = getData('invoices');
     
-    // تحديد عنصر تحديد الكل
-    const selectAll = document.getElementById('selectAll');
-    if (selectAll) {
-        selectAll.addEventListener('change', function() {
-            const checkboxes = document.querySelectorAll('.row-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
+    // Calculate totals
+    const totals = calculateInvoiceTotals(invoiceData.items, invoiceData.taxRate);
+    
+    const invoiceToSave = {
+        ...invoiceData,
+        subtotal: totals.subtotal,
+        taxAmount: totals.taxAmount,
+        totalAmount: totals.totalAmount,
+        updatedAt: new Date().toISOString()
+    };
+    
+    if (isEdit) {
+        // Update existing invoice
+        const index = invoices.findIndex(i => i.id === invoiceData.id);
+        if (index !== -1) {
+            invoices[index] = {
+                ...invoices[index],
+                ...invoiceToSave
+            };
+        }
+    } else {
+        // Create new invoice
+        const newInvoice = {
+            id: getNextId('invoices'),
+            invoiceNumber: generateInvoiceNumber(),
+            status: 'pending',
+            createdAt: new Date().toISOString(),
+            ...invoiceToSave
+        };
+        invoices.push(newInvoice);
+        
+        // Update customer balance if needed
+        updateCustomerBalance(invoiceData.customerId, totals.totalAmount);
+    }
+    
+    saveData('invoices', invoices);
+    showAlert('success', `تم ${isEdit ? 'تحديث' : 'إنشاء'} الفاتورة بنجاح`);
+    
+    setTimeout(() => {
+        window.location.href = 'list.html';
+    }, 1500);
+}
+
+// Update customer balance
+function updateCustomerBalance(customerId, amount) {
+    if (!customerId) return;
+    
+    const customers = getData('customers');
+    const customerIndex = customers.findIndex(c => c.id === customerId);
+    
+    if (customerIndex !== -1) {
+        customers[customerIndex].balance = (customers[customerIndex].balance || 0) + amount;
+        customers[customerIndex].updatedAt = new Date().toISOString();
+        saveData('customers', customers);
+    }
+}
+
+// Search invoices
+function searchInvoices() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
+    
+    const invoices = getData('invoices');
+    
+    let filteredInvoices = invoices.filter(invoice =>
+        invoice.invoiceNumber?.toLowerCase().includes(searchTerm) ||
+        invoice.customerName?.toLowerCase().includes(searchTerm)
+    );
+    
+    if (statusFilter) {
+        filteredInvoices = filteredInvoices.filter(invoice => invoice.status === statusFilter);
+    }
+    
+    if (dateFilter) {
+        const filterDate = new Date(dateFilter);
+        filteredInvoices = filteredInvoices.filter(invoice => {
+            const invoiceDate = new Date(invoice.invoiceDate);
+            return invoiceDate.toDateString() === filterDate.toDateString();
         });
     }
     
-    // إضافة أحداث لأزرار الحذف
-    const deleteButtons = document.querySelectorAll('.action-buttons .delete');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const invoiceId = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-            if (confirm(`هل أنت متأكد من حذف الفاتورة ${invoiceId}؟`)) {
-                // في التطبيق الحقيقي، سيتم إرسال طلب حذف إلى الخادم
-                this.closest('tr').remove();
-                alert('تم حذف الفاتورة بنجاح');
-            }
-        });
+    const tableBody = document.getElementById('invoicesTable');
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = '';
+    
+    if (filteredInvoices.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center">
+                    <p>لا توجد نتائج للبحث</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    filteredInvoices.forEach(invoice => {
+        const statusClass = getStatusClass(invoice.status);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${invoice.invoiceNumber || 'غير محدد'}</td>
+            <td>${invoice.customerName || 'عميل'}</td>
+            <td>${formatDate(invoice.invoiceDate)}</td>
+            <td>${formatDate(invoice.dueDate)}</td>
+            <td>${formatCurrency(invoice.totalAmount || 0)}</td>
+            <td><span class="status-badge ${statusClass}">${getStatusText(invoice.status)}</span></td>
+            <td class="actions">
+                <button class="btn btn-sm btn-primary" onclick="viewInvoice(${invoice.id})" title="عرض">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="editInvoice(${invoice.id})" title="تعديل">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${invoice.id})" title="حذف">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn btn-sm btn-success" onclick="printInvoice(${invoice.id})" title="طباعة">
+                    <i class="fas fa-print"></i>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
     });
 }
 
-// تهيئة صفحات الفواتير عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', initInvoices);
+// Initialize invoices search
+function initInvoicesSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(searchInvoices, 300));
+    }
+    
+    const statusFilter = document.getElementById('statusFilter');
+    if (statusFilter) {
+        statusFilter.addEventListener('change', searchInvoices);
+    }
+    
+    const dateFilter = document.getElementById('dateFilter');
+    if (dateFilter) {
+        dateFilter.addEventListener('change', searchInvoices);
+    }
+}
+
+// Export invoices to CSV
+function exportInvoices() {
+    const invoices = getData('invoices');
+    if (invoices.length === 0) {
+        showAlert('warning', 'لا توجد بيانات للتصدير');
+        return;
+    }
+    
+    const exportData = invoices.map(invoice => ({
+        'رقم الفاتورة': invoice.invoiceNumber,
+        'العميل': invoice.customerName,
+        'تاريخ الفاتورة': formatDate(invoice.invoiceDate),
+        'تاريخ الاستحقاق': formatDate(invoice.dueDate),
+        'المجموع الفرعي': invoice.subtotal || 0,
+        'الضريبة': invoice.taxAmount || 0,
+        'الإجمالي': invoice.totalAmount || 0,
+        'الحالة': getStatusText(invoice.status),
+        'تاريخ الإنشاء': formatDate(invoice.createdAt)
+    }));
+    
+    exportToCSV(exportData, 'الفواتير.csv');
+}
+
+// Get invoice status options
+function getInvoiceStatusOptions() {
+    return [
+        { value: 'pending', text: ' pending' },
+        { value: 'paid', text: 'مدفوعة' },
+        { value: 'overdue', text: 'متأخرة' },
+        { value: 'cancelled', text: 'ملغاة' }
+    ];
+}
+
+// Update invoice status
+function updateInvoiceStatus(invoiceId, status) {
+    const invoices = getData('invoices');
+    const invoiceIndex = invoices.findIndex(i => i.id === invoiceId);
+    
+    if (invoiceIndex !== -1) {
+        invoices[invoiceIndex].status = status;
+        invoices[invoiceIndex].updatedAt = new Date().toISOString();
+        saveData('invoices', invoices);
+        
+        showAlert('success', 'تم تحديث حالة الفاتورة بنجاح');
+        return true;
+    }
+    
+    return false;
+}
+
+// Check for overdue invoices
+function checkOverdueInvoices() {
+    const invoices = getData('invoices');
+    const today = new Date();
+    
+    invoices.forEach(invoice => {
+        if (invoice.status === 'pending') {
+            const dueDate = new Date(invoice.dueDate);
+            if (dueDate < today) {
+                invoice.status = 'overdue';
+                invoice.updatedAt = new Date().toISOString();
+            }
+        }
+    });
+    
+    saveData('invoices', invoices);
+}
+
+// Initialize overdue check on app start
+document.addEventListener('DOMContentLoaded', function() {
+    checkOverdueInvoices();
+});

@@ -1,41 +1,740 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>إنشاء العملاء</title>
-  <link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/components.css"><link rel="stylesheet" href="css/responsive.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة عميل - المحاسب المالي</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/modules.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* تحسينات التنسيق الإضافية */
+        .balance-info {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .balance-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0.5rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="فتح أو إغلاق القائمة الجانبية" aria-expanded="false" aria-controls="mainSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="logo">
+                <img src="../assets/images/logo.png" alt="شعار المحاسب المالي" id="headerLogo" onerror="handleLogoError(this)">
+                <span>المحاسب المالي</span>
+            </div>
 
-<header class="app-header">
-  <div class="brand">💼 Financial Accountant</div>
-  <nav>
-    <a href="index.html" class="">الرئيسية</a>
-    <a href="dashboard.html" class="">لوحة التحكم</a>
-    <a href="invoices/list.html">الفواتير</a>
-    <a href="customers/list.html">العملاء</a>
-    <a href="products/list.html">المنتجات</a>
-    <a href="expenses/list.html">المصروفات</a>
-    <a href="reports/financial.html">التقارير</a>
-    <a href="settings/company.html">الإعدادات</a>
-    <a href="auth/login.html" class="btn small">تسجيل الدخول</a>
-  </nav>
-</header>
+            <div class="header-actions">
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar" role="img" aria-label="صورة المستخدم"></div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" aria-label="قائمة المستخدم" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" role="menu">
+                            <a href="#" class="dropdown-item" onclick="logout()" role="menuitem">
+                                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
-  <main class="container">
+    <!-- Sidebar -->
+    <aside class="main-sidebar" id="mainSidebar">
+        <nav class="sidebar-nav" aria-label="القائمة الرئيسية">
+            <ul>
+                <li class="nav-item">
+                    <a href="../dashboard.html">
+                        <i class="fas fa-home"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../invoices/list.html">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>الفواتير</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="list.html" aria-current="page">
+                        <i class="fas fa-users"></i>
+                        <span>العملاء</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../products/list.html">
+                        <i class="fas fa-box"></i>
+                        <span>المنتجات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../expenses/list.html">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>المصروفات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../reports/financial.html">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>التقارير</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../settings/company.html">
+                        <i class="fas fa-cog"></i>
+                        <span>الإعدادات</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 
-    <div data-entity="customers" class="card">
-      <h2>إنشاء العملاء</h2>
-      <form id="form"></form>
-    </div>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1>إضافة عميل جديد</h1>
+            <div class="header-actions">
+                <a href="list.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i> رجوع
+                </a>
+            </div>
+        </div>
 
-  </main>
+        <!-- Customer Form -->
+        <form class="module-form" id="customerForm" novalidate>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">اسم العميل *</label>
+                    <input type="text" id="name" name="name" required aria-describedby="nameHelp">
+                    <small id="nameHelp" class="form-help">الاسم الكامل للعميل كما سيظهر في الفواتير</small>
+                    <div class="invalid-feedback" id="nameError">يرجى إدخال اسم العميل</div>
+                </div>
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني</label>
+                    <input type="email" id="email" name="email" aria-describedby="emailHelp">
+                    <small id="emailHelp" class="form-help">البريد الإلكتروني للتواصل مع العميل</small>
+                    <div class="invalid-feedback" id="emailError">صيغة البريد الإلكتروني غير صحيحة</div>
+                </div>
+            </div>
 
-<footer class="app-footer">
-  <small>© 2025 Financial Accountant App — إصدار تجريبي</small>
-</footer>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">رقم الهاتف</label>
+                    <input type="tel" id="phone" name="phone" pattern="[0-9+()-]*" aria-describedby="phoneHelp">
+                    <small id="phoneHelp" class="form-help">رقم الهاتف بالصيغة الدولية أو المحلية</small>
+                    <div class="invalid-feedback" id="phoneError">صيغة رقم الهاتف غير صحيحة</div>
+                </div>
+                <div class="form-group">
+                    <label for="taxNumber">الرقم الضريبي</label>
+                    <input type="text" id="taxNumber" name="taxNumber" pattern="[0-9]*" aria-describedby="taxNumberHelp">
+                    <small id="taxNumberHelp" class="form-help">الرقم الضريبي المسجل للعميل (إن وجد)</small>
+                    <div class="invalid-feedback" id="taxNumberError">يجب أن يحتوي الرقم الضريبي على أرقام فقط</div>
+                </div>
+            </div>
 
-  <script defer src="js/helpers.js"></script><script defer src="js/storage.js"></script><script defer src="js/main.js"></script><script defer src="js/customers.js"></script>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="address">العنوان</label>
+                    <textarea id="address" name="address" rows="3" aria-describedby="addressHelp"></textarea>
+                    <small id="addressHelp" class="form-help">العنوان الكامل للعميل</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="initialBalance">الرصيد الافتتاحي</label>
+                    <input type="number" id="initialBalance" name="initialBalance" step="0.01" aria-describedby="balanceHelp">
+                    <small id="balanceHelp" class="form-help">رصيد العميل الافتتاحي بالريال اليمني</small>
+                    <div class="invalid-feedback" id="initialBalanceError">يجب أن يكون الرصيد قيمة رقمية</div>
+                </div>
+                <div class="form-group">
+                    <label for="balanceType">نوع الرصيد</label>
+                    <select id="balanceType" name="balanceType" aria-describedby="balanceTypeHelp">
+                        <option value="debit">مدين (للعميل)</option>
+                        <option value="credit">دائن (على العميل)</option>
+                    </select>
+                    <small id="balanceTypeHelp" class="form-help">نوع الرصيد الافتتاحي للعميل</small>
+                </div>
+            </div>
+
+            <div class="balance-info" id="balancePreview" style="display: none;">
+                <h3>معاينة الرصيد الافتتاحي</h3>
+                <p class="balance-amount" id="balanceAmount"></p>
+                <p id="balanceDescription"></p>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='list.html'">
+                    إلغاء
+                </button>
+                <button type="submit" class="btn btn-primary" id="saveButton">
+                    <i class="fas fa-save"></i> حفظ العميل
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        // ===== Authentication Functions =====
+        function isLoggedIn() {
+            return getCurrentUser() !== null;
+        }
+
+        function getCurrentUser() {
+            try {
+                return JSON.parse(localStorage.getItem('financial_app_current_user')) || null;
+            } catch (error) {
+                console.error('خطأ في تحميل بيانات المستخدم:', error);
+                return null;
+            }
+        }
+
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('financial_app_current_user');
+                window.location.href = '../index.html';
+            }
+        }
+
+        // ===== Alert Function =====
+        function showAlert(type, message, duration = 5000) {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.setAttribute('role', 'alert');
+            alert.setAttribute('aria-live', 'assertive');
+            alert.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" aria-label="إغلاق التنبيه">×</button>
+            `;
+            
+            // Add styles if not already added
+            if (!document.querySelector('#alert-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'alert-styles';
+                styles.textContent = `
+                    .alert {
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        color: white;
+                        font-weight: 500;
+                        z-index: 1000;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        min-width: 300px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        animation: slideDown 0.3s ease;
+                    }
+                    
+                    .alert-success { background-color: #28a745; }
+                    .alert-error { background-color: #dc3545; }
+                    .alert-warning { background-color: #ffc107; color: #000; }
+                    
+                    .alert button {
+                        background: none;
+                        border: none;
+                        color: inherit;
+                        font-size: 18px;
+                        cursor: pointer;
+                        margin-right: 10px;
+                    }
+                    
+                    @keyframes slideDown {
+                        from { transform: translate(-50%, -100%); opacity: 0; }
+                        to { transform: translate(-50%, 0); opacity: 1; }
+                    }
+                    
+                    @media (max-width: 480px) {
+                        .alert {
+                            min-width: auto;
+                            left: 20px;
+                            right: 20px;
+                            transform: none;
+                        }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+            
+            document.body.appendChild(alert);
+            
+            // Auto remove after duration
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.remove();
+                }
+            }, duration);
+        }
+
+        // ===== User Data Functions =====
+        function loadUserData() {
+            const user = getCurrentUser();
+            if (!user) return;
+            
+            // Create user avatar
+            const userAvatarElement = document.getElementById('userAvatar');
+            if (userAvatarElement) {
+                const initials = getUserInitials(user.fullName);
+                const randomColor = getRandomColor();
+                
+                userAvatarElement.innerHTML = initials;
+                userAvatarElement.style.backgroundColor = randomColor;
+                userAvatarElement.style.display = 'flex';
+                userAvatarElement.style.alignItems = 'center';
+                userAvatarElement.style.justifyContent = 'center';
+                userAvatarElement.style.color = 'white';
+                userAvatarElement.style.fontWeight = '600';
+                userAvatarElement.style.borderRadius = '50%';
+                userAvatarElement.style.width = '40px';
+                userAvatarElement.style.height = '40px';
+            }
+        }
+
+        function getUserInitials(name) {
+            if (!name) return 'U';
+            return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function getRandomColor() {
+            const colors = [
+                '#3366cc', '#dc3545', '#28a745', '#ffc107', 
+                '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // ===== Storage Functions =====
+        function initializeStorage() {
+            // Check if storage is already initialized
+            const isInitialized = localStorage.getItem('financial_app_initialized');
+            
+            if (!isInitialized) {
+                try {
+                    if (!localStorage.getItem('financial_app_users')) {
+                        localStorage.setItem('financial_app_users', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_customers')) {
+                        localStorage.setItem('financial_app_customers', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_products')) {
+                        localStorage.setItem('financial_app_products', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_invoices')) {
+                        localStorage.setItem('financial_app_invoices', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_expenses')) {
+                        localStorage.setItem('financial_app_expenses', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_settings')) {
+                        localStorage.setItem('financial_app_settings', JSON.stringify({
+                            currency: 'ريال يمني',
+                            currency_code: 'ر.ي',
+                            tax_rate: 15,
+                            company_name: 'شركتي',
+                            company_logo: '',
+                            company_tax_number: '',
+                            company_address: '',
+                            company_phone: '',
+                            company_email: '',
+                            invoice_prefix: 'INV-',
+                            language: 'ar'
+                        }));
+                    }
+                    
+                    localStorage.setItem('financial_app_initialized', 'true');
+                } catch (error) {
+                    console.error('خطأ في تهيئة التخزين المحلي:', error);
+                    showAlert('error', 'حدث خطأ في تهيئة النظام. يرجى تحديث الصفحة.');
+                }
+            }
+        }
+
+        function getData(key) {
+            try {
+                const itemName = `financial_app_${key}`;
+                const data = localStorage.getItem(itemName);
+                
+                if (!data) {
+                    console.warn(`البيانات لـ ${itemName} غير موجودة`);
+                    return key === 'settings' ? {} : [];
+                }
+                
+                return JSON.parse(data);
+                
+            } catch (error) {
+                console.error(`خطأ في تحميل البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في تحميل البيانات لـ ${key}`);
+                return key === 'settings' ? {} : [];
+            }
+        }
+
+        function saveData(key, data) {
+            try {
+                localStorage.setItem(`financial_app_${key}`, JSON.stringify(data));
+                return true;
+            } catch (error) {
+                console.error(`خطأ في حفظ البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في حفظ البيانات لـ ${key}`);
+                return false;
+            }
+        }
+
+        function getNextId(key) {
+            const data = getData(key);
+            if (data.length === 0) return 1;
+            return Math.max(...data.map(item => item.id)) + 1;
+        }
+
+        // ===== Settings Functions =====
+        function getSettings() {
+            const settings = getData('settings');
+            return {
+                currency: 'ريال يمني',
+                currency_code: 'ر.ي',
+                tax_rate: 15,
+                company_name: 'شركتي',
+                company_logo: '',
+                company_tax_number: '',
+                company_address: '',
+                company_phone: '',
+                company_email: '',
+                invoice_prefix: 'INV-',
+                language: 'ar',
+                ...settings
+            };
+        }
+
+        function getCurrencySymbol() {
+            const settings = getSettings();
+            return settings.currency_code || 'ر.ي';
+        }
+
+        function formatCurrency(amount) {
+            const symbol = getCurrencySymbol();
+            
+            // تنسيق الرقم مع فواصل الآلاف
+            const formattedAmount = parseFloat(amount || 0).toLocaleString('ar-EG');
+            
+            return `${formattedAmount} ${symbol}`;
+        }
+
+        // ===== Logo Functions =====
+        function handleLogoError(img) {
+            img.onerror = null;
+            img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzNjZjYyIgLz48dGV4dCB4PSI5MCUiIHk9IjUwJSIgZHk9Ii4zNWVmIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjgiPuetlDwvdGV4dD48L3N2Zz4=';
+        }
+
+        // ===== Customer Functions =====
+        function saveCustomer(customerData) {
+            const customers = getData('customers');
+            
+            // Create new customer
+            const newCustomer = {
+                id: getNextId('customers'),
+                ...customerData,
+                balance: customerData.balanceType === 'debit' ? 
+                         parseFloat(customerData.initialBalance || 0) : 
+                         -parseFloat(customerData.initialBalance || 0),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            customers.push(newCustomer);
+            
+            if (saveData('customers', customers)) {
+                showAlert('success', 'تم إضافة العميل بنجاح');
+                
+                setTimeout(() => {
+                    window.location.href = 'list.html';
+                }, 1500);
+            } else {
+                showAlert('error', 'حدث خطأ أثناء حفظ العميل');
+            }
+        }
+
+        // ===== Validation Functions =====
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function validateCustomerForm() {
+            let isValid = true;
+            const form = document.getElementById('customerForm');
+            
+            // اسم العميل (مطلوب)
+            const name = document.getElementById('name');
+            if (!name.value.trim()) {
+                showFieldError(name, 'يرجى إدخال اسم العميل');
+                isValid = false;
+            } else {
+                clearFieldError(name);
+            }
+            
+            // البريد الإلكتروني (صيغة صحيحة)
+            const email = document.getElementById('email');
+            if (email.value && !isValidEmail(email.value)) {
+                showFieldError(email, 'صيغة البريد الإلكتروني غير صحيحة');
+                isValid = false;
+            } else {
+                clearFieldError(email);
+            }
+            
+            // الهاتف (صيغة صحيحة)
+            const phone = document.getElementById('phone');
+            if (phone.value && !/^[0-9+()-\s]*$/.test(phone.value)) {
+                showFieldError(phone, 'صيغة رقم الهاتف غير صحيحة');
+                isValid = false;
+            } else {
+                clearFieldError(phone);
+            }
+            
+            // الرقم الضريبي (أرقام فقط)
+            const taxNumber = document.getElementById('taxNumber');
+            if (taxNumber.value && !/^\d*$/.test(taxNumber.value)) {
+                showFieldError(taxNumber, 'يجب أن يحتوي الرقم الضريبي على أرقام فقط');
+                isValid = false;
+            } else {
+                clearFieldError(taxNumber);
+            }
+            
+            // الرصيد الافتتاحي (رقم صحيح)
+            const initialBalance = document.getElementById('initialBalance');
+            if (initialBalance.value && isNaN(parseFloat(initialBalance.value))) {
+                showFieldError(initialBalance, 'يجب أن يكون الرصيد قيمة رقمية');
+                isValid = false;
+            } else {
+                clearFieldError(initialBalance);
+            }
+            
+            return isValid;
+        }
+
+        function showFieldError(field, message) {
+            field.classList.add('is-invalid');
+            const errorElement = document.getElementById(field.id + 'Error');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            field.setAttribute('aria-invalid', 'true');
+        }
+
+        function clearFieldError(field) {
+            field.classList.remove('is-invalid');
+            const errorElement = document.getElementById(field.id + 'Error');
+            if (errorElement) {
+                errorElement.style.display = 'none';
+            }
+            field.setAttribute('aria-invalid', 'false');
+        }
+
+        // تحديث معاينة الرصيد
+        function updateBalancePreview() {
+            const balanceInput = document.getElementById('initialBalance');
+            const balanceType = document.getElementById('balanceType');
+            const balancePreview = document.getElementById('balancePreview');
+            const balanceAmount = document.getElementById('balanceAmount');
+            const balanceDescription = document.getElementById('balanceDescription');
+            
+            const balanceValue = parseFloat(balanceInput.value || 0);
+            
+            if (balanceValue > 0) {
+                balancePreview.style.display = 'block';
+                
+                if (balanceType.value === 'debit') {
+                    balanceAmount.textContent = formatCurrency(balanceValue);
+                    balanceDescription.textContent = 'رصيد مدين (مستحق للعميل)';
+                    balanceAmount.style.color = '#28a745';
+                } else {
+                    balanceAmount.textContent = formatCurrency(balanceValue);
+                    balanceDescription.textContent = 'رصيد دائن (مستحق على العميل)';
+                    balanceAmount.style.color = '#dc3545';
+                }
+            } else {
+                balancePreview.style.display = 'none';
+            }
+        }
+
+        // ===== Form Handling =====
+        function saveCustomerForm(event) {
+            if (event) event.preventDefault();
+            
+            if (!validateCustomerForm()) {
+                showAlert('error', 'يرجى تصحيح الأخطاء في النموذج');
+                return;
+            }
+            
+            // تعطيل زر الحفظ أثناء المعالجة
+            const saveButton = document.getElementById('saveButton');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                taxNumber: document.getElementById('taxNumber').value,
+                address: document.getElementById('address').value,
+                initialBalance: document.getElementById('initialBalance').value,
+                balanceType: document.getElementById('balanceType').value
+            };
+            
+            // محاكاة عملية غير متزامنة
+            setTimeout(() => {
+                saveCustomer(formData);
+                
+                // إعادة تمكين زر الحفظ
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fas fa-save"></i> حفظ العميل';
+            }, 1000);
+        }
+
+        // ===== Helper Functions =====
+        function checkAuth() {
+            const allowedPages = ['index.html', 'auth/', 'login.html'];
+            const currentPath = window.location.pathname;
+            
+            if (!isLoggedIn() && !allowedPages.some(page => currentPath.includes(page))) {
+                window.location.href = '../index.html';
+                return false;
+            }
+            return true;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mainSidebar');
+            const toggleButton = document.querySelector('.sidebar-toggle');
+            
+            if (sidebar) {
+                const isExpanded = sidebar.classList.toggle('show');
+                toggleButton.setAttribute('aria-expanded', isExpanded);
+                
+                // إضافة overlay على المحتوى الرئيسي عند فتح القائمة على الجوال
+                const mainContent = document.getElementById('mainContent');
+                if (window.innerWidth < 768) {
+                    if (isExpanded) {
+                        const overlay = document.createElement('div');
+                        overlay.className = 'sidebar-overlay';
+                        overlay.onclick = toggleSidebar;
+                        document.body.appendChild(overlay);
+                    } else {
+                        const overlay = document.querySelector('.sidebar-overlay');
+                        if (overlay) overlay.remove();
+                    }
+                }
+            }
+        }
+
+        // ===== Initialize Application =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStorage();
+            
+            if (!checkAuth()) return;
+            
+            loadUserData();
+            
+            // تحديث شعار الهيدر
+            updateHeaderLogo();
+            
+            // إضافة أحداث التحقق أثناء الكتابة
+            const formFields = document.querySelectorAll('input, select, textarea');
+            formFields.forEach(field => {
+                field.addEventListener('blur', function() {
+                    validateCustomerForm();
+                });
+            });
+            
+            // أحداث تحديث معاينة الرصيد
+            document.getElementById('initialBalance').addEventListener('input', updateBalancePreview);
+            document.getElementById('balanceType').addEventListener('change', updateBalancePreview);
+            
+            // إضافة حدث للنموذج
+            document.getElementById('customerForm').addEventListener('submit', saveCustomerForm);
+            
+            // Initialize dropdowns
+            document.addEventListener('click', function(e) {
+                const dropdowns = document.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    if (!dropdown.contains(e.target)) {
+                        const menu = dropdown.querySelector('.dropdown-menu');
+                        menu.classList.remove('show');
+                        dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+                    }
+                });
+                
+                if (e.target.classList.contains('dropdown-toggle')) {
+                    const menu = e.target.parentElement.querySelector('.dropdown-menu');
+                    const isExpanded = menu.classList.toggle('show');
+                    e.target.setAttribute('aria-expanded', isExpanded);
+                }
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth < 768) {
+                    const sidebar = document.getElementById('mainSidebar');
+                    const toggleBtn = document.querySelector('.sidebar-toggle');
+                    
+                    if (sidebar.classList.contains('show') && 
+                        !sidebar.contains(e.target) && 
+                        !toggleBtn.contains(e.target)) {
+                        toggleSidebar();
+                    }
+                }
+            });
+        });
+
+        // Update logo in header
+        function updateHeaderLogo() {
+            const settings = getSettings();
+            const headerLogo = document.getElementById('headerLogo');
+            
+            if (settings.company_logo && headerLogo) {
+                headerLogo.src = settings.company_logo;
+            }
+        }
+    </script>
 </body>
 </html>

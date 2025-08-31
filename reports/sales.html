@@ -1,42 +1,1710 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>تقارير المبيعات</title>
-  <link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/components.css"><link rel="stylesheet" href="css/responsive.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقارير المبيعات - المحاسب المالي</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/modules.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* تحسينات التبويبات */
+        .report-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .report-tab {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #495057;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .report-tab:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+            transform: translateY(-2px);
+        }
+
+        .report-tab.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+
+        .report-tab i {
+            margin-left: 8px;
+        }
+        
+        /* تحسينات البطاقات الإحصائية */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #007bff;
+        }
+        
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .stat-info p {
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        
+        /* تحسينات الرسوم البيانية */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .chart-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        
+        .chart-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+        
+        .chart-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+        }
+        
+        .chart-container {
+            padding: 1.5rem;
+            height: 320px;
+            position: relative;
+        }
+        
+        /* تحسينات القوائم */
+        .top-list {
+            padding: 1rem 0;
+        }
+        
+        .top-item {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+        
+        .top-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .top-item:last-child {
+            border-bottom: none;
+        }
+        
+        .top-rank {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .top-info {
+            flex: 1;
+        }
+        
+        .top-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #2c3e50;
+        }
+        
+        .top-value {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        /* تحسينات الفلاتر */
+        .search-filter {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        /* تحسينات التبويبات الداخلية */
+        .period-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            width: fit-content;
+        }
+        
+        .period-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .period-tab.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        /* تحسينات للاستجابة */
+        @media (max-width: 1024px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .report-tabs {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 280px;
+                padding: 1rem;
+            }
+            
+            .top-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .top-rank {
+                margin-left: 0;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        /* تحسينات الوضع الداكن */
+        @media (prefers-color-scheme: dark) {
+            .stat-card,
+            .chart-card,
+            .search-filter {
+                background: #2d3748;
+                border-color: #4a5568;
+            }
+            
+            .chart-header {
+                background: #4a5568;
+                border-color: #4a5568;
+            }
+            
+            .stat-info h3,
+            .chart-header h3,
+            .top-name {
+                color: #e2e8f0;
+            }
+            
+            .stat-info p,
+            .form-group label {
+                color: #cbd5e0;
+            }
+            
+            .top-item:hover {
+                background-color: #4a5568;
+            }
+            
+            .period-tabs {
+                background: #4a5568;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="فتح أو إغلاق القائمة الجانبية">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="logo">
+                <img src="../assets/images/logo.png" alt="شعار المحاسب المالي" id="headerLogo" onerror="handleLogoError(this)">
+                <span>المحاسب المالي</span>
+            </div>
 
-<header class="app-header">
-  <div class="brand">💼 Financial Accountant</div>
-  <nav>
-    <a href="index.html" class="">الرئيسية</a>
-    <a href="dashboard.html" class="">لوحة التحكم</a>
-    <a href="invoices/list.html">الفواتير</a>
-    <a href="customers/list.html">العملاء</a>
-    <a href="products/list.html">المنتجات</a>
-    <a href="expenses/list.html">المصروفات</a>
-    <a href="reports/financial.html">التقارير</a>
-    <a href="settings/company.html">الإعدادات</a>
-    <a href="auth/login.html" class="btn small">تسجيل الدخول</a>
-  </nav>
-</header>
+            <div class="header-actions">
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar" role="img" aria-label="صورة المستخدم"></div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" aria-label="قائمة المستخدم" aria-haspopup="true">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" role="menu">
+                            <a href="#" class="dropdown-item" onclick="logout()" role="menuitem">
+                                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
-  <main class="container">
+    <!-- Sidebar -->
+    <aside class="main-sidebar" id="mainSidebar">
+        <nav class="sidebar-nav" aria-label="القائمة الرئيسية">
+            <ul>
+                <li class="nav-item">
+                    <a href="../dashboard.html">
+                        <i class="fas fa-home"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../invoices/list.html">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>الفواتير</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../customers/list.html">
+                        <i class="fas fa-users"></i>
+                        <span>العملاء</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../products/list.html">
+                        <i class="fas fa-box"></i>
+                        <span>المنتجات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../expenses/list.html">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>المصروفات</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="../reports/financial.html">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>التقارير</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../settings/company.html">
+                        <i class="fas fa-cog"></i>
+                        <span>الإعدادات</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 
-<div class="card">
-  <h2>تقارير المبيعات</h2>
-  <p>تجميعة مبسطة لمبالغ الفواتير المسجلة.</p>
-  <div>إجمالي المبيعات: <strong id="r-sales">—</strong></div>
-</div>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1>تقارير المبيعات</h1>
+            <div class="header-actions">
+                <div class="dropdown">
+                    <button class="btn btn-success dropdown-toggle">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                    <div class="dropdown-menu">
+                        <button class="dropdown-item" onclick="exportReportToPDF('sales')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="dropdown-item" onclick="exportReportToExcel('sales')">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="dropdown-item" onclick="exportReportToCSV('sales')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                    </div>
+                </div>
+                <button class="btn btn-info" onclick="printReport()">
+                    <i class="fas fa-print"></i> طباعة
+                </button>
+            </div>
+        </div>
 
-  </main>
+        <!-- Report Tabs -->
+        <div class="report-tabs">
+            <a href="financial.html" class="report-tab">
+                <i class="fas fa-chart-line"></i> التقارير المالية
+            </a>
+            <a href="sales.html" class="report-tab active">
+                <i class="fas fa-shopping-cart"></i> تقارير المبيعات
+            </a>
+            <a href="tax.html" class="report-tab">
+                <i class="fas fa-receipt"></i> تقارير الضرائب
+            </a>
+            
+        </div>
 
-<footer class="app-footer">
-  <small>© 2025 Financial Accountant App — إصدار تجريبي</small>
-</footer>
+        <!-- Date Filter -->
+        <div class="search-filter">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dateFrom">من تاريخ</label>
+                    <input type="date" id="dateFrom" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="dateTo">إلى تاريخ</label>
+                    <input type="date" id="dateTo" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="reportPeriod">الفترة</label>
+                    <select id="reportPeriod" class="form-control" onchange="applyPeriodFilter(this.value)">
+                        <option value="today">اليوم</option>
+                        <option value="week">أسبوع</option>
+                        <option value="month" selected>شهر</option>
+                        <option value="quarter">ربع سنة</option>
+                        <option value="year">سنة</option>
+                        <option value="custom">مخصص</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="updateReports()">
+                        <i class="fas fa-filter"></i> تطبيق الفلتر
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearFilters()" style="margin-right: 10px;">
+                        <i class="fas fa-times"></i> مسح
+                    </button>
+                </div>
+            </div>
+        </div>
 
-  <script defer src="js/helpers.js"></script><script defer src="js/storage.js"></script><script defer src="js/main.js"></script><script defer src="js/reports.js"></script>
+        <!-- Sales Reports Section -->
+        <div class="report-section active" id="sales-reports">
+            <!-- الإحصائيات السريعة -->
+            <div class="stats-grid">
+                <div class="stat-card" id="totalInvoices">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0</h3>
+                        <p>إجمالي الفواتير</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="totalRevenue">
+                    <div class="stat-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0</h3>
+                        <p>إجمالي الإيرادات</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="paidInvoices">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0</h3>
+                        <p>الفواتير المدفوعة</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="pendingInvoices">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0</h3>
+                        <p>الفواتير pending</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="avgInvoice">
+                    <div class="stat-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0</h3>
+                        <p>متوسط قيمة الفاتورة</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="collectionRate">
+                    <div class="stat-icon">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0%</h3>
+                        <p>معدل التحصيل</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الرسوم البيانية -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>حالة الفواتير</h3>
+                        <select id="chartType" onchange="updateCharts()" class="form-control-sm" style="margin-top: 0.5rem;">
+                            <option value="doughnut">دونات</option>
+                            <option value="pie">دائري</option>
+                            <option value="bar">أعمدة</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="invoiceStatusChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>المبيعات الشهرية</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="monthlySalesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>المبيعات حسب العملاء (أفضل 5)</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesByCustomerChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>المبيعات حسب المنتجات (أفضل 5)</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesByProductChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>أفضل العملاء</h3>
+                    </div>
+                    <div class="chart-container">
+                        <div class="top-list" id="topCustomers">
+                            <!-- سيتم ملؤه بالجافاسكريبت -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>أفضل المنتجات</h3>
+                    </div>
+                    <div class="chart-container">
+                        <div class="top-list" id="topProducts">
+                            <!-- سيتم ملؤه بالجافاسكريبت -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- جدول البيانات التفصيلي -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>تفاصيل الفواتير</h3>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="toggleInvoiceTable()">
+                            <i class="fas fa-table"></i> تبديل العرض
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="table-responsive">
+                        <table class="data-table" id="invoicesTable">
+                            <thead>
+                                <tr>
+                                    <th>رقم الفاتورة</th>
+                                    <th>التاريخ</th>
+                                    <th>العميل</th>
+                                    <th>المبلغ</th>
+                                    <th>الحالة</th>
+                                    <th>طريقة الدفع</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- سيتم ملؤه بالجافاسكريبت -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="pagination" class="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ===== Authentication Functions =====
+        function isLoggedIn() {
+            return getCurrentUser() !== null;
+        }
+
+        function getCurrentUser() {
+            try {
+                return JSON.parse(localStorage.getItem('financial_app_current_user')) || null;
+            } catch (error) {
+                console.error('خطأ في تحميل بيانات المستخدم:', error);
+                return null;
+            }
+        }
+
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('financial_app_current_user');
+                window.location.href = '../index.html';
+            }
+        }
+
+        // ===== Alert Function =====
+        function showAlert(type, message, duration = 5000) {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.setAttribute('role', 'alert');
+            alert.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" aria-label="إغلاق التنبيه">×</button>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Auto remove after duration
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.remove();
+                }
+            }, duration);
+        }
+
+        // ===== User Data Functions =====
+        function loadUserData() {
+            const user = getCurrentUser();
+            if (!user) return;
+            
+            // Create user avatar
+            const userAvatarElement = document.getElementById('userAvatar');
+            if (userAvatarElement && user.fullName) {
+                const initials = getUserInitials(user.fullName);
+                const randomColor = getRandomColor();
+                
+                userAvatarElement.innerHTML = initials;
+                userAvatarElement.style.backgroundColor = randomColor;
+                userAvatarElement.style.display = 'flex';
+                userAvatarElement.style.alignItems = 'center';
+                userAvatarElement.style.justifyContent = 'center';
+                userAvatarElement.style.color = 'white';
+                userAvatarElement.style.fontWeight = '600';
+                userAvatarElement.style.borderRadius = '50%';
+                userAvatarElement.style.width = '40px';
+                userAvatarElement.style.height = '40px';
+            }
+        }
+
+        function getUserInitials(name) {
+            if (!name) return 'U';
+            return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function getRandomColor() {
+            const colors = [
+                '#3366cc', '#dc3545', '#28a745', '#ffc107', 
+                '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // ===== Storage Functions =====
+        function initializeStorage() {
+            // Check if storage is already initialized
+            const isInitialized = localStorage.getItem('financial_app_initialized');
+            
+            if (!isInitialized) {
+                try {
+                    if (!localStorage.getItem('financial_app_users')) {
+                        localStorage.setItem('financial_app_users', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_customers')) {
+                        localStorage.setItem('financial_app_customers', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_products')) {
+                        localStorage.setItem('financial_app_products', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_invoices')) {
+                        localStorage.setItem('financial_app_invoices', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_expenses')) {
+                        localStorage.setItem('financial_app_expenses', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_settings')) {
+                        localStorage.setItem('financial_app_settings', JSON.stringify({
+                            currency: 'ريال يمني',
+                            currency_code: 'ر.ي',
+                            tax_rate: 15,
+                            company_name: 'شركتي',
+                            company_logo: '',
+                            company_tax_number: '',
+                            company_address: '',
+                            company_phone: '',
+                            company_email: '',
+                            invoice_prefix: 'INV-',
+                            language: 'ar'
+                        }));
+                    }
+                    
+                    localStorage.setItem('financial_app_initialized', 'true');
+                } catch (error) {
+                    console.error('خطأ في تهيئة التخزين المحلي:', error);
+                    showAlert('error', 'حدث خطأ في تهيئة النظام. يرجى تحديث الصفحة.');
+                }
+            }
+        }
+
+        function getData(key) {
+            try {
+                const itemName = `financial_app_${key}`;
+                const data = localStorage.getItem(itemName);
+                
+                if (!data) {
+                    console.warn(`البيانات لـ ${itemName} غير موجودة`);
+                    return key === 'settings' ? {} : [];
+                }
+                
+                return JSON.parse(data);
+                
+            } catch (error) {
+                console.error(`خطأ في تحميل البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في تحميل البيانات لـ ${key}`);
+                return key === 'settings' ? {} : [];
+            }
+        }
+
+        function saveData(key, data) {
+            try {
+                localStorage.setItem(`financial_app_${key}`, JSON.stringify(data));
+                return true;
+            } catch (error) {
+                console.error(`خطأ في حفظ البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في حفظ البيانات لـ ${key}`);
+                return false;
+            }
+        }
+
+        // ===== Settings Functions =====
+        function getSettings() {
+            const settings = getData('settings');
+            return {
+                currency: 'ريال يمني',
+                currency_code: 'ر.ي',
+                tax_rate: 15,
+                company_name: 'شركتي',
+                company_logo: '',
+                company_tax_number: '',
+                company_address: '',
+                company_phone: '',
+                company_email: '',
+                invoice_prefix: 'INV-',
+                language: 'ar',
+                ...settings
+            };
+        }
+
+        function getCurrencySymbol() {
+            const settings = getSettings();
+            return settings.currency_code || 'ر.ي';
+        }
+
+        function formatCurrency(amount) {
+            const symbol = getCurrencySymbol();
+            
+            if (amount === undefined || amount === null || isNaN(amount)) {
+                return `0.00 ${symbol}`;
+            }
+            
+            // تنسيق الرقم مع فواصل الآلاف
+            const formattedAmount = parseFloat(amount).toLocaleString('ar-EG', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            return `${formattedAmount} ${symbol}`;
+        }
+
+        // ===== Logo Functions =====
+        function handleLogoError(img) {
+            img.onerror = null;
+            img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzNjZjYyIgLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZHk9Ii4zNWVtIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjgiPuetlDwvdGV4dD48L3N2Zz4=';
+        }
+
+        // ===== Sales Reports Functions =====
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let filteredInvoices = [];
+        let charts = {};
+
+        // Load sales reports
+        function loadSalesReports() {
+            const invoices = getData('invoices');
+            const customers = getData('customers');
+            const products = getData('products');
+            
+            // تطبيق تصفية التاريخ إذا كان موجوداً
+            filteredInvoices = filterInvoicesByDate(invoices);
+            
+            // تحديث الإحصائيات السريعة
+            updateSalesStats(filteredInvoices);
+            
+            // تحميل الرسوم البيانية
+            loadInvoiceStatusChart(filteredInvoices);
+            loadMonthlySalesChart(filteredInvoices);
+            loadSalesByCustomerChart(filteredInvoices, customers);
+            loadSalesByProductChart(filteredInvoices, products);
+            
+            // تحميل القوائم
+            loadTopCustomers(filteredInvoices, customers);
+            loadTopProducts(filteredInvoices, products);
+            
+            // تحميل جدول الفواتير
+            loadInvoicesTable();
+        }
+
+        // Filter invoices by date
+        function filterInvoicesByDate(invoices) {
+            const dateFrom = document.getElementById('dateFrom')?.value;
+            const dateTo = document.getElementById('dateTo')?.value;
+            
+            if (!dateFrom && !dateTo) return invoices;
+            
+            return invoices.filter(invoice => {
+                const invoiceDate = new Date(invoice.invoiceDate || invoice.createdAt);
+                const fromDate = dateFrom ? new Date(dateFrom) : null;
+                const toDate = dateTo ? new Date(dateTo) : null;
+                
+                if (fromDate && invoiceDate < fromDate) return false;
+                if (toDate && invoiceDate > toDate) return false;
+                
+                return true;
+            });
+        }
+
+        // Apply period filter
+        function applyPeriodFilter(period) {
+            const today = new Date();
+            let dateFrom, dateTo;
+            
+            switch(period) {
+                case 'today':
+                    dateFrom = new Date();
+                    dateTo = new Date();
+                    break;
+                case 'week':
+                    dateFrom = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+                    dateTo = new Date();
+                    break;
+                case 'month':
+                    dateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
+                    dateTo = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    break;
+                case 'quarter':
+                    const quarter = Math.floor(today.getMonth() / 3);
+                    dateFrom = new Date(today.getFullYear(), quarter * 3, 1);
+                    dateTo = new Date(today.getFullYear(), quarter * 3 + 3, 0);
+                    break;
+                case 'year':
+                    dateFrom = new Date(today.getFullYear(), 0, 1);
+                    dateTo = new Date(today.getFullYear(), 11, 31);
+                    break;
+                case 'custom':
+                default:
+                    // لا تغيير في التواريخ للمخصص
+                    return;
+            }
+            
+            document.getElementById('dateFrom').value = dateFrom.toISOString().split('T')[0];
+            document.getElementById('dateTo').value = dateTo.toISOString().split('T')[0];
+            
+            updateReports();
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            document.getElementById('reportPeriod').value = 'month';
+            updateReports();
+        }
+
+        // Update sales statistics
+        function updateSalesStats(invoices) {
+            const totalInvoices = invoices.length;
+            const paidInvoices = invoices.filter(i => i.status === 'paid').length;
+            const pendingInvoices = invoices.filter(i => i.status === 'pending').length;
+            const totalRevenue = invoices.reduce((sum, invoice) => sum + (parseFloat(invoice.totalAmount) || 0), 0);
+            const avgInvoice = totalInvoices > 0 ? totalRevenue / totalInvoices : 0;
+            const collectionRate = totalInvoices > 0 ? (paidInvoices / totalInvoices * 100) : 0;
+            
+            // تحديث البطاقات الإحصائية
+            updateReportCard('totalInvoices', totalInvoices, 'إجمالي الفواتير');
+            updateReportCard('totalRevenue', totalRevenue, 'إجمالي الإيرادات', true);
+            updateReportCard('paidInvoices', paidInvoices, 'الفواتير المدفوعة');
+            updateReportCard('pendingInvoices', pendingInvoices, 'الفواتير pending');
+            updateReportCard('avgInvoice', avgInvoice, 'متوسط قيمة الفاتورة', true);
+            updateReportCard('collectionRate', collectionRate, 'معدل التحصيل (%)');
+        }
+
+        // Update report card
+        function updateReportCard(elementId, value, label, isCurrency = false) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const valueElement = element.querySelector('h3');
+            if (!valueElement) return;
+            
+            if (isCurrency) {
+                valueElement.textContent = formatCurrency(value);
+            } else if (typeof value === 'number') {
+                if (label.includes('%')) {
+                    valueElement.textContent = value.toFixed(1) + '%';
+                } else {
+                    valueElement.textContent = value.toLocaleString();
+                }
+            } else {
+                valueElement.textContent = value;
+            }
+        }
+
+        // Load invoice status chart
+        function loadInvoiceStatusChart(invoices) {
+            const statusCounts = {
+                'paid': invoices.filter(i => i.status === 'paid').length,
+                'pending': invoices.filter(i => i.status === 'pending').length,
+                'overdue': invoices.filter(i => i.status === 'overdue').length,
+                'cancelled': invoices.filter(i => i.status === 'cancelled').length
+            };
+            
+            const ctx = document.getElementById('invoiceStatusChart');
+            if (!ctx) return;
+            
+            // تدمير المخطط القديم إذا كان موجوداً
+            if (charts.invoiceStatusChart) {
+                charts.invoiceStatusChart.destroy();
+            }
+            
+            const chartType = document.getElementById('chartType').value;
+            
+            charts.invoiceStatusChart = new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: ['مدفوعة', 'قيد الانتظار', 'متأخرة', 'ملغاة'],
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(255, 193, 7, 0.8)',
+                            'rgba(220, 53, 69, 0.8)',
+                            'rgba(108, 117, 125, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(108, 117, 125, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw} فاتورة`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load monthly sales chart
+        function loadMonthlySalesChart(invoices) {
+            // تجميع المبيعات حسب الشهر
+            const monthlySales = {};
+            
+            invoices.forEach(invoice => {
+                const date = new Date(invoice.invoiceDate || invoice.createdAt);
+                const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                
+                if (!monthlySales[monthYear]) {
+                    monthlySales[monthYear] = 0;
+                }
+                
+                monthlySales[monthYear] += parseFloat(invoice.totalAmount) || 0;
+            });
+            
+            // تحضير البيانات للرسم البياني
+            const labels = Object.keys(monthlySales).sort();
+            const data = labels.map(label => monthlySales[label]);
+            
+            const ctx = document.getElementById('monthlySalesChart');
+            if (!ctx) return;
+            
+            if (charts.monthlySalesChart) {
+                charts.monthlySalesChart.destroy();
+            }
+            
+            charts.monthlySalesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'المبيعات الشهرية',
+                        data: data,
+                        backgroundColor: 'rgba(23, 162, 184, 0.2)',
+                        borderColor: 'rgba(23, 162, 184, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `المبيعات: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load sales by customer chart
+        function loadSalesByCustomerChart(invoices, customers) {
+            const customerSales = {};
+            
+            invoices.forEach(invoice => {
+                if (invoice.customerId) {
+                    const customerId = invoice.customerId;
+                    if (!customerSales[customerId]) {
+                        customerSales[customerId] = 0;
+                    }
+                    customerSales[customerId] += parseFloat(invoice.totalAmount) || 0;
+                }
+            });
+            
+            // الحصول على أفضل 5 عملاء
+            const topCustomers = Object.entries(customerSales)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            const customerNames = topCustomers.map(([customerId]) => {
+                const customer = customers.find(c => c.id === parseInt(customerId));
+                return customer ? customer.name : `عميل ${customerId}`;
+            });
+            
+            const salesData = topCustomers.map(([, amount]) => amount);
+            
+            const ctx = document.getElementById('salesByCustomerChart');
+            if (!ctx) return;
+            
+            if (charts.salesByCustomerChart) {
+                charts.salesByCustomerChart.destroy();
+            }
+            
+            charts.salesByCustomerChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: customerNames,
+                    datasets: [{
+                        label: 'المبيعات',
+                        data: salesData,
+                        backgroundColor: 'rgba(23, 162, 184, 0.7)',
+                        borderColor: 'rgba(23, 162, 184, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `المبيعات: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load sales by product chart
+        function loadSalesByProductChart(invoices, products) {
+            const productSales = {};
+            
+            invoices.forEach(invoice => {
+                if (invoice.items && Array.isArray(invoice.items)) {
+                    invoice.items.forEach(item => {
+                        if (item.productId) {
+                            const productId = item.productId;
+                            if (!productSales[productId]) {
+                                productSales[productId] = 0;
+                            }
+                            productSales[productId] += parseFloat(item.total) || 0;
+                        }
+                    });
+                }
+            });
+            
+            // الحصول على أفضل 5 منتجات
+            const topProducts = Object.entries(productSales)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            const productNames = topProducts.map(([productId]) => {
+                const product = products.find(p => p.id === parseInt(productId));
+                return product ? product.name : `منتج ${productId}`;
+            });
+            
+            const salesData = topProducts.map(([, amount]) => amount);
+            
+            const ctx = document.getElementById('salesByProductChart');
+            if (!ctx) return;
+            
+            if (charts.salesByProductChart) {
+                charts.salesByProductChart.destroy();
+            }
+            
+            charts.salesByProductChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: productNames,
+                    datasets: [{
+                        label: 'المبيعات',
+                        data: salesData,
+                        backgroundColor: 'rgba(111, 66, 193, 0.7)',
+                        borderColor: 'rgba(111, 66, 193, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `المبيعات: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load top customers list
+        function loadTopCustomers(invoices, customers) {
+            const customerSales = {};
+            
+            invoices.forEach(invoice => {
+                if (invoice.customerId) {
+                    const customerId = invoice.customerId;
+                    if (!customerSales[customerId]) {
+                        customerSales[customerId] = 0;
+                    }
+                    customerSales[customerId] += parseFloat(invoice.totalAmount) || 0;
+                }
+            });
+            
+            // الحصول على أفضل 5 عملاء
+            const topCustomers = Object.entries(customerSales)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            const container = document.getElementById('topCustomers');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (topCustomers.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted">لا توجد بيانات</p>';
+                return;
+            }
+            
+            topCustomers.forEach(([customerId, amount], index) => {
+                const customer = customers.find(c => c.id === parseInt(customerId));
+                const row = document.createElement('div');
+                row.className = 'top-item';
+                row.innerHTML = `
+                    <div class="top-rank">${index + 1}</div>
+                    <div class="top-info">
+                        <div class="top-name">${customer ? customer.name : `عميل ${customerId}`}</div>
+                        <div class="top-value">${formatCurrency(amount)}</div>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // Load top products list
+        function loadTopProducts(invoices, products) {
+            const productSales = {};
+            
+            invoices.forEach(invoice => {
+                if (invoice.items && Array.isArray(invoice.items)) {
+                    invoice.items.forEach(item => {
+                        if (item.productId) {
+                            const productId = item.productId;
+                            if (!productSales[productId]) {
+                                productSales[productId] = 0;
+                            }
+                            productSales[productId] += parseFloat(item.total) || 0;
+                        }
+                    });
+                }
+            });
+            
+            // الحصول على أفضل 5 منتجات
+            const topProducts = Object.entries(productSales)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            const container = document.getElementById('topProducts');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (topProducts.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted">لا توجد بيانات</p>';
+                return;
+            }
+            
+            topProducts.forEach(([productId, amount], index) => {
+                const product = products.find(p => p.id === parseInt(productId));
+                const row = document.createElement('div');
+                row.className = 'top-item';
+                row.innerHTML = `
+                    <div class="top-rank">${index + 1}</div>
+                    <div class="top-info">
+                        <div class="top-name">${product ? product.name : `منتج ${productId}`}</div>
+                        <div class="top-value">${formatCurrency(amount)}</div>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // Load invoices table
+        function loadInvoicesTable() {
+            const tableBody = document.querySelector('#invoicesTable tbody');
+            if (!tableBody) return;
+            
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentInvoices = filteredInvoices.slice(startIndex, endIndex);
+            
+            tableBody.innerHTML = '';
+            
+            if (currentInvoices.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <i class="fas fa-file-invoice fa-2x mb-2 text-muted"></i>
+                            <p class="text-muted">لا توجد فواتير</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            currentInvoices.forEach(invoice => {
+                const statusClass = getStatusClass(invoice.status);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${invoice.invoiceNumber || 'غير محدد'}</td>
+                    <td>${formatGregorianDate(invoice.invoiceDate)}</td>
+                    <td>${invoice.customerName || 'عميل'}</td>
+                    <td>${formatCurrency(invoice.totalAmount)}</td>
+                    <td><span class="status-badge ${statusClass}">${getStatusText(invoice.status)}</span></td>
+                    <td>${invoice.paymentMethod || 'غير محدد'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            renderPagination();
+        }
+
+        // Render pagination
+        function renderPagination() {
+            const paginationElement = document.getElementById('pagination');
+            if (!paginationElement) return;
+            
+            const totalPages = Math.ceil(filteredInvoices.length / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                paginationElement.innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = `
+                <div class="pagination-info">
+                    عرض ${Math.min((currentPage - 1) * itemsPerPage + 1, filteredInvoices.length)} 
+                    - ${Math.min(currentPage * itemsPerPage, filteredInvoices.length)} 
+                    من ${filteredInvoices.length} فاتورة
+                </div>
+                <div class="pagination-controls">
+            `;
+            
+            // زر السابق
+            if (currentPage > 1) {
+                paginationHTML += `<button class="btn btn-sm" onclick="changePage(${currentPage - 1})">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>`;
+            }
+            
+            // أرقام الصفحات
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, startPage + 4);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button class="btn btn-sm ${i === currentPage ? 'btn-primary' : ''}" onclick="changePage(${i})">
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            // زر التالي
+            if (currentPage < totalPages) {
+                paginationHTML += `<button class="btn btn-sm" onclick="changePage(${currentPage + 1})">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>`;
+            }
+            
+            paginationHTML += `</div>`;
+            paginationElement.innerHTML = paginationHTML;
+        }
+
+        // Change page
+        function changePage(page) {
+            currentPage = page;
+            loadInvoicesTable();
+            
+            // التمرير إلى أعلى الجدول
+            const tableContainer = document.querySelector('.table-responsive');
+            if (tableContainer) {
+                tableContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Toggle invoice table view
+        function toggleInvoiceTable() {
+            const table = document.getElementById('invoicesTable');
+            table.classList.toggle('compact-view');
+        }
+
+        // Update charts when chart type changes
+        function updateCharts() {
+            loadInvoiceStatusChart(filteredInvoices);
+        }
+
+        // Update reports based on date filter
+        function updateReports() {
+            loadSalesReports();
+        }
+
+        // Export reports to PDF
+        function exportReportToPDF(reportType) {
+            showAlert('info', 'جاري تحضير التقرير للتحميل...');
+            
+            // محاكاة عملية التصدير
+            setTimeout(() => {
+                const fileName = `تقرير_${reportType}_${new Date().toISOString().split('T')[0]}.pdf`;
+                showAlert('success', `تم تحضير التقرير: ${fileName}`);
+                
+                // في التطبيق الحقيقي، هنا سيتم استخدام مكتبة مثل jsPDF
+                console.log(`تصدير تقرير ${reportType} كملف PDF`);
+            }, 2000);
+        }
+
+        // Export reports to Excel
+        function exportReportToExcel(reportType) {
+            showAlert('info', 'جاري تحضير التقرير للتحميل...');
+            
+            // محاكاة عملية التصدير
+            setTimeout(() => {
+                const fileName = `تقرير_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
+                showAlert('success', `تم تحضير التقرير: ${fileName}`);
+                
+                // في التطبيق الحقيقي، هنا سيتم استخدام مكتبة مثل SheetJS
+                console.log(`تصدير تقرير ${reportType} كملف Excel`);
+            }, 2000);
+        }
+
+        // Export reports to CSV
+        function exportReportToCSV(reportType) {
+            if (filteredInvoices.length === 0) {
+                showAlert('warning', 'لا توجد بيانات للتصدير');
+                return;
+            }
+            
+            try {
+                const exportData = filteredInvoices.map(invoice => ({
+                    'رقم الفاتورة': invoice.invoiceNumber || 'غير محدد',
+                    'التاريخ': formatGregorianDate(invoice.invoiceDate),
+                    'العميل': invoice.customerName || 'غير محدد',
+                    'المبلغ': invoice.totalAmount || 0,
+                    'الحالة': getStatusText(invoice.status),
+                    'طريقة الدفع': invoice.paymentMethod || 'غير محدد'
+                }));
+                
+                const csvContent = convertToCSV(exportData);
+                const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                
+                const fileName = `تقرير_${reportType}_${new Date().toISOString().split('T')[0]}.csv`;
+                
+                if (navigator.msSaveBlob) {
+                    navigator.msSaveBlob(blob, fileName);
+                } else {
+                    const url = URL.createObjectURL(blob);
+                    link.href = url;
+                    link.download = fileName;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    
+                    // تنظيف الذاكرة
+                    setTimeout(() => {
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                }
+                
+                showAlert('success', 'تم تصدير البيانات بنجاح');
+            } catch (error) {
+                console.error('خطأ في التصدير:', error);
+                showAlert('error', 'حدث خطأ أثناء التصدير');
+            }
+        }
+
+        // Print report
+        function printReport() {
+            window.print();
+        }
+
+        // ===== Helper Functions =====
+        function getStatusClass(status) {
+            switch (status) {
+                case 'paid': return 'status-paid';
+                case 'pending': return 'status-pending';
+                case 'overdue': return 'status-overdue';
+                case 'cancelled': return 'status-cancelled';
+                default: return 'status-pending';
+            }
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'paid': return 'مدفوعة';
+                case 'pending': return 'قيد الانتظار';
+                case 'overdue': return 'متأخرة';
+                case 'cancelled': return 'ملغاة';
+                default: return 'قيد الانتظار';
+            }
+        }
+
+        // دالة محسنة للتاريخ الميلادي
+        function formatGregorianDate(dateString) {
+            if (!dateString) return 'غير محدد';
+            
+            try {
+                const date = new Date(dateString);
+                
+                // التأكد من أن التاريخ صحيح
+                if (isNaN(date.getTime())) {
+                    return 'تاريخ غير صحيح';
+                }
+                
+                // استخدام خيارات محددة للتاريخ الميلادي
+                const options = {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    calendar: 'gregory',
+                    timeZone: 'Asia/Riyadh'
+                };
+                
+                let formattedDate;
+                
+                try {
+                    // المحاولة الأولى باستخدام Intl.DateTimeFormat
+                    formattedDate = new Intl.DateTimeFormat('ar-SA', options).format(date);
+                } catch (e) {
+                    // المحاولة الثانية باستخدام toLocaleDateString
+                    formattedDate = date.toLocaleDateString('ar-SA', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        timeZone: 'Asia/Riyadh'
+                    });
+                }
+                
+                // التحقق من أن النتيجة تحتوي على سنة ميلادية (بين 1900-2100)
+                const yearMatch = formattedDate.match(/\d{4}/);
+                if (yearMatch) {
+                    const year = parseInt(yearMatch[0]);
+                    if (year > 1900 && year < 2100) {
+                        return formattedDate;
+                    }
+                }
+                
+                // إذا فشل كل شيء، استخدم التنسيق الدولي
+                return date.toISOString().split('T')[0].split('-').reverse().join('/');
+                
+            } catch (e) {
+                console.error('خطأ في تنسيق التاريخ الميلادي:', e);
+                return 'غير محدد';
+            }
+        }
+
+        function convertToCSV(data) {
+            if (data.length === 0) return '';
+            
+            const headers = Object.keys(data[0]).join(',');
+            const rows = data.map(row => 
+                Object.values(row).map(value => 
+                    `"${String(value).replace(/"/g, '""')}"`
+                ).join(',')
+            );
+            return [headers, ...rows].join('\n');
+        }
+
+        function checkAuth() {
+            const allowedPages = ['index.html', 'auth/', 'login.html'];
+            const currentPath = window.location.pathname;
+            
+            if (!isLoggedIn() && !allowedPages.some(page => currentPath.includes(page))) {
+                window.location.href = '../index.html';
+                return false;
+            }
+            return true;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mainSidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+            }
+        }
+
+        // Initialize date filters
+        function initDateFilters() {
+            const dateFrom = document.getElementById('dateFrom');
+            const dateTo = document.getElementById('dateTo');
+            
+            if (dateFrom && dateTo) {
+                // تعيين التاريخ الافتراضي (الشهر الحالي)
+                const today = new Date();
+                const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+                const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                
+                dateFrom.value = firstDay.toISOString().split('T')[0];
+                dateTo.value = lastDay.toISOString().split('T')[0];
+            }
+        }
+
+        // ===== Initialize Application =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStorage();
+            
+            if (!checkAuth()) return;
+            
+            loadUserData();
+            
+            // Initialize dropdowns
+            document.addEventListener('click', function(e) {
+                const dropdowns = document.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    if (!dropdown.contains(e.target)) {
+                        const menu = dropdown.querySelector('.dropdown-menu');
+                        if (menu) {
+                            menu.classList.remove('show');
+                        }
+                    }
+                });
+                
+                if (e.target.classList.contains('dropdown-toggle')) {
+                    const menu = e.target.closest('.dropdown').querySelector('.dropdown-menu');
+                    if (menu) {
+                        menu.classList.toggle('show');
+                    }
+                }
+            });
+            
+            // Initialize date filters and load reports
+            initDateFilters();
+            loadSalesReports();
+        });
+    </script>
 </body>
 </html>

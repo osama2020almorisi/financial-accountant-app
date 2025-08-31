@@ -1,175 +1,6 @@
-/* css/dashboard.css */
-.dashboard-page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+/* ===== Dashboard Styles - Professional Enhanced Version ===== */
 
-.dashboard-header {
-    background-color: white;
-    box-shadow: var(--shadow);
-    padding: 1rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.sidebar-toggle {
-    display: none;
-    flex-direction: column;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-}
-
-.sidebar-toggle span {
-    width: 25px;
-    height: 3px;
-    background-color: var(--dark-color);
-    margin: 2px 0;
-    border-radius: 2px;
-}
-
-.header-logo h1 {
-    margin-bottom: 0;
-    color: var(--primary-color);
-}
-
-.header-search {
-    flex: 1;
-    max-width: 400px;
-    margin: 0 1.5rem;
-}
-
-.header-search input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-}
-
-.notification-btn {
-    position: relative;
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-left: 1rem;
-    font-size: 1.25rem;
-}
-
-.badge {
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    background-color: var(--danger-color);
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.user-profile {
-    display: flex;
-    align-items: center;
-    margin-right: 1rem;
-}
-
-.user-profile img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-left: 0.5rem;
-}
-
-.main-container {
-    display: flex;
-    flex: 1;
-}
-
-.sidebar {
-    width: 250px;
-    background-color: var(--dark-color);
-    color: white;
-    padding: 1.5rem 0;
-    transition: var(--transition);
-}
-
-.sidebar-nav {
-    padding: 0 1rem;
-}
-
-.nav-section {
-    margin-bottom: 1.5rem;
-}
-
-.nav-section h3 {
-    color: var(--gray-color);
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-    padding: 0 1rem;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    color: white;
-    border-radius: 0.5rem;
-    margin-bottom: 0.25rem;
-    transition: var(--transition);
-}
-
-.nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.nav-item.active {
-    background-color: var(--primary-color);
-}
-
-.nav-item .icon {
-    margin-left: 0.5rem;
-    font-size: 1.25rem;
-}
-
-.nav-item.logout {
-    color: var(--danger-color);
-}
-
-.main-content {
-    flex: 1;
-    padding: 1.5rem;
-    background-color: #f8f9fa;
-}
-
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.dashboard-content {
-    margin-top: 1.5rem;
-}
-
+/* Statistics Grid - Enhanced with Fixes */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -178,143 +9,1608 @@
 }
 
 .stat-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: var(--shadow);
-    padding: 1.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    padding: 1.8rem;
+    border-radius: 16px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
+    gap: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gradient-start, #667eea), var(--gradient-end, #764ba2));
+    opacity: 0.9;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.12),
+        0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
 .stat-icon {
-    font-size: 2.5rem;
-    margin-left: 1rem;
-}
-
-.stat-info h3 {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    color: var(--gray-color);
-}
-
-.stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-}
-
-.stat-change {
-    font-size: 0.875rem;
-}
-
-.stat-change.positive {
-    color: var(--success-color);
-}
-
-.stat-change.negative {
-    color: var(--danger-color);
-}
-
-.charts-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.chart-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: var(--shadow);
-    padding: 1.5rem;
-}
-
-.chart-placeholder {
-    height: 250px;
-    background-color: #f8f9fa;
-    border-radius: 0.5rem;
+    width: 65px;
+    height: 65px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.6rem;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.stat-card:nth-child(1) .stat-icon { 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-start: #667eea;
+    --gradient-end: #764ba2;
+}
+
+.stat-card:nth-child(2) .stat-icon { 
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-start: #f093fb;
+    --gradient-end: #f5576c;
+}
+
+.stat-card:nth-child(3) .stat-icon { 
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --gradient-start: #4facfe;
+    --gradient-end: #00f2fe;
+}
+
+.stat-card:nth-child(4) .stat-icon { 
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    --gradient-start: #43e97b;
+    --gradient-end: #38f9d7;
+}
+
+.stat-info {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-info h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+    color: var(--dark-color);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    line-height: 1.2;
+}
+
+/* إصلاح مشكلة الاختفاء - التأكد من ظهور الأرقام */
+.stat-info h3,
+#totalInvoicesCount,
+#totalCustomersCount, 
+#totalProductsCount,
+#totalSalesAmount {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: var(--dark-color) !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    background-clip: initial !important;
+}
+
+.stat-info p {
     color: var(--gray-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
-.recent-section {
+.stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.3rem;
+}
+
+.trend-up {
+    color: var(--success-color);
+}
+
+.trend-down {
+    color: var(--danger-color);
+}
+
+/* Charts Section - Enhanced */
+.charts-section {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.8rem;
+    margin-bottom: 2.5rem;
 }
 
-.recent-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: var(--shadow);
-    padding: 1.5rem;
+.chart-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-radius: 16px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
-.table-container {
-    overflow-x: auto;
+.chart-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.12),
+        0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.chart-header h3 {
+    margin-bottom: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--dark-color);
+}
+
+.chart-header select {
+    width: auto;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chart-header select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(51, 102, 204, 0.1);
+}
+
+.view-all {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.3s ease;
+}
+
+.view-all:hover {
+    text-decoration: none;
+    gap: 0.6rem;
+}
+
+.chart-container {
+    height: 280px;
+    position: relative;
+}
+
+/* Recent Items - Enhanced */
+.recent-items {
+    max-height: 340px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+.recent-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.recent-items::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
+}
+
+.recent-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.recent-item:last-child {
+    border-bottom: none;
+}
+
+.recent-item:hover {
+    background: rgba(51, 102, 204, 0.05);
+    transform: translateX(5px);
+}
+
+.recent-item-info {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.recent-item-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(51, 102, 204, 0.1);
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.recent-item:hover .recent-item-icon {
+    background: var(--primary-color);
+    color: white;
+    transform: rotate(5deg);
+}
+
+.recent-item-details h4 {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+.recent-item-details p {
+    font-size: 0.85rem;
+    color: var(--gray-color);
+    margin-bottom: 0;
+}
+
+.recent-item-amount {
+    font-weight: 700;
+    color: var(--success-color);
+    font-size: 1.1rem;
+}
+
+/* Recent Activity - Enhanced */
+.recent-activity {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-radius: 16px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.recent-activity:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.12),
+        0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.activity-header h3 {
+    margin-bottom: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--dark-color);
+}
+
+.activity-list {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+.activity-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.activity-list::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-item:hover {
+    background: rgba(51, 102, 204, 0.05);
+    transform: translateX(5px);
+}
+
+.activity-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(51, 102, 204, 0.1);
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover .activity-icon {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-content p {
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--dark-color);
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    color: var(--gray-color);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Empty State - Enhanced */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-radius: 16px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    margin: 2.5rem 0;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.empty-state:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.12),
+        0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--light-gray);
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+}
+
+.empty-state h3 {
+    color: var(--dark-color);
     margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
-.table-actions {
-    text-align: left;
+.empty-state p {
+    color: var(--gray-color);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
 }
 
-/* تنسيقات الاستجابة للشاشات */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* System Status Card - Enhanced */
+.system-status-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-radius: 16px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    margin-top: 2rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.system-status-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.12),
+        0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.status-header h3 {
+    margin-bottom: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--dark-color);
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.online {
+    background: rgba(56, 161, 105, 0.15);
+    color: var(--success-color);
+}
+
+.status-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    margin: 0 1rem;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+/* Responsive Design for Dashboard - Enhanced */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+}
+
 @media (max-width: 1024px) {
-    .sidebar {
-        width: 200px;
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-info h3 {
+        font-size: 1.8rem;
     }
 }
 
 @media (max-width: 768px) {
-    .sidebar-toggle {
-        display: flex;
-    }
-    
-    .sidebar {
-        position: fixed;
-        top: 0;
-        right: -250px;
-        height: 100vh;
-        z-index: 200;
-        width: 250px;
-    }
-    
-    .sidebar.open {
-        right: 0;
-    }
-    
-    .header-search {
-        display: none;
-    }
-    
-    .stats-grid,
-    .charts-section,
-    .recent-section {
+    .stats-grid {
         grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+    
+    .stat-card {
+        padding: 1.5rem;
+    }
+    
+    .stat-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 1.4rem;
+    }
+    
+    .chart-card {
+        padding: 1.5rem;
+    }
+    
+    .chart-container {
+        height: 240px;
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .chart-header select {
+        width: 100%;
+    }
+    
+    .empty-state {
+        padding: 3rem 1.5rem;
+    }
+    
+    .empty-state i {
+        font-size: 3.5rem;
     }
 }
 
 @media (max-width: 576px) {
-    .header-actions .user-profile span {
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1rem;
+        gap: 1rem;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .stat-info h3 {
+        font-size: 1.6rem;
+    }
+    
+    .recent-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .activity-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .activity-icon {
+        align-self: center;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+    }
+    
+    .status-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}
+
+/* Animation Enhancements */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card, .chart-card, .recent-activity, .system-status-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .stat-card,
+    .chart-card,
+    .recent-activity,
+    .empty-state,
+    .system-status-card {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        box-shadow: 
+            0 4px 20px rgba(0, 0, 0, 0.2),
+            0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .stat-info h3,
+    .chart-header h3,
+    .activity-header h3,
+    .empty-state h3,
+    .status-header h3,
+    .recent-item-details h4,
+    .activity-content p {
+        color: #e2e8f0;
+    }
+    
+    .stat-info p,
+    .recent-item-details p,
+    .activity-time,
+    .empty-state p {
+        color: #a0aec0;
+    }
+    
+    .recent-item:hover,
+    .activity-item:hover {
+        background: rgba(66, 153, 225, 0.1);
+    }
+    
+    .progress-bar {
+        background: #4a5568;
+    }
+}
+
+/* Fix for statistics numbers visibility - IMPORTANT */
+#statsContainer .stat-info h3,
+#totalInvoicesCount,
+#totalCustomersCount, 
+#totalProductsCount,
+#totalSalesAmount,
+#invoiceTrend,
+#customerTrend,
+#productTrend,
+#salesTrend {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: inherit !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    background-clip: initial !important;
+    text-shadow: none !important;
+}
+
+/* Loading States */
+.dashboard-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.dashboard-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.dashboard-loading-text {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error State */
+.dashboard-error {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-muted);
+}
+
+.dashboard-error i {
+    font-size: 3rem;
+    color: var(--danger-color);
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-error h3 {
+    color: var(--danger-color);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.dashboard-error p {
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+/* Success State */
+.dashboard-success {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-muted);
+}
+
+.dashboard-success i {
+    font-size: 3rem;
+    color: var(--success-color);
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-success h3 {
+    color: var(--success-color);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+
+
+
+
+
+
+/* ===== إصلاحات المخططات والرسوم البيانية ===== */
+
+/* تحسين حاوية المخططات */
+/* إصلاحات المخططات والرسوم البيانية */
+.chart-container {
+    position: relative;
+    width: 100%;
+    min-height: 350px;
+    overflow: hidden;
+}
+
+.chart-container canvas,
+.chart-container #invoiceStatusChart,
+.chart-container #topCustomersChart {
+    max-width: 100% !important;
+    height: 280px !important;
+    display: block;
+}
+
+/* تحسينات خاصة لمخطط ApexCharts */
+.apexcharts-canvas {
+    max-width: 100% !important;
+    direction: ltr; /* إصلاح اتجاه ApexCharts */
+}
+
+.apexcharts-text.apexcharts-datalabel-label,
+.apexcharts-text.apexcharts-datalabel-value {
+    font-family: 'Tajawal', sans-serif !important;
+}
+
+.apexcharts-legend-text {
+    font-family: 'Tajawal', sans-serif !important;
+    font-size: 12px !important;
+}
+
+/* تحسينات للوضع الليلي في المخططات */
+.dark-mode .apexcharts-grid line,
+.dark-mode .apexcharts-xaxis line,
+.dark-mode .apexcharts-yaxis line {
+    stroke: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-mode .apexcharts-text {
+    fill: #e2e8f0 !important;
+}
+
+.dark-mode .apexcharts-legend-text {
+    color: #e2e8f0 !important;
+}
+
+/* تحسينات خاصة بمخطط حالة الفواتير */
+#invoiceStatusChart {
+    width: 100% !important;
+    height: 250px !important;
+    min-height: 250px;
+}
+
+/* تحسينات خاصة بمخطط أفضل العملاء */
+#topCustomersChart {
+    width: 100% !important;
+    height: 250px !important;
+    min-height: 250px;
+}
+
+/* تحسينات خاصة بمخطط الإيرادات */
+#revenueChart {
+    width: 100% !important;
+    max-width: 100%;
+}
+
+/* إصلاحات للبطاقات التي تحتوي على مخططات */
+.chart-card {
+    position: relative;
+    overflow: hidden;
+}
+
+/* تأكد من أن المخططات لا تتجاوز حدود البطاقات */
+.chart-card .apexcharts-canvas,
+.chart-card .chartjs-render-monitor {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+/* تحسينات للعناوين داخل البطاقات */
+.chart-header {
+    position: relative;
+    z-index: 10;
+}
+
+/* تحسينات للريسبونسيف للمخططات */
+@media (max-width: 1024px) {
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    #invoiceStatusChart,
+    #topCustomersChart {
+        height: 220px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 220px;
+    }
+    
+    #invoiceStatusChart,
+    #topCustomersChart {
+        height: 200px !important;
+    }
+    
+    .chart-card {
+        padding: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-container {
+        height: 200px;
+    }
+    
+    #invoiceStatusChart,
+    #topCustomersChart {
+        height: 180px !important;
+    }
+}
+
+/* تحسينات لأداة ApexCharts */
+.apexcharts-tooltip {
+    direction: rtl;
+    text-align: right;
+}
+
+.apexcharts-legend {
+    direction: rtl;
+    text-align: right;
+}
+
+.apexcharts-datalabels text {
+    font-family: 'Tajawal', sans-serif !important;
+}
+
+/* تحسينات لأداة Chart.js */
+.chartjs-tooltip {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Tajawal', sans-serif;
+}
+
+/* إصلاحات للعناوين والتسميات */
+.apexcharts-text,
+.apexcharts-title-text,
+.apexcharts-legend-text {
+    font-family: 'Tajawal', sans-serif !important;
+}
+
+/* تحسينات للوضع الداكن */
+@media (prefers-color-scheme: dark) {
+    .apexcharts-grid line,
+    .apexcharts-xaxis line,
+    .apexcharts-yaxis line {
+        stroke: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .apexcharts-grid-borders line {
+        stroke: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .apexcharts-text {
+        fill: #e2e8f0 !important;
+    }
+    
+    .apexcharts-legend-text {
+        color: #e2e8f0 !important;
+    }
+}
+
+/* تحميل واستعداد المخططات */
+.chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+}
+
+.chart-loading::after {
+    content: 'جاري تحميل البيانات...';
+    font-size: 0.9rem;
+}
+
+/* تحسينات للرسوم البيانية الفارغة */
+.chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    flex-direction: column;
+    color: var(--text-muted);
+}
+
+.chart-empty i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.chart-empty p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* تحسينات للأسطوانات (tooltips) */
+.apexcharts-tooltip {
+    box-shadow: var(--shadow-lg) !important;
+    border-radius: var(--radius-lg) !important;
+    border: 1px solid var(--border-color) !important;
+    background: var(--bg-primary) !important;
+}
+
+.apexcharts-tooltip-series-group {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+.apexcharts-tooltip-text {
+    color: var(--text-primary) !important;
+    font-family: 'Tajawal', sans-serif !important;
+    font-size: 0.85rem !important;
+}
+
+/* تحسينات للأسهم والتلميحات */
+.apexcharts-tooltip-marker {
+    margin-left: 0.5rem !important;
+    margin-right: 0 !important;
+}
+
+/* تحسينات للأساطير (legends) */
+.apexcharts-legend {
+    padding: 0.5rem 0 !important;
+}
+
+.apexcharts-legend-series {
+    margin: 0 0.5rem !important;
+}
+
+/* تحسينات للمخططات الدائرية */
+.apexcharts-datalabel-label {
+    font-family: 'Tajawal', sans-serif !important;
+    font-weight: 600 !important;
+}
+
+.apexcharts-datalabel-value {
+    font-family: 'Tajawal', sans-serif !important;
+    font-weight: 700 !important;
+}
+
+/* تحسينات للمخططات الشريطية */
+.apexcharts-bar-series path {
+    rx: 4px !important;
+    ry: 4px !important;
+}
+
+/* تحسينات للمخططات الخطية */
+.apexcharts-line-series path {
+    stroke-width: 2px !important;
+}
+
+/* تحسينات للنقاط على المخططات */
+.apexcharts-marker {
+    stroke-width: 2px !important;
+}
+
+/* تحسينات للمحاور */
+.apexcharts-xaxis-tick,
+.apexcharts-yaxis-tick {
+    font-family: 'Tajawal', sans-serif !important;
+}
+
+/* تحسينات للقيم على المحاور */
+.apexcharts-xaxis-label,
+.apexcharts-yaxis-label {
+    font-family: 'Tajawal', sans-serif !important;
+    font-size: 0.8rem !important;
+}
+
+/* تحسينات للشبكة */
+.apexcharts-gridline {
+    stroke: var(--border-color) !important;
+    stroke-dasharray: 3,3 !important;
+}
+
+/* تحسينات للعنوان الفرعي */
+.apexcharts-subtitle-text {
+    font-family: 'Tajawal', sans-serif !important;
+    font-weight: 400 !important;
+    fill: var(--text-secondary) !important;
+}
+
+/* تحسينات للوضع المطبوع */
+@media print {
+    .chart-card {
+        page-break-inside: avoid;
+    }
+    
+    .apexcharts-canvas,
+    .chartjs-render-monitor {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* تحسينات للرسوم المتحركة */
+.apexcharts-series path,
+.apexcharts-series rect {
+    transition: all 0.3s ease !important;
+}
+
+/* تحسينات للتفاعلات */
+.apexcharts-series:hover path,
+.apexcharts-series:hover rect {
+    opacity: 0.8 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* تحسينات للتركيز */
+.apexcharts-series:focus {
+    outline: 2px solid var(--primary-color) !important;
+    outline-offset: 2px !important;
+}
+
+
+
+
+/* إصلاح مشكلة الاختفاء - التأكد من ظهور الأرقام */
+.stat-info h3,
+#totalInvoicesCount,
+#totalCustomersCount, 
+#totalProductsCount,
+#totalSalesAmount {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: var(--dark-color) !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    background-clip: initial !important;
+}
+
+
+
+/* إصلاح مشكلة تجاوز المخططات للحدود */
+.chart-container canvas,
+.chart-container #invoiceStatusChart,
+.chart-container #topCustomersChart {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+}
+
+/* تحسينات خاصة بمخطط حالة الفواتير */
+#invoiceStatusChart {
+    width: 100% !important;
+    height: 250px !important;
+    min-height: 250px;
+}
+
+/* تحسين البطاقات الإحصائية */
+.stat-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    padding: 1.8rem;
+    border-radius: 16px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.12),
+        0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+
+
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1rem;
+        gap: 1rem;
+    }
+}
+
+
+
+@media (prefers-color-scheme: dark) {
+    .stat-card,
+    .chart-card,
+    .recent-activity,
+    .empty-state,
+    .system-status-card {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        box-shadow: 
+            0 4px 20px rgba(0, 0, 0, 0.2),
+            0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card, .chart-card, .recent-activity, .system-status-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+
+/* Loading States */
+.dashboard-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.dashboard-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+
+
+/* تحسينات لأداة ApexCharts */
+.apexcharts-tooltip {
+    direction: rtl;
+    text-align: right;
+}
+
+.apexcharts-legend {
+    direction: rtl;
+    text-align: right;
+}
+
+.apexcharts-datalabels text {
+    font-family: 'Tajawal', sans-serif !important;
+}
+
+
+
+/* تحسينات الوضع الليلي */
+.dark-mode {
+    --text-primary: #e2e8f0;
+    --text-secondary: #cbd5e0;
+    --text-muted: #a0aec0;
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+    --bg-tertiary: #4a5568;
+    --border-color: #4a5568;
+    --border-light: #2d3748;
+    --border-dark: #718096;
+}
+
+.dark-mode .main-header {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #2d3748 100%);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dark-mode .main-sidebar {
+    background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
+    border-left-color: var(--border-color);
+}
+
+.dark-mode .stat-card,
+.dark-mode .chart-card,
+.dark-mode .recent-activity,
+.dark-mode .system-status-card {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border: 1px solid var(--border-color);
+}
+
+.dark-mode .stat-info h3,
+.dark-mode .chart-header h3,
+.dark-mode .activity-header h3,
+.dark-mode .status-header h3 {
+    color: var(--text-primary);
+}
+
+.dark-mode .search-box input {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.dark-mode .notification-dropdown {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+}
+
+.dark-mode .notification-header {
+    background: var(--bg-secondary);
+    border-bottom-color: var(--border-color);
+}
+
+.dark-mode .notification-item {
+    border-bottom-color: var(--border-color);
+}
+
+.dark-mode .notification-item.unread {
+    background: rgba(66, 153, 225, 0.1);
+}
+
+
+/* تحسينات قائمة إدارة البيانات */
+.dropdown-menu {
+    min-width: 200px;
+    z-index: 1050;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--bg-secondary);
+    color: var(--primary-color);
+}
+
+/* تحسينات الأيقونات */
+.fa-database:before {
+    content: "\f1c0";
+}
+
+/* تحسينات البطاقات الإحصائية */
+.stat-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid transparent;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-light);
+}
+
+/* إصلاح مشكلة ظهور الأرقام */
+.stat-info h3,
+#totalInvoicesCount,
+#totalCustomersCount, 
+#totalProductsCount,
+#totalSalesAmount {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: var(--text-primary) !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    background-clip: initial !important;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* تحسينات الاستجابة للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        min-height: 250px;
+    }
+    
+    .chart-container canvas,
+    .chart-container #invoiceStatusChart,
+    .chart-container #topCustomersChart {
+        height: 250px !important;
+    }
+    
+    .header-actions {
+        gap: 0.5rem;
+    }
+    
+    .search-box {
         display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        text-align: center;
     }
     
     .page-header {
         flex-direction: column;
-        align-items: flex-start;
+        gap: 1rem;
     }
     
     .page-header .header-actions {
-        margin-top: 1rem;
         width: 100%;
-    }
-    
-    .page-header .btn-primary {
-        width: 100%;
+        justify-content: center;
     }
 }
+
+/* تحسينات التحميل والرسائل */
+.loading-overlay {
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 9999;
+}
+
+.dark-mode .loading-overlay {
+    background: rgba(26, 32, 44, 0.95);
+}
+
+.empty-state {
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+/* تحسينات التنبيهات */
+.alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-lg);
+    z-index: 1060;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-lg);
+    max-width: 90%;
+    animation: slideInDown 0.3s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+
+/* تحسينات الأداء */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* تحسينات التحويلات */
+.stat-card,
+.chart-card,
+.recent-activity,
+.system-status-card {
+    transition: all 0.3s ease;
+}
+
+/* تحسينات التمرير */
+.recent-items,
+.activity-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+.recent-items::-webkit-scrollbar,
+.activity-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.recent-items::-webkit-scrollbar-thumb,
+.activity-list::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
+}
+
+/* تحسينات التركيز لإمكانية الوصول */
+.btn:focus,
+.dropdown-toggle:focus,
+input:focus,
+select:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+
+/* إصلاحات محددة للعناصر */
+#invoiceStatusChart,
+#topCustomersChart {
+    width: 100% !important;
+    min-height: 280px;
+}
+
+/* إصلاح مشكلة الظلال في الوضع الليلي */
+.dark-mode .stat-card,
+.dark-mode .chart-card,
+.dark-mode .recent-activity,
+.dark-mode .system-status-card {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* تحسينات النصوص العربية */
+body {
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    text-rendering: optimizeLegibility;
+}
+
+/* إصلاح مشكلة التخطيط في القوائم المنسدلة */
+.dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+/* تحسينات للشعار والصورة */
+.logo img {
+    object-fit: contain;
+    max-width: 100%;
+    height: auto;
+}
+
+
+
+
+
+/* أنماط للعناصر الجديدة */
+.status-indicator.online::after {
+    border-color: var(--success-color);
+    animation: statusPulse 2s infinite;
+}
+
+@keyframes statusPulse {
+    0% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 0; transform: scale(1.5); }
+    100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* تحسينات لزر إدارة البيانات */
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-dark) 100%);
+    border: none;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, var(--warning-dark) 0%, var(--warning-color) 100%);
+    transform: translateY(-2px);
+}
+
+
+
+
+
 
 

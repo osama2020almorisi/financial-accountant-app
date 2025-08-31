@@ -1,42 +1,1371 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>تقارير الضرائب</title>
-  <link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/components.css"><link rel="stylesheet" href="css/responsive.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقارير الضرائب - المحاسب المالي</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/modules.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* تحسينات التبويبات */
+        .report-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .report-tab {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #495057;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .report-tab:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+            transform: translateY(-2px);
+        }
+
+        .report-tab.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+
+        .report-tab i {
+            margin-left: 8px;
+        }
+        
+        /* تحسينات البطاقات الإحصائية */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #dc3545;
+        }
+        
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .stat-info p {
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        
+        /* تحسينات الرسوم البيانية */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .chart-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        
+        .chart-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+        
+        .chart-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+        }
+        
+        .chart-container {
+            padding: 1.5rem;
+            height: 320px;
+            position: relative;
+        }
+        
+        /* تحسينات قائمة التفاصيل */
+        .tax-details {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+        
+        .tax-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tax-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+        }
+        
+        .tax-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .tax-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s ease;
+        }
+        
+        .tax-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .tax-item:last-child {
+            border-bottom: none;
+        }
+        
+        .tax-info {
+            flex: 1;
+        }
+        
+        .tax-desc {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #2c3e50;
+        }
+        
+        .tax-meta {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .tax-amount {
+            font-weight: 600;
+            color: #dc3545;
+            margin: 0 1rem;
+        }
+        
+        .tax-rate {
+            color: #6c757d;
+            font-size: 0.8rem;
+            background: #f1f3f4;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        /* تحسينات الفلاتر */
+        .search-filter {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        /* تحسينات التبويبات الداخلية */
+        .period-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            width: fit-content;
+        }
+        
+        .period-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .period-tab.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        /* تحسينات للاستجابة */
+        @media (max-width: 1024px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .report-tabs {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 280px;
+                padding: 1rem;
+            }
+            
+            .tax-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .tax-amount {
+                margin: 0;
+            }
+        }
+        
+        /* تحسينات الوضع الداكن */
+        @media (prefers-color-scheme: dark) {
+            .stat-card,
+            .chart-card,
+            .search-filter,
+            .tax-details {
+                background: #2d3748;
+                border-color: #4a5568;
+            }
+            
+            .chart-header,
+            .tax-header {
+                background: #4a5568;
+                border-color: #4a5568;
+            }
+            
+            .stat-info h3,
+            .chart-header h3,
+            .tax-header h3,
+            .tax-desc {
+                color: #e2e8f0;
+            }
+            
+            .stat-info p,
+            .form-group label {
+                color: #cbd5e0;
+            }
+            
+            .tax-item:hover {
+                background-color: #4a5568;
+            }
+            
+            .period-tabs {
+                background: #4a5568;
+            }
+            
+            .tax-rate {
+                background: #4a5568;
+                color: #cbd5e0;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="فتح أو إغلاق القائمة الجانبية">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="logo">
+                <img src="../assets/images/logo.png" alt="شعار المحاسب المالي" id="headerLogo" onerror="handleLogoError(this)">
+                <span>المحاسب المالي</span>
+            </div>
 
-<header class="app-header">
-  <div class="brand">💼 Financial Accountant</div>
-  <nav>
-    <a href="index.html" class="">الرئيسية</a>
-    <a href="dashboard.html" class="">لوحة التحكم</a>
-    <a href="invoices/list.html">الفواتير</a>
-    <a href="customers/list.html">العملاء</a>
-    <a href="products/list.html">المنتجات</a>
-    <a href="expenses/list.html">المصروفات</a>
-    <a href="reports/financial.html">التقارير</a>
-    <a href="settings/company.html">الإعدادات</a>
-    <a href="auth/login.html" class="btn small">تسجيل الدخول</a>
-  </nav>
-</header>
+            <div class="header-actions">
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar" role="img" aria-label="صورة المستخدم"></div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" aria-label="قائمة المستخدم" aria-haspopup="true">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" role="menu">
+                            <a href="#" class="dropdown-item" onclick="logout()" role="menuitem">
+                                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
-  <main class="container">
+    <!-- Sidebar -->
+    <aside class="main-sidebar" id="mainSidebar">
+        <nav class="sidebar-nav" aria-label="القائمة الرئيسية">
+            <ul>
+                <li class="nav-item">
+                    <a href="../dashboard.html">
+                        <i class="fas fa-home"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../invoices/list.html">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>الفواتير</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../customers/list.html">
+                        <i class="fas fa-users"></i>
+                        <span>العملاء</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../products/list.html">
+                        <i class="fas fa-box"></i>
+                        <span>المنتجات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../expenses/list.html">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>المصروفات</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="../reports/financial.html">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>التقارير</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../settings/company.html">
+                        <i class="fas fa-cog"></i>
+                        <span>الإعدادات</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 
-<div class="card">
-  <h2>تقارير الضرائب</h2>
-  <p>تعتمد على نسبة تقديرية 15% لأغراض العرض فقط.</p>
-  <div>ضريبة مستحقة تقديراً: <strong id="r-tax">—</strong></div>
-</div>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1>تقارير الضرائب</h1>
+            <div class="header-actions">
+                <div class="dropdown">
+                    <button class="btn btn-success dropdown-toggle">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                    <div class="dropdown-menu">
+                        <button class="dropdown-item" onclick="exportReportToPDF('tax')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="dropdown-item" onclick="exportReportToExcel('tax')">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="dropdown-item" onclick="exportReportToCSV('tax')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                    </div>
+                </div>
+                <button class="btn btn-info" onclick="printReport()">
+                    <i class="fas fa-print"></i> طباعة
+                </button>
+            </div>
+        </div>
 
-  </main>
+        <!-- Report Tabs -->
+        <div class="report-tabs">
+            <a href="financial.html" class="report-tab">
+                <i class="fas fa-chart-line"></i> التقارير المالية
+            </a>
+            <a href="sales.html" class="report-tab">
+                <i class="fas fa-shopping-cart"></i> تقارير المبيعات
+            </a>
+            <a href="tax.html" class="report-tab active">
+                <i class="fas fa-receipt"></i> تقارير الضرائب
+            </a>
+       
+        </div>
 
-<footer class="app-footer">
-  <small>© 2025 Financial Accountant App — إصدار تجريبي</small>
-</footer>
+        <!-- Date Filter -->
+        <div class="search-filter">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dateFrom">من تاريخ</label>
+                    <input type="date" id="dateFrom" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="dateTo">إلى تاريخ</label>
+                    <input type="date" id="dateTo" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="reportPeriod">الفترة</label>
+                    <select id="reportPeriod" class="form-control" onchange="applyPeriodFilter(this.value)">
+                        <option value="month" selected>شهر</option>
+                        <option value="quarter">ربع سنة</option>
+                        <option value="year">سنة</option>
+                        <option value="custom">مخصص</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="updateReports()">
+                        <i class="fas fa-filter"></i> تطبيق الفلتر
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearFilters()" style="margin-right: 10px;">
+                        <i class="fas fa-times"></i> مسح
+                    </button>
+                </div>
+            </div>
+        </div>
 
-  <script defer src="js/helpers.js"></script><script defer src="js/storage.js"></script><script defer src="js/main.js"></script><script defer src="js/reports.js"></script>
+        <!-- Tax Reports Section -->
+        <div class="report-section active" id="tax-reports">
+            <!-- الإحصائيات السريعة -->
+            <div class="stats-grid">
+                <div class="stat-card" id="totalTax">
+                    <div class="stat-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0.00</h3>
+                        <p>إجمالي الضرائب</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="taxableRevenue">
+                    <div class="stat-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0.00</h3>
+                        <p>الإيرادات الخاضعة للضريبة</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="averageTaxRate">
+                    <div class="stat-icon">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0%</h3>
+                        <p>متوسط نسبة الضريبة</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="taxInvoices">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>0</h3>
+                        <p>الفواتير الخاضعة للضريبة</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الرسوم البيانية -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>توزيع الضرائب حسب الأشهر</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="monthlyTaxChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>نسب الضرائب</h3>
+                        <select id="taxChartType" onchange="updateTaxCharts()" class="form-control-sm" style="margin-top: 0.5rem;">
+                            <option value="doughnut">دونات</option>
+                            <option value="pie">دائري</option>
+                            <option value="bar">أعمدة</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="taxRateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تفاصيل الضرائب -->
+            <div class="tax-details">
+                <div class="tax-header">
+                    <h3>تفاصيل الضرائب</h3>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog"></i> الخيارات
+                        </button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" onclick="sortTaxDetails('month')">ترتيب حسب الشهر</button>
+                            <button class="dropdown-item" onclick="sortTaxDetails('amount')">ترتيب حسب المبلغ</button>
+                            <button class="dropdown-item" onclick="sortTaxDetails('rate')">ترتيب حسب النسبة</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tax-list" id="taxDetails">
+                    <!-- سيتم ملؤه بالجافاسكريبت -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ===== Authentication Functions =====
+        function isLoggedIn() {
+            return getCurrentUser() !== null;
+        }
+
+        function getCurrentUser() {
+            try {
+                return JSON.parse(localStorage.getItem('financial_app_current_user')) || null;
+            } catch (error) {
+                console.error('خطأ في تحميل بيانات المستخدم:', error);
+                return null;
+            }
+        }
+
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('financial_app_current_user');
+                window.location.href = '../index.html';
+            }
+        }
+
+        // ===== Alert Function =====
+        function showAlert(type, message, duration = 5000) {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.setAttribute('role', 'alert');
+            alert.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" aria-label="إغلاق التنبيه">×</button>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Auto remove after duration
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.remove();
+                }
+            }, duration);
+        }
+
+        // ===== User Data Functions =====
+        function loadUserData() {
+            const user = getCurrentUser();
+            if (!user) return;
+            
+            // Create user avatar
+            const userAvatarElement = document.getElementById('userAvatar');
+            if (userAvatarElement && user.fullName) {
+                const initials = getUserInitials(user.fullName);
+                const randomColor = getRandomColor();
+                
+                userAvatarElement.innerHTML = initials;
+                userAvatarElement.style.backgroundColor = randomColor;
+                userAvatarElement.style.display = 'flex';
+                userAvatarElement.style.alignItems = 'center';
+                userAvatarElement.style.justifyContent = 'center';
+                userAvatarElement.style.color = 'white';
+                userAvatarElement.style.fontWeight = '600';
+                userAvatarElement.style.borderRadius = '50%';
+                userAvatarElement.style.width = '40px';
+                userAvatarElement.style.height = '40px';
+            }
+        }
+
+        function getUserInitials(name) {
+            if (!name) return 'U';
+            return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function getRandomColor() {
+            const colors = [
+                '#3366cc', '#dc3545', '#28a745', '#ffc107', 
+                '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // ===== Storage Functions =====
+        function initializeStorage() {
+            // Check if storage is already initialized
+            const isInitialized = localStorage.getItem('financial_app_initialized');
+            
+            if (!isInitialized) {
+                try {
+                    if (!localStorage.getItem('financial_app_users')) {
+                        localStorage.setItem('financial_app_users', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_customers')) {
+                        localStorage.setItem('financial_app_customers', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_products')) {
+                        localStorage.setItem('financial_app_products', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_invoices')) {
+                        localStorage.setItem('financial_app_invoices', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_expenses')) {
+                        localStorage.setItem('financial_app_expenses', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_settings')) {
+                        localStorage.setItem('financial_app_settings', JSON.stringify({
+                            currency: 'ريال يمني',
+                            currency_code: 'ر.ي',
+                            tax_rate: 15,
+                            company_name: 'شركتي',
+                            company_logo: '',
+                            company_tax_number: '',
+                            company_address: '',
+                            company_phone: '',
+                            company_email: '',
+                            invoice_prefix: 'INV-',
+                            language: 'ar'
+                        }));
+                    }
+                    
+                    localStorage.setItem('financial_app_initialized', 'true');
+                } catch (error) {
+                    console.error('خطأ في تهيئة التخزين المحلي:', error);
+                    showAlert('error', 'حدث خطأ في تهيئة النظام. يرجى تحديث الصفحة.');
+                }
+            }
+        }
+
+        function getData(key) {
+            try {
+                const itemName = `financial_app_${key}`;
+                const data = localStorage.getItem(itemName);
+                
+                if (!data) {
+                    console.warn(`البيانات لـ ${itemName} غير موجودة`);
+                    return key === 'settings' ? {} : [];
+                }
+                
+                return JSON.parse(data);
+                
+            } catch (error) {
+                console.error(`خطأ في تحميل البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في تحميل البيانات لـ ${key}`);
+                return key === 'settings' ? {} : [];
+            }
+        }
+
+        function saveData(key, data) {
+            try {
+                localStorage.setItem(`financial_app_${key}`, JSON.stringify(data));
+                return true;
+            } catch (error) {
+                console.error(`خطأ في حفظ البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في حفظ البيانات لـ ${key}`);
+                return false;
+            }
+        }
+
+        // ===== Settings Functions =====
+        function getSettings() {
+            const settings = getData('settings');
+            return {
+                currency: 'ريال يمني',
+                currency_code: 'ر.ي',
+                tax_rate: 15,
+                company_name: 'شركتي',
+                company_logo: '',
+                company_tax_number: '',
+                company_address: '',
+                company_phone: '',
+                company_email: '',
+                invoice_prefix: 'INV-',
+                language: 'ar',
+                ...settings
+            };
+        }
+
+        function getCurrencySymbol() {
+            const settings = getSettings();
+            return settings.currency_code || 'ر.ي';
+        }
+
+        function formatCurrency(amount) {
+            const symbol = getCurrencySymbol();
+            
+            if (amount === undefined || amount === null || isNaN(amount)) {
+                return `0.00 ${symbol}`;
+            }
+            
+            // تنسيق الرقم مع فواصل الآلاف
+            const formattedAmount = parseFloat(amount).toLocaleString('ar-EG', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            return `${formattedAmount} ${symbol}`;
+        }
+
+        // ===== Logo Functions =====
+        function handleLogoError(img) {
+            img.onerror = null;
+            img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzNjZjYyIgLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZHk9Ii4zNWVtIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjgiPuetlDwvdGV4dD48L3N2Zz4=';
+        }
+
+        // ===== Tax Reports Functions =====
+        let taxCharts = {};
+        let currentTaxDetails = [];
+
+        // Load tax reports
+        function loadTaxReports() {
+            const invoices = getData('invoices');
+            const expenses = getData('expenses');
+            
+            // تطبيق تصفية التاريخ إذا كان موجوداً
+            const filteredInvoices = filterInvoicesByDate(invoices);
+            const filteredExpenses = filterExpensesByDate(expenses);
+            
+            // حساب إحصائيات الضرائب
+            calculateTaxStats(filteredInvoices, filteredExpenses);
+            
+            // تحميل الرسوم البيانية
+            loadMonthlyTaxChart(filteredInvoices);
+            loadTaxRateChart(filteredInvoices);
+            
+            // تحميل تفاصيل الضرائب
+            loadTaxDetails(filteredInvoices);
+        }
+
+        // Filter invoices by date
+        function filterInvoicesByDate(invoices) {
+            const dateFrom = document.getElementById('dateFrom')?.value;
+            const dateTo = document.getElementById('dateTo')?.value;
+            
+            if (!dateFrom && !dateTo) return invoices;
+            
+            return invoices.filter(invoice => {
+                const invoiceDate = new Date(invoice.invoiceDate || invoice.createdAt);
+                const fromDate = dateFrom ? new Date(dateFrom) : null;
+                const toDate = dateTo ? new Date(dateTo) : null;
+                
+                if (fromDate && invoiceDate < fromDate) return false;
+                if (toDate && invoiceDate > toDate) return false;
+                
+                return true;
+            });
+        }
+
+        // Filter expenses by date
+        function filterExpensesByDate(expenses) {
+            const dateFrom = document.getElementById('dateFrom')?.value;
+            const dateTo = document.getElementById('dateTo')?.value;
+            
+            if (!dateFrom && !dateTo) return expenses;
+            
+            return expenses.filter(expense => {
+                const expenseDate = new Date(expense.date || expense.createdAt);
+                const fromDate = dateFrom ? new Date(dateFrom) : null;
+                const toDate = dateTo ? new Date(dateTo) : null;
+                
+                if (fromDate && expenseDate < fromDate) return false;
+                if (toDate && expenseDate > toDate) return false;
+                
+                return true;
+            });
+        }
+
+        // Apply period filter
+        function applyPeriodFilter(period) {
+            const today = new Date();
+            let dateFrom, dateTo;
+            
+            switch(period) {
+                case 'month':
+                    dateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
+                    dateTo = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    break;
+                case 'quarter':
+                    const quarter = Math.floor(today.getMonth() / 3);
+                    dateFrom = new Date(today.getFullYear(), quarter * 3, 1);
+                    dateTo = new Date(today.getFullYear(), quarter * 3 + 3, 0);
+                    break;
+                case 'year':
+                    dateFrom = new Date(today.getFullYear(), 0, 1);
+                    dateTo = new Date(today.getFullYear(), 11, 31);
+                    break;
+                case 'custom':
+                default:
+                    // لا تغيير في التواريخ للمخصص
+                    return;
+            }
+            
+            document.getElementById('dateFrom').value = dateFrom.toISOString().split('T')[0];
+            document.getElementById('dateTo').value = dateTo.toISOString().split('T')[0];
+            
+            updateReports();
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            document.getElementById('reportPeriod').value = 'month';
+            updateReports();
+        }
+
+        // Calculate tax statistics
+        function calculateTaxStats(invoices, expenses) {
+            // حساب إجمالي الضرائب من الفواتير
+            const totalTax = invoices.reduce((sum, invoice) => {
+                return sum + (parseFloat(invoice.taxAmount) || 0);
+            }, 0);
+            
+            // حساب الإيرادات الخاضعة للضريبة
+            const taxableRevenue = invoices.reduce((sum, invoice) => {
+                return sum + (parseFloat(invoice.subtotal) || 0);
+            }, 0);
+            
+            // حساب عدد الفواتير الخاضعة للضريبة
+            const taxInvoices = invoices.filter(invoice => invoice.taxAmount > 0).length;
+            
+            // حساب متوسط نسبة الضريبة
+            const averageTaxRate = taxableRevenue > 0 ? (totalTax / taxableRevenue * 100) : 0;
+            
+            // تحديث البطاقات الإحصائية
+            updateReportCard('totalTax', totalTax, 'إجمالي الضرائب', true);
+            updateReportCard('taxableRevenue', taxableRevenue, 'الإيرادات الخاضعة للضريبة', true);
+            updateReportCard('averageTaxRate', averageTaxRate, 'متوسط نسبة الضريبة (%)');
+            updateReportCard('taxInvoices', taxInvoices, 'الفواتير الخاضعة للضريبة');
+        }
+
+        // Update report card
+        function updateReportCard(elementId, value, label, isCurrency = false) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const valueElement = element.querySelector('h3');
+            if (!valueElement) return;
+            
+            if (isCurrency) {
+                valueElement.textContent = formatCurrency(value);
+            } else if (typeof value === 'number') {
+                if (label.includes('%')) {
+                    valueElement.textContent = value.toFixed(1) + '%';
+                } else {
+                    valueElement.textContent = value.toLocaleString();
+                }
+            } else {
+                valueElement.textContent = value;
+            }
+        }
+
+        // Load monthly tax chart
+        function loadMonthlyTaxChart(invoices) {
+            // تجميع الضرائب حسب الشهر
+            const monthlyTax = {};
+            
+            invoices.forEach(invoice => {
+                if (invoice.invoiceDate && invoice.taxAmount > 0) {
+                    const date = new Date(invoice.invoiceDate || invoice.createdAt);
+                    const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                    
+                    if (!monthlyTax[monthYear]) {
+                        monthlyTax[monthYear] = 0;
+                    }
+                    
+                    monthlyTax[monthYear] += parseFloat(invoice.taxAmount) || 0;
+                }
+            });
+            
+            // تحضير البيانات للرسم البياني
+            const labels = Object.keys(monthlyTax).sort();
+            const data = labels.map(label => monthlyTax[label]);
+            
+            const ctx = document.getElementById('monthlyTaxChart');
+            if (!ctx) return;
+            
+            if (taxCharts.monthlyTaxChart) {
+                taxCharts.monthlyTaxChart.destroy();
+            }
+            
+            taxCharts.monthlyTaxChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels.map(label => {
+                        const [year, month] = label.split('-');
+                        const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
+                                          'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+                        return `${monthNames[parseInt(month) - 1]} ${year}`;
+                    }),
+                    datasets: [{
+                        label: 'الضرائب الشهرية',
+                        data: data,
+                        backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                        borderColor: 'rgba(220, 53, 69, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `الضرائب: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load tax rate chart
+        function loadTaxRateChart(invoices) {
+            // تجميع الفواتير حسب نسبة الضريبة
+            const taxRates = {};
+            
+            invoices.forEach(invoice => {
+                if (invoice.taxAmount > 0 && invoice.subtotal > 0) {
+                    const taxRate = Math.round((invoice.taxAmount / invoice.subtotal) * 100);
+                    const rateKey = `${taxRate}%`;
+                    
+                    if (!taxRates[rateKey]) {
+                        taxRates[rateKey] = 0;
+                    }
+                    
+                    taxRates[rateKey] += 1;
+                }
+            });
+            
+            const ctx = document.getElementById('taxRateChart');
+            if (!ctx) return;
+            
+            if (taxCharts.taxRateChart) {
+                taxCharts.taxRateChart.destroy();
+            }
+            
+            const chartType = document.getElementById('taxChartType').value;
+            
+            taxCharts.taxRateChart = new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: Object.keys(taxRates),
+                    datasets: [{
+                        data: Object.values(taxRates),
+                        backgroundColor: [
+                            'rgba(220, 53, 69, 0.7)',
+                            'rgba(40, 167, 69, 0.7)',
+                            'rgba(255, 193, 7, 0.7)',
+                            'rgba(0, 123, 255, 0.7)',
+                            'rgba(111, 66, 193, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(0, 123, 255, 1)',
+                            'rgba(111, 66, 193, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw} فاتورة`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load tax details
+        function loadTaxDetails(invoices) {
+            const container = document.getElementById('taxDetails');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            currentTaxDetails = [];
+            
+            if (invoices.length === 0) {
+                container.innerHTML = `
+                    <div class="tax-item">
+                        <div class="tax-info">
+                            <div class="tax-desc">لا توجد فواتير للفترة المحددة</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // تجميع الضرائب حسب الشهر
+            const monthlyTax = {};
+            
+            invoices.forEach(invoice => {
+                if (invoice.invoiceDate && invoice.taxAmount > 0) {
+                    const date = new Date(invoice.invoiceDate || invoice.createdAt);
+                    const monthKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                    
+                    if (!monthlyTax[monthKey]) {
+                        monthlyTax[monthKey] = {
+                            taxAmount: 0,
+                            taxableAmount: 0,
+                            count: 0
+                        };
+                    }
+                    
+                    monthlyTax[monthKey].taxAmount += parseFloat(invoice.taxAmount) || 0;
+                    monthlyTax[monthKey].taxableAmount += parseFloat(invoice.subtotal) || 0;
+                    monthlyTax[monthKey].count += 1;
+                }
+            });
+            
+            // تحويل إلى مصفوفة
+            currentTaxDetails = Object.entries(monthlyTax)
+                .map(([month, data]) => ({
+                    month,
+                    taxAmount: data.taxAmount,
+                    taxableAmount: data.taxableAmount,
+                    count: data.count,
+                    taxRate: data.taxableAmount > 0 ? (data.taxAmount / data.taxableAmount * 100) : 0
+                }));
+            
+            // عرض التفاصيل بعد الترتيب
+            sortTaxDetails('month');
+        }
+
+        // Sort tax details
+        function sortTaxDetails(criteria) {
+            const container = document.getElementById('taxDetails');
+            if (!container || currentTaxDetails.length === 0) return;
+            
+            // ترتيب البيانات حسب المعيار المحدد
+            let sortedDetails = [...currentTaxDetails];
+            
+            switch(criteria) {
+                case 'month':
+                    sortedDetails.sort((a, b) => b.month.localeCompare(a.month));
+                    break;
+                case 'amount':
+                    sortedDetails.sort((a, b) => b.taxAmount - a.taxAmount);
+                    break;
+                case 'rate':
+                    sortedDetails.sort((a, b) => b.taxRate - a.taxRate);
+                    break;
+            }
+            
+            // عرض البيانات المرتبة
+            container.innerHTML = '';
+            
+            sortedDetails.forEach(item => {
+                const [year, month] = item.month.split('-');
+                const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
+                                  'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+                const monthName = monthNames[parseInt(month) - 1];
+                
+                const row = document.createElement('div');
+                row.className = 'tax-item';
+                row.innerHTML = `
+                    <div class="tax-info">
+                        <div class="tax-desc">ضرائب ${monthName} ${year}</div>
+                        <div class="tax-meta">${item.count} فاتورة</div>
+                    </div>
+                    <div class="tax-amount">
+                        ${formatCurrency(item.taxAmount)}
+                    </div>
+                    <div class="tax-rate">
+                        ${item.taxRate.toFixed(1)}%
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // Update tax charts when chart type changes
+        function updateTaxCharts() {
+            const invoices = getData('invoices');
+            const filteredInvoices = filterInvoicesByDate(invoices);
+            loadTaxRateChart(filteredInvoices);
+        }
+
+        // Update reports based on date filter
+        function updateReports() {
+            loadTaxReports();
+        }
+
+        // Export reports to PDF
+        function exportReportToPDF(reportType) {
+            showAlert('info', 'جاري تحضير التقرير للتحميل...');
+            
+            // محاكاة عملية التصدير
+            setTimeout(() => {
+                const fileName = `تقرير_${reportType}_${new Date().toISOString().split('T')[0]}.pdf`;
+                showAlert('success', `تم تحضير التقرير: ${fileName}`);
+                
+                // في التطبيق الحقيقي، هنا سيتم استخدام مكتبة مثل jsPDF
+                console.log(`تصدير تقرير ${reportType} كملف PDF`);
+            }, 2000);
+        }
+
+        // Export reports to Excel
+        function exportReportToExcel(reportType) {
+            showAlert('info', 'جاري تحضير التقرير للتحميل...');
+            
+            // محاكاة عملية التصدير
+            setTimeout(() => {
+                const fileName = `تقرير_${reportType}_${new Date().toISOString().split('T')[0]}.xlsx`;
+                showAlert('success', `تم تحضير التقرير: ${fileName}`);
+                
+                // في التطبيق الحقيقي، هنا سيتم استخدام مكتبة مثل SheetJS
+                console.log(`تصدير تقرير ${reportType} كملف Excel`);
+            }, 2000);
+        }
+
+        // Export reports to CSV
+        function exportReportToCSV(reportType) {
+            if (currentTaxDetails.length === 0) {
+                showAlert('warning', 'لا توجد بيانات للتصدير');
+                return;
+            }
+            
+            try {
+                const exportData = currentTaxDetails.map(item => {
+                    const [year, month] = item.month.split('-');
+                    const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
+                                      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+                    const monthName = monthNames[parseInt(month) - 1];
+                    
+                    return {
+                        'الشهر': `${monthName} ${year}`,
+                        'عدد الفواتير': item.count,
+                        'المبلغ الخاضع للضريبة': item.taxableAmount,
+                        'مبلغ الضريبة': item.taxAmount,
+                        'نسبة الضريبة': `${item.taxRate.toFixed(1)}%`
+                    };
+                });
+                
+                const csvContent = convertToCSV(exportData);
+                const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                
+                const fileName = `تقرير_${reportType}_${new Date().toISOString().split('T')[0]}.csv`;
+                
+                if (navigator.msSaveBlob) {
+                    navigator.msSaveBlob(blob, fileName);
+                } else {
+                    const url = URL.createObjectURL(blob);
+                    link.href = url;
+                    link.download = fileName;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    
+                    // تنظيف الذاكرة
+                    setTimeout(() => {
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                }
+                
+                showAlert('success', 'تم تصدير البيانات بنجاح');
+            } catch (error) {
+                console.error('خطأ في التصدير:', error);
+                showAlert('error', 'حدث خطأ أثناء التصدير');
+            }
+        }
+
+        // Print report
+        function printReport() {
+            window.print();
+        }
+
+        // ===== Helper Functions =====
+        function convertToCSV(data) {
+            if (data.length === 0) return '';
+            
+            const headers = Object.keys(data[0]).join(',');
+            const rows = data.map(row => 
+                Object.values(row).map(value => 
+                    `"${String(value).replace(/"/g, '""')}"`
+                ).join(',')
+            );
+            return [headers, ...rows].join('\n');
+        }
+
+        function checkAuth() {
+            const allowedPages = ['index.html', 'auth/', 'login.html'];
+            const currentPath = window.location.pathname;
+            
+            if (!isLoggedIn() && !allowedPages.some(page => currentPath.includes(page))) {
+                window.location.href = '../index.html';
+                return false;
+            }
+            return true;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mainSidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+            }
+        }
+
+        // Initialize date filters
+        function initDateFilters() {
+            const dateFrom = document.getElementById('dateFrom');
+            const dateTo = document.getElementById('dateTo');
+            
+            if (dateFrom && dateTo) {
+                // تعيين التاريخ الافتراضي (الشهر الحالي)
+                const today = new Date();
+                const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+                const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                
+                dateFrom.value = firstDay.toISOString().split('T')[0];
+                dateTo.value = lastDay.toISOString().split('T')[0];
+            }
+        }
+
+        // ===== Initialize Application =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStorage();
+            
+            if (!checkAuth()) return;
+            
+            loadUserData();
+            
+            // Initialize dropdowns
+            document.addEventListener('click', function(e) {
+                const dropdowns = document.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    if (!dropdown.contains(e.target)) {
+                        const menu = dropdown.querySelector('.dropdown-menu');
+                        if (menu) {
+                            menu.classList.remove('show');
+                        }
+                    }
+                });
+                
+                if (e.target.classList.contains('dropdown-toggle')) {
+                    const menu = e.target.closest('.dropdown').querySelector('.dropdown-menu');
+                    if (menu) {
+                        menu.classList.toggle('show');
+                    }
+                }
+            });
+            
+            // Initialize date filters and load reports
+            initDateFilters();
+            loadTaxReports();
+        });
+    </script>
 </body>
 </html>

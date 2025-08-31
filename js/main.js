@@ -1,125 +1,266 @@
-// js/main.js
+// Main application functions
 
-// دالة التهيئة العامة
-function initApp() {
-    console.log('تم تحميل التطبيق المحاسبي بنجاح');
-    
-    // تهيئة الأحداث العامة
-    initEvents();
-    
-    // تحميل البيانات إذا كان المستخدم مسجلاً
-    if (isUserLoggedIn()) {
-        loadUserData();
+// Check authentication on page load
+function checkAuth() {
+    if (!isLoggedIn() && !window.location.pathname.includes('auth/') && 
+        window.location.pathname !== '/index.html' && 
+        window.location.pathname !== '/') {
+        window.location.href = 'index.html';
+        return false;
     }
+    return true;
 }
 
-// تهيئة الأحداث
-function initEvents() {
-    // الأحداث العامة المشتركة بين الصفحات
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-        form.addEventListener('submit', handleFormSubmit);
+// Format currency
+function formatCurrency(amount) {
+    if (amount === undefined || amount === null) {
+        return '0.00 ريال';
+    }
+    
+    const num = parseFloat(amount);
+    if (isNaN(num)) {
+        return '0.00 ريال';
+    }
+    
+    return new Intl.NumberFormat('ar-SA', {
+        style: 'currency',
+        currency: 'SAR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(num);
+}
+
+// Format date
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('ar-SA').format(date);
+}
+
+// Generate random color for avatars
+function getRandomColor() {
+    const colors = [
+        '#3366cc', '#dc3545', '#28a745', '#ffc107', 
+        '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+// Get user initials for avatar
+function getUserInitials(name) {
+    return name.split(' ').map(word => word[0]).join('').toUpperCase();
+}
+
+// Debounce function for search inputs
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Initialize tooltips
+function initTooltips() {
+    const tooltips = document.querySelectorAll('[data-tooltip]');
+    tooltips.forEach(tooltip => {
+        tooltip.addEventListener('mouseenter', function(e) {
+            const tooltipText = this.getAttribute('data-tooltip');
+            const tooltipEl = document.createElement('div');
+            tooltipEl.className = 'tooltip';
+            tooltipEl.textContent = tooltipText;
+            document.body.appendChild(tooltipEl);
+            
+            const rect = this.getBoundingClientRect();
+            tooltipEl.style.top = (rect.top - tooltipEl.offsetHeight - 5) + 'px';
+            tooltipEl.style.left = (rect.left + (rect.width - tooltipEl.offsetWidth) / 2) + 'px';
+        });
+        
+        tooltip.addEventListener('mouseleave', function() {
+            const tooltipEl = document.querySelector('.tooltip');
+            if (tooltipEl) {
+                tooltipEl.remove();
+            }
+        });
     });
 }
 
-// التعامل مع إرسال النماذج
-function handleFormSubmit(e) {
-    e.preventDefault();
-    const form = e.target;
-    const formId = form.id;
-    
-    // منع الإرسال إذا كان النموذج غير صالح
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
+// Add tooltip styles
+const tooltipStyles = document.createElement('style');
+tooltipStyles.textContent = `
+    .tooltip {
+        position: fixed;
+        background: #333;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        z-index: 1000;
+        pointer-events: none;
     }
+`;
+document.head.appendChild(tooltipStyles);
+
+// إغلاق القائمة الجانبية عند النقر خارجها
+document.addEventListener('click', function(e) {
+    const sidebar = document.getElementById('mainSidebar');
+    const toggleBtn = document.querySelector('.sidebar-toggle');
     
-    // التعامل مع النماذج المختلفة
-    if (formId === 'loginForm') {
-        handleLogin(form);
-    } else if (formId === 'registerForm') {
-        handleRegister(form);
+    if (window.innerWidth < 768 && 
+        sidebar.classList.contains('show') && 
+        !sidebar.contains(e.target) && 
+        !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('show');
     }
-}
+});
 
-// التعامل مع تسجيل الدخول
-function handleLogin(form) {
-    const formData = new FormData(form);
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const rememberMe = formData.get('rememberMe') === 'on';
-    
-    // هنا سيتم الاتصال بالخادم في التطبيق الحقيقي
-    // لمثالنا، سنقوم بمحاكاة تسجيل الدخول الناجح
-    
-    // حفظ بيانات المستخدم في localStorage
-    const userData = {
-        email: email,
-        name: 'محمد أحمد', // سيتم استبدالها بالبيانات الحقيقية من الخادم
-        company: 'شركة التقنية المحدودة'
-    };
-    
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-    
-    if (rememberMe) {
-        localStorage.setItem('rememberMe', 'true');
-    }
-    
-    // توجيه المستخدم إلى لوحة التحكم
-    window.location.href = 'dashboard.html';
-}
-
-// التعامل مع إنشاء الحساب
-function handleRegister(form) {
-    const formData = new FormData(form);
-    const fullName = formData.get('fullName');
-    const email = formData.get('email');
-    const company = formData.get('company');
-    const phone = formData.get('phone');
-    const password = formData.get('password');
-    
-    // هنا سيتم الاتصال بالخادم في التطبيق الحقيقي
-    // لمثالنا، سنقوم بمحاكاة إنشاء الحساب الناجح
-    
-    // حفظ بيانات المستخدم في localStorage
-    const userData = {
-        email: email,
-        name: fullName,
-        company: company,
-        phone: phone
-    };
-    
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-    
-    // توجيه المستخدم إلى لوحة التحكم
-    window.location.href = 'dashboard.html';
-}
-
-// التحقق من وجود مستخدم مسجل
-function isUserLoggedIn() {
-    return localStorage.getItem('currentUser') !== null;
-}
-
-// تحميل بيانات المستخدم
-function loadUserData() {
-    const userData = JSON.parse(localStorage.getItem('currentUser'));
-    
-    // تحديث واجهة المستخدم ببيانات المستخدم
-    const userElements = document.querySelectorAll('.user-profile span');
-    userElements.forEach(el => {
-        if (el.textContent === '') {
-            el.textContent = userData.name;
+// إدارة القوائم المنسدلة
+function initDropdowns() {
+    document.addEventListener('click', function(e) {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        dropdowns.forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+                const menu = dropdown.querySelector('.dropdown-menu');
+                if (menu) menu.classList.remove('show');
+            }
+        });
+        
+        if (e.target.classList.contains('dropdown-toggle')) {
+            const menu = e.target.closest('.dropdown').querySelector('.dropdown-menu');
+            if (menu) menu.classList.toggle('show');
         }
     });
+}
+
+// دالة تحميل آمنة مع إعادة محاولة
+function safeLoad(loadFunction, maxAttempts = 3, delay = 200) {
+    let attempts = 0;
     
-    return userData;
+    function tryLoad() {
+        attempts++;
+        try {
+            loadFunction();
+        } catch (error) {
+            console.error(`محاولة ${attempts} فشلت:`, error);
+            if (attempts < maxAttempts) {
+                setTimeout(tryLoad, delay * attempts);
+            }
+        }
+    }
+    
+    tryLoad();
 }
 
-// تسجيل الخروج
-function logout() {
-    localStorage.removeItem('currentUser');
-    window.location.href = 'auth/login.html';
+// تهيئة التطبيق عند تحميل أي صفحة
+function initializeApp() {
+    console.log('تهيئة التطبيق...');
+    
+    // تهيئة التخزين (بدون مسح البيانات الموجودة)
+    initializeStorage();
+    
+    // التحقق من المصادقة
+    if (!checkAuth()) {
+        return false;
+    }
+    
+    // تحميل بيانات المستخدم
+    loadUserData();
+    
+    // تهيئة القوائم المنسدلة
+    initDropdowns();
+    
+    // تهيئة التلميحات
+    initTooltips();
+    
+    // تحميل البيانات بناءً على الصفحة الحالية
+    setTimeout(() => {
+        const path = window.location.pathname;
+        
+        if (path.includes('dashboard.html')) {
+            safeLoad(() => {
+                if (typeof loadDashboardData === 'function') {
+                    loadDashboardData();
+                }
+                if (typeof initCharts === 'function') {
+                    initCharts();
+                }
+                if (typeof loadRecentInvoices === 'function') {
+                    loadRecentInvoices();
+                }
+                if (typeof loadRecentActivity === 'function') {
+                    loadRecentActivity();
+                }
+            });
+        }
+        else if (path.includes('customers/list.html')) {
+            safeLoad(() => {
+                if (typeof loadCustomers === 'function') {
+                    loadCustomers();
+                }
+                if (typeof initCustomersSearch === 'function') {
+                    initCustomersSearch();
+                }
+            });
+        }
+        else if (path.includes('products/list.html')) {
+            safeLoad(() => {
+                if (typeof loadProducts === 'function') {
+                    loadProducts();
+                }
+                if (typeof initProductsSearch === 'function') {
+                    initProductsSearch();
+                }
+            });
+        }
+        else if (path.includes('invoices/list.html')) {
+            safeLoad(() => {
+                if (typeof loadInvoices === 'function') {
+                    loadInvoices();
+                }
+                if (typeof initInvoicesSearch === 'function') {
+                    initInvoicesSearch();
+                }
+            });
+        }
+        else if (path.includes('expenses/list.html')) {
+            safeLoad(() => {
+                if (typeof loadExpenses === 'function') {
+                    loadExpenses();
+                }
+                if (typeof initExpensesSearch === 'function') {
+                    initExpensesSearch();
+                }
+            });
+        }
+    }, 100);
+    
+    return true;
 }
 
-// تهيئة التطبيق عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', initApp);
+// تشغيل التهيئة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    if (initializeApp()) {
+        console.log('تم تهيئة التطبيق بنجاح');
+    }
+});
+
+// إعادة تحميل تلقائي للبيانات
+function autoReloadData() {
+    // إعادة تحميل بعد إضافة بيانات جديدة
+    if (window.location.pathname.includes('list.html')) {
+        setTimeout(() => {
+            if (window.location.pathname.includes('customers')) {
+                if (typeof loadCustomers === 'function') loadCustomers();
+            } else if (window.location.pathname.includes('products')) {
+                if (typeof loadProducts === 'function') loadProducts();
+            } else if (window.location.pathname.includes('invoices')) {
+                if (typeof loadInvoices === 'function') loadInvoices();
+            } else if (window.location.pathname.includes('expenses')) {
+                if (typeof loadExpenses === 'function') loadExpenses();
+            }
+        }, 100);
+    }
+}

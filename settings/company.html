@@ -5,368 +5,1005 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إعدادات الشركة - المحاسب المالي</title>
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" href="../css/forms.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/modules.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        
+        .logo-preview {
+            margin-top: 1rem;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-preview img {
+            max-width: 100%;
+            max-height: 100px;
+            border-radius: var(--border-radius);
+        }
+        
+        #noLogoText {
+            color: var(--gray-color);
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .file-upload {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
 </head>
-<body class="dashboard-page">
-    <header class="dashboard-header">
-        <div class="header-container">
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <span></span>
-                <span></span>
-                <span></span>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="فتح أو إغلاق القائمة الجانبية" aria-expanded="false" aria-controls="mainSidebar">
+                <i class="fas fa-bars"></i>
             </button>
             
-            <div class="header-logo">
-                <h1>المحاسب المالي</h1>
-            </div>
-
-            <div class="header-search">
-                <input type="text" placeholder="بحث...">
+            <div class="logo">
+                <img src="../assets/images/logo.png" alt="شعار المحاسب المالي" id="headerLogo" onerror="handleLogoError(this)">
+                <span>المحاسب المالي</span>
             </div>
 
             <div class="header-actions">
-                <button class="notification-btn">
-                    <span class="icon">🔔</span>
-                    <span class="badge">3</span>
-                </button>
-                
-                <div class="user-profile">
-                    <img src="../assets/images/avatar.png" alt="User Avatar">
-                    <span>محمد أحمد</span>
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar" role="img" aria-label="صورة المستخدم"></div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" aria-label="قائمة المستخدم" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" role="menu">
+                            <a href="#" class="dropdown-item" onclick="logout()" role="menuitem">
+                                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <aside class="sidebar" id="sidebar">
-        <nav class="sidebar-nav">
-            <div class="nav-section">
-                <h3>الرئيسية</h3>
-                <a href="../dashboard.html" class="nav-item">
-                    <span class="icon">📊</span>
-                    <span>لوحة التحكم</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <h3>الفواتير</h3>
-                <a href="../invoices/list.html" class="nav-item">
-                    <span class="icon">🧾</span>
-                    <span>قائمة الفواتير</span>
-                </a>
-                <a href="../invoices/create.html" class="nav-item">
-                    <span class="icon">➕</span>
-                    <span>إنشاء فاتورة</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <h3>العملاء</h3>
-                <a href="../customers/list.html" class="nav-item">
-                    <span class="icon">👥</span>
-                    <span>قائمة العملاء</span>
-                </a>
-                <a href="../customers/create.html" class="nav-item">
-                    <span class="icon">➕</span>
-                    <span>إضافة عميل</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <h3>المنتجات</h3>
-                <a href="../products/list.html" class="nav-item">
-                    <span class="icon">📦</span>
-                    <span>قائمة المنتجات</span>
-                </a>
-                <a href="../products/create.html" class="nav-item">
-                    <span class="icon">➕</span>
-                    <span>إضافة منتج</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <h3>المصروفات</h3>
-                <a href="../expenses/list.html" class="nav-item">
-                    <span class="icon">💸</span>
-                    <span>قائمة المصروفات</span>
-                </a>
-                <a href="../expenses/create.html" class="nav-item">
-                    <span class="icon">➕</span>
-                    <span>إضافة مصروف</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <h3>التقارير</h3>
-                <a href="../reports/financial.html" class="nav-item">
-                    <span class="icon">📈</span>
-                    <span>تقارير مالية</span>
-                </a>
-                <a href="../reports/sales.html" class="nav-item">
-                    <span class="icon">💰</span>
-                    <span>تقارير المبيعات</span>
-                </a>
-                <a href="../reports/tax.html" class="nav-item">
-                    <span class="icon">📋</span>
-                    <span>تقارير الضرائب</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <h3>الإعدادات</h3>
-                <a href="company.html" class="nav-item active">
-                    <span class="icon">🏢</span>
-                    <span>إعدادات الشركة</span>
-                </a>
-                <a href="users.html" class="nav-item">
-                    <span class="icon">👤</span>
-                    <span>المستخدمين</span>
-                </a>
-                <a href="preferences.html" class="nav-item">
-                    <span class="icon">⚙️</span>
-                    <span>التفضيلات</span>
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <a href="../auth/login.html" class="nav-item logout">
-                    <span class="icon">🚪</span>
-                    <span>تسجيل الخروج</span>
-                </a>
-            </div>
+    <!-- Sidebar -->
+    <aside class="main-sidebar" id="mainSidebar">
+        <nav class="sidebar-nav" aria-label="القائمة الرئيسية">
+            <ul>
+                <li class="nav-item">
+                    <a href="../dashboard.html">
+                        <i class="fas fa-home"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../invoices/list.html">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>الفواتير</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../customers/list.html">
+                        <i class="fas fa-users"></i>
+                        <span>العملاء</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../products/list.html">
+                        <i class="fas fa-box"></i>
+                        <span>المنتجات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../expenses/list.html">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>المصروفات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../reports/financial.html">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>التقارير</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="company.html" aria-current="page">
+                        <i class="fas fa-cog"></i>
+                        <span>الإعدادات</span>
+                    </a>
+                </li>
+            </ul>
         </nav>
     </aside>
 
-    <main class="main-content">
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
         <div class="page-header">
             <h1>إعدادات الشركة</h1>
             <div class="header-actions">
-                <button type="submit" form="companyForm" class="btn-primary">حفظ التغييرات</button>
+                <a href="../dashboard.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i> رجوع
+                </a>
             </div>
         </div>
 
-        <form id="companyForm" class="settings-form">
-            <div class="settings-tabs">
-                <div class="tab-buttons">
-                    <button type="button" class="tab-btn active" data-tab="basic">المعلومات الأساسية</button>
-                    <button type="button" class="tab-btn" data-tab="address">العنوان والاتصال</button>
-                    <button type="button" class="tab-btn" data-tab="financial">المعلومات المالية</button>
-                    <button type="button" class="tab-btn" data-tab="invoice">إعدادات الفواتير</button>
+        <!-- Company Settings Form -->
+        <form class="module-form" id="settingsForm" onsubmit="saveSettingsForm(event)" novalidate>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyName">اسم الشركة *</label>
+                    <input type="text" id="companyName" name="companyName" required aria-describedby="companyNameHelp">
+                    <small id="companyNameHelp" class="form-help">اسم الشركة كما سيظهر في الفواتير والتقارير</small>
+                    <div class="invalid-feedback" id="companyNameError">يرجى إدخال اسم الشركة</div>
                 </div>
+                <div class="form-group">
+                    <label for="companyTaxNumber">الرقم الضريبي</label>
+                    <input type="text" id="companyTaxNumber" name="companyTaxNumber" pattern="[0-9]*" aria-describedby="taxNumberHelp">
+                    <small id="taxNumberHelp" class="form-help">الرقم الضريبي المسجل في الهيئة الضريبية</small>
+                    <div class="invalid-feedback" id="companyTaxNumberError">يجب أن يحتوي الرقم الضريبي على أرقام فقط</div>
+                </div>
+            </div>
 
-                <div class="tab-content">
-                    <!-- تبويب المعلومات الأساسية -->
-                    <div class="tab-pane active" id="basic">
-                        <div class="form-card">
-                            <h3>المعلومات الأساسية</h3>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="companyName">اسم الشركة *</label>
-                                    <input type="text" id="companyName" name="companyName" value="شركة التقنية المحدودة" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="commercialNo">السجل التجاري *</label>
-                                    <input type="text" id="commercialNo" name="commercialNo" value="1234567890" required>
-                                </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyAddress">عنوان الشركة</label>
+                    <textarea id="companyAddress" name="companyAddress" rows="2" aria-describedby="addressHelp"></textarea>
+                    <small id="addressHelp" class="form-help">العنوان الكامل للشركة</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyPhone">هاتف الشركة</label>
+                    <input type="tel" id="companyPhone" name="companyPhone" pattern="[0-9+()-]*" aria-describedby="phoneHelp">
+                    <small id="phoneHelp" class="form-help">رقم الهاتف بالصيغة الدولية أو المحلية</small>
+                    <div class="invalid-feedback" id="companyPhoneError">صيغة رقم الهاتف غير صحيحة</div>
+                </div>
+                <div class="form-group">
+                    <label for="companyEmail">البريد الإلكتروني</label>
+                    <input type="email" id="companyEmail" name="companyEmail" aria-describedby="emailHelp">
+                    <small id="emailHelp" class="form-help">البريد الإلكتروني الرسمي للشركة</small>
+                    <div class="invalid-feedback" id="companyEmailError">صيغة البريد الإلكتروني غير صحيحة</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="defaultTaxRate">نسبة الضريبة الافتراضية (%)</label>
+                    <input type="number" id="defaultTaxRate" name="defaultTaxRate" min="0" max="100" step="0.1" aria-describedby="taxRateHelp">
+                    <small id="taxRateHelp" class="form-help">النسبة المئوية للضريبة المطبقة على الفواتير</small>
+                    <div class="invalid-feedback" id="defaultTaxRateError">يجب أن تكون نسبة الضريبة بين 0 و 100</div>
+                </div>
+                <div class="form-group">
+                    <label for="invoicePrefix">بادئة أرقام الفواتير</label>
+                    <input type="text" id="invoicePrefix" name="invoicePrefix" placeholder="INV-" aria-describedby="invoicePrefixHelp">
+                    <small id="invoicePrefixHelp" class="form-help">بادئة لتسلسل أرقام الفواتير (مثال: INV-2023-)</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="currency">العملة</label>
+                    <select id="currency" name="currency" aria-describedby="currencyHelp" onchange="updateCurrencyCode()">
+                        <option value="ريال يمني">ريال يمني (ر.ي)</option>
+                        <option value="ريال سعودي">ريال سعودي (ر.س)</option>
+                        <option value="دينار كويتي">دينار كويتي (د.ك)</option>
+                        <option value="درهم إماراتي">درهم إماراتي (د.إ)</option>
+                        <option value="دولار أمريكي">دولار أمريكي ($)</option>
+                        <option value="يورو">يورو (€)</option>
+                    </select>
+                    <small id="currencyHelp" class="form-help">العملة المستخدمة في المعاملات المالية</small>
+                </div>
+                <div class="form-group">
+                    <label for="currencyCode">رمز العملة</label>
+                    <input type="text" id="currencyCode" name="currencyCode" value="ر.ي" aria-describedby="currencyCodeHelp">
+                    <small id="currencyCodeHelp" class="form-help">رمز العملة الذي سيظهر في الفواتير والتقارير</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="language">اللغة</label>
+                    <select id="language" name="language" aria-describedby="languageHelp">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                    </select>
+                    <small id="languageHelp" class="form-help">لغة واجهة المستخدم للنظام</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="logoUpload">شعار الشركة</label>
+                    <div class="file-upload">
+                        <input type="file" id="logoUpload" accept="image/*" onchange="previewLogo(event)" aria-describedby="logoHelp">
+                        <label for="logoUpload" class="btn btn-secondary">
+                            <i class="fas fa-upload"></i> رفع صورة
+                        </label>
+                        <div class="upload-progress" id="uploadProgress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-value" id="progressValue"></div>
                             </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="taxNo">الرقم الضريبي *</label>
-                                    <input type="text" id="taxNo" name="taxNo" value="310123456789" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="industry">مجال العمل</label>
-                                    <select id="industry" name="industry">
-                                        <option value="technology">تقنية المعلومات</option>
-                                        <option value="consulting">استشارات</option>
-                                        <option value="retail">تجارة التجزئة</option>
-                                        <option value="services">خدمات</option>
-                                        <option value="other">أخرى</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="companyLogo">شعار الشركة</label>
-                                <div class="file-upload">
-                                    <div class="logo-preview">
-                                        <img src="../assets/images/company-logo.png" alt="Company Logo" id="logoPreview">
-                                        <span>الشعار الحالي</span>
-                                    </div>
-                                    <input type="file" id="companyLogo" name="companyLogo" accept="image/*" class="file-input">
-                                    <label for="companyLogo" class="btn-secondary">اختر صورة</label>
-                                    <span class="file-name" id="logoFileName">لم يتم اختيار ملف</span>
-                                </div>
-                            </div>
+                            <span id="progressText">0%</span>
                         </div>
                     </div>
-
-                    <!-- تبويب العنوان والاتصال -->
-                    <div class="tab-pane" id="address">
-                        <div class="form-card">
-                            <h3>معلومات العنوان والاتصال</h3>
-                            
-                            <div class="form-group">
-                                <label for="address">العنوان *</label>
-                                <textarea id="address" name="address" rows="3" required>الرياض، حي العليا، شارع الملك فهد</textarea>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="city">المدينة *</label>
-                                    <input type="text" id="city" name="city" value="الرياض" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="country">البلد *</label>
-                                    <select id="country" name="country" required>
-                                        <option value="SA">المملكة العربية السعودية</option>
-                                        <option value="AE">الإمارات العربية المتحدة</option>
-                                        <option value="BH">البحرين</option>
-                                        <option value="KW">الكويت</option>
-                                        <option value="OM">عمان</option>
-                                        <option value="QA">قطر</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="phone">رقم الهاتف *</label>
-                                    <input type="tel" id="phone" name="phone" value="+966112345678" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="email">البريد الإلكتروني *</label>
-                                    <input type="email" id="email" name="email" value="info@techcompany.com" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="website">الموقع الإلكتروني</label>
-                                <input type="url" id="website" name="website" value="https://www.techcompany.com">
-                            </div>
-                        </div>
+                    <small id="logoHelp" class="form-help">الحجم الأمثل للشعار 300x100 بكسل بصيغة PNG أو JPG</small>
+                    <div class="logo-preview" id="logoPreview">
+                        <img src="" alt="معاينة الشعار" id="previewImage" style="display: none;">
+                        <span id="noLogoText">لا يوجد شعار</span>
                     </div>
-
-                    <!-- تبويب المعلومات المالية -->
-                    <div class="tab-pane" id="financial">
-                        <div class="form-card">
-                            <h3>المعلومات المالية</h3>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="currency">العملة الأساسية *</label>
-                                    <select id="currency" name="currency" required>
-                                        <option value="SAR">ريال سعودي (ر.س)</option>
-                                        <option value="USD">دولار أمريكي ($)</option>
-                                        <option value="EUR">يورو (€)</option>
-                                        <option value="AED">درهم إماراتي (د.إ)</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="taxRate">معدل الضريبة الافتراضي (%) *</label>
-                                    <input type="number" id="taxRate" name="taxRate" value="15" min="0" max="100" step="0.01" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="fiscalYear">بداية السنة المالية *</label>
-                                    <select id="fiscalYear" name="fiscalYear" required>
-                                        <option value="01-01">1 يناير</option>
-                                        <option value="04-01">1 أبريل</option>
-                                        <option value="07-01">1 يوليو</option>
-                                        <option value="10-01">1 أكتوبر</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="paymentTerms">شروط الدفع الافتراضية *</label>
-                                    <select id="paymentTerms" name="paymentTerms" required>
-                                        <option value="0">الدفع فوري</option>
-                                        <option value="7">صافي 7 أيام</option>
-                                        <option value="15" selected>صافي 15 يوم</option>
-                                        <option value="30">صافي 30 يوم</option>
-                                        <option value="45">صافي 45 يوم</option>
-                                        <option value="60">صافي 60 يوم</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="bankAccount">معلومات الحساب البنكي</label>
-                                <textarea id="bankAccount" name="bankAccount" rows="3">البنك الأهلي السعودي
-رقم الحساب: SA0380000000608010167879
-IBAN: SA0380000000608010167879</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- تبويب إعدادات الفواتير -->
-                    <div class="tab-pane" id="invoice">
-                        <div class="form-card">
-                            <h3>إعدادات الفواتير</h3>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="invoicePrefix">بادئة رقم الفاتورة *</label>
-                                    <input type="text" id="invoicePrefix" name="invoicePrefix" value="INV" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="nextInvoiceNumber">رقم الفاتورة التالي *</label>
-                                    <input type="number" id="nextInvoiceNumber" name="nextInvoiceNumber" value="006" min="1" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="invoiceNotes">ملاحظات افتراضية على الفواتير</label>
-                                <textarea id="invoiceNotes" name="invoiceNotes" rows="3">شكراً لتعاملكم معنا
-يرجى السداد خلال 15 يوم من تاريخ الفاتورة
-للاستفسارات، يرجى الاتصال على 0112345678</textarea>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="invoiceTerms">الشروط والأحكام الافتراضية</label>
-                                <textarea id="invoiceTerms" name="invoiceTerms" rows="4">1. جميع الأسعار تشمل الضريبة المضافة إن وجدت
-2. الدفع خلال 15 يوم من تاريخ الفاتورة
-3. يتضمن السعر جميع الخدمات المتفق عليها
-4. للاستفسارات يرجى الاتصال خلال أوقات العمل الرسمية</textarea>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>تذييل الفاتورة</label>
-                                <div class="checkbox-container">
-                                    <input type="checkbox" id="showSignature" name="showSignature" checked>
-                                    <label for="showSignature">إظهار مكان للتوقيع</label>
-                                </div>
-                                <div class="checkbox-container">
-                                    <input type="checkbox" id="showStamp" name="showStamp" checked>
-                                    <label for="showStamp">إظهار مكان للختم</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="invalid-feedback" id="logoUploadError">صيغة الملف غير مدعومة. يرجى اختيار صورة</div>
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-secondary">إعادة تعيين</button>
-                <button type="submit" class="btn-primary">حفظ التغييرات</button>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                    إعادة تعيين
+                </button>
+                <button type="submit" class="btn btn-primary" id="saveButton">
+                    <i class="fas fa-save"></i> حفظ الإعدادات
+                </button>
             </div>
         </form>
     </main>
 
-    <script src="../js/main.js"></script>
-    <script src="../js/dashboard.js"></script>
-    <script src="../js/settings.js"></script>
+    <script>
+        // ===== Authentication Functions =====
+        function isLoggedIn() {
+            return getCurrentUser() !== null;
+        }
+
+        function getCurrentUser() {
+            try {
+                return JSON.parse(localStorage.getItem('financial_app_current_user')) || null;
+            } catch (error) {
+                console.error('خطأ في تحميل بيانات المستخدم:', error);
+                return null;
+            }
+        }
+
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('financial_app_current_user');
+                window.location.href = '../index.html';
+            }
+        }
+
+        // ===== Alert Function =====
+        function showAlert(type, message, duration = 5000) {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.setAttribute('role', 'alert');
+            alert.setAttribute('aria-live', 'assertive');
+            alert.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" aria-label="إغلاق التنبيه">×</button>
+            `;
+            
+            // Add styles if not already added
+            if (!document.querySelector('#alert-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'alert-styles';
+                styles.textContent = `
+                    .alert {
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        color: white;
+                        font-weight: 500;
+                        z-index: 1000;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        min-width: 300px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        animation: slideDown 0.3s ease;
+                    }
+                    
+                    .alert-success { background-color: #28a745; }
+                    .alert-error { background-color: #dc3545; }
+                    .alert-warning { background-color: #ffc107; color: #000; }
+                    
+                    .alert button {
+                        background: none;
+                        border: none;
+                        color: inherit;
+                        font-size: 18px;
+                        cursor: pointer;
+                        margin-right: 10px;
+                    }
+                    
+                    @keyframes slideDown {
+                        from { transform: translate(-50%, -100%); opacity: 0; }
+                        to { transform: translate(-50%, 0); opacity: 1; }
+                    }
+                    
+                    @media (max-width: 480px) {
+                        .alert {
+                            min-width: auto;
+                            left: 20px;
+                            right: 20px;
+                            transform: none;
+                        }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+            
+            document.body.appendChild(alert);
+            
+            // Auto remove after duration
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.remove();
+                }
+            }, duration);
+        }
+
+        // ===== User Data Functions =====
+        function loadUserData() {
+            const user = getCurrentUser();
+            if (!user) return;
+            
+            // Create user avatar
+            const userAvatarElement = document.getElementById('userAvatar');
+            if (userAvatarElement) {
+                const initials = getUserInitials(user.fullName);
+                const randomColor = getRandomColor();
+                
+                userAvatarElement.innerHTML = initials;
+                userAvatarElement.style.backgroundColor = randomColor;
+                userAvatarElement.style.display = 'flex';
+                userAvatarElement.style.alignItems = 'center';
+                userAvatarElement.style.justifyContent = 'center';
+                userAvatarElement.style.color = 'white';
+                userAvatarElement.style.fontWeight = '600';
+                userAvatarElement.style.borderRadius = '50%';
+                userAvatarElement.style.width = '40px';
+                userAvatarElement.style.height = '40px';
+            }
+        }
+
+        function getUserInitials(name) {
+            if (!name) return 'U';
+            return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function getRandomColor() {
+            const colors = [
+                '#3366cc', '#dc3545', '#28a745', '#ffc107', 
+                '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // ===== Storage Functions =====
+        function initializeStorage() {
+            // Check if storage is already initialized
+            const isInitialized = localStorage.getItem('financial_app_initialized');
+            
+            if (!isInitialized) {
+                try {
+                    if (!localStorage.getItem('financial_app_users')) {
+                        localStorage.setItem('financial_app_users', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_customers')) {
+                        localStorage.setItem('financial_app_customers', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_products')) {
+                        localStorage.setItem('financial_app_products', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_invoices')) {
+                        localStorage.setItem('financial_app_invoices', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_expenses')) {
+                        localStorage.setItem('financial_app_expenses', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_settings')) {
+                        localStorage.setItem('financial_app_settings', JSON.stringify({
+                            currency: 'ريال يمني',
+                            currency_code: 'ر.ي',
+                            tax_rate: 15,
+                            company_name: 'شركتي',
+                            company_logo: '',
+                            company_tax_number: '',
+                            company_address: '',
+                            company_phone: '',
+                            company_email: '',
+                            invoice_prefix: 'INV-',
+                            language: 'ar'
+                        }));
+                    }
+                    
+                    localStorage.setItem('financial_app_initialized', 'true');
+                } catch (error) {
+                    console.error('خطأ في تهيئة التخزين المحلي:', error);
+                    showAlert('error', 'حدث خطأ في تهيئة النظام. يرجى تحديث الصفحة.');
+                }
+            }
+        }
+
+        function getData(key) {
+            try {
+                const itemName = `financial_app_${key}`;
+                const data = localStorage.getItem(itemName);
+                
+                if (!data) {
+                    console.warn(`البيانات لـ ${itemName} غير موجودة`);
+                    return key === 'settings' ? {} : [];
+                }
+                
+                return JSON.parse(data);
+                
+            } catch (error) {
+                console.error(`خطأ في تحميل البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في تحميل البيانات لـ ${key}`);
+                return key === 'settings' ? {} : [];
+            }
+        }
+
+        function saveData(key, data) {
+            try {
+                localStorage.setItem(`financial_app_${key}`, JSON.stringify(data));
+                return true;
+            } catch (error) {
+                console.error(`خطأ في حفظ البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في حفظ البيانات لـ ${key}`);
+                return false;
+            }
+        }
+
+        // ===== Settings Functions =====
+        function getSettings() {
+            const settings = getData('settings');
+            return {
+                currency: 'ريال يمني',
+                currency_code: 'ر.ي',
+                tax_rate: 15,
+                company_name: 'شركتي',
+                company_logo: '',
+                company_tax_number: '',
+                company_address: '',
+                company_phone: '',
+                company_email: '',
+                invoice_prefix: 'INV-',
+                language: 'ar',
+                ...settings
+            };
+        }
+
+        function saveSettings(settings) {
+            const currentSettings = getSettings();
+            const updatedSettings = { ...currentSettings, ...settings };
+            return saveData('settings', updatedSettings);
+        }
+
+        function getCompanySettings() {
+            const settings = getSettings();
+            return {
+                name: settings.company_name || 'شركتي',
+                taxNumber: settings.company_tax_number || '',
+                address: settings.company_address || '',
+                phone: settings.company_phone || '',
+                email: settings.company_email || '',
+                logo: settings.company_logo || ''
+            };
+        }
+
+        function updateCompanySettings(settings) {
+            return saveSettings(settings);
+        }
+
+        // ===== Currency Functions =====
+        function getCurrentCurrency() {
+            const settings = getSettings();
+            return settings.currency || 'ريال يمني';
+        }
+
+        function getCurrencySymbol(currency) {
+            const settings = getSettings();
+            const currencySymbols = {
+                'ريال يمني': settings.currency_code || 'ر.ي',
+                'ريال سعودي': 'ر.س',
+                'دينار كويتي': 'د.ك',
+                'درهم إماراتي': 'د.إ',
+                'دولار أمريكي': '$',
+                'يورو': '€'
+            };
+            
+            return currencySymbols[currency] || '';
+        }
+
+        function formatCurrency(amount, currency = null) {
+            if (!currency) currency = getCurrentCurrency();
+            const symbol = getCurrencySymbol(currency);
+            
+            // تنسيق الرقم مع فواصل الآلاف
+            const formattedAmount = parseFloat(amount).toLocaleString('ar-EG');
+            
+            return `${formattedAmount} ${symbol}`;
+        }
+
+        // تحديث رمز العملة عند تغيير نوع العملة
+        function updateCurrencyCode() {
+            const currencySelect = document.getElementById('currency');
+            const currencyCodeInput = document.getElementById('currencyCode');
+            const currency = currencySelect.value;
+            
+            const currencyCodes = {
+                'ريال يمني': 'ر.ي',
+                'ريال سعودي': 'ر.س',
+                'دينار كويتي': 'د.ك',
+                'درهم إماراتي': 'د.إ',
+                'دولار أمريكي': '$',
+                'يورو': '€'
+            };
+            
+            currencyCodeInput.value = currencyCodes[currency] || 'ر.ي';
+        }
+
+        // ===== Logo Functions =====
+        function handleLogoError(img) {
+            img.onerror = null;
+            img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzNjZjYyIgLz48dGV4dCB4PSI5MCUiIHk9IjUwJSIgZHk9Ii4zNWVmIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjgiPuetlDwvdGV4dD48L3N2Zz4=';
+        }
+
+        function resizeImage(file, maxWidth, maxHeight, quality, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // حساب الأبعاد الجديدة مع الحفاظ على التناسب
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                    
+                    if (height > maxHeight) {
+                        width = (width * maxHeight) / height;
+                        height = maxHeight;
+                    }
+                    
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // تحويل إلى base64 مع الجودة المحددة
+                    const resizedImage = canvas.toDataURL('image/jpeg', quality);
+                    callback(resizedImage);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Load company settings into form
+        function loadCompanySettings() {
+            const settings = getSettings();
+            const companySettings = getCompanySettings();
+            
+            // معلومات الشركة
+            document.getElementById('companyName').value = companySettings.name;
+            document.getElementById('companyTaxNumber').value = companySettings.taxNumber;
+            document.getElementById('companyAddress').value = companySettings.address;
+            document.getElementById('companyPhone').value = companySettings.phone;
+            document.getElementById('companyEmail').value = companySettings.email;
+            
+            // الإعدادات العامة
+            document.getElementById('defaultTaxRate').value = settings.tax_rate;
+            document.getElementById('invoicePrefix').value = settings.invoice_prefix;
+            document.getElementById('currency').value = settings.currency;
+            document.getElementById('currencyCode').value = settings.currency_code || 'ر.ي';
+            document.getElementById('language').value = settings.language;
+            
+            // تحميل معاينة الشعار إذا موجود
+            loadLogoPreview(companySettings.logo);
+            
+            // تحديث شعار الهيدر
+            updateHeaderLogo();
+        }
+
+        // Load logo preview
+        function loadLogoPreview(logoData) {
+            const previewImage = document.getElementById('previewImage');
+            const noLogoText = document.getElementById('noLogoText');
+            
+            if (logoData) {
+                previewImage.src = logoData;
+                previewImage.style.display = 'block';
+                noLogoText.style.display = 'none';
+            } else {
+                previewImage.style.display = 'none';
+                noLogoText.style.display = 'block';
+            }
+        }
+
+        // Preview logo before upload
+        function previewLogo(event) {
+            const input = event.target;
+            const previewImage = document.getElementById('previewImage');
+            const noLogoText = document.getElementById('noLogoText');
+            const logoError = document.getElementById('logoUploadError');
+            const progressContainer = document.getElementById('uploadProgress');
+            const progressValue = document.getElementById('progressValue');
+            const progressText = document.getElementById('progressText');
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // التحقق من نوع الملف
+                if (!file.type.match('image.*')) {
+                    logoError.style.display = 'block';
+                    input.value = '';
+                    return;
+                }
+                
+                logoError.style.display = 'none';
+                
+                // إظهار مؤشر التقدم
+                progressContainer.style.display = 'flex';
+                progressValue.style.width = '0%';
+                progressText.textContent = '0%';
+                
+                // محاكاة التقدم
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 5;
+                    if (progress <= 70) {
+                        progressValue.style.width = `${progress}%`;
+                        progressText.textContent = `${progress}%`;
+                    }
+                }, 100);
+                
+                // تحجيم الصورة قبل حفظها
+                resizeImage(file, 300, 100, 0.8, function(resizedImage) {
+                    // إكمال مؤشر التقدم
+                    clearInterval(progressInterval);
+                    progressValue.style.width = '100%';
+                    progressText.textContent = '100%';
+                    
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                        
+                        previewImage.src = resizedImage;
+                        previewImage.style.display = 'block';
+                        noLogoText.style.display = 'none';
+                        
+                        // حفظ الصورة كـ base64 في الإعدادات
+                        const settings = getSettings();
+                        settings.company_logo = resizedImage;
+                        saveSettings(settings);
+                        
+                        // تحديث شعار الهيدر
+                        updateHeaderLogo();
+                        
+                        showAlert('success', 'تم رفع الشعار بنجاح');
+                    }, 500);
+                });
+            }
+        }
+
+        // التحقق من صحة النموذج
+        function validateSettingsForm() {
+            let isValid = true;
+            const form = document.getElementById('settingsForm');
+            
+            // اسم الشركة (مطلوب)
+            const companyName = document.getElementById('companyName');
+            if (!companyName.value.trim()) {
+                showFieldError(companyName, 'يرجى إدخال اسم الشركة');
+                isValid = false;
+            } else {
+                clearFieldError(companyName);
+            }
+            
+            // الرقم الضريبي (أرقام فقط)
+            const taxNumber = document.getElementById('companyTaxNumber');
+            if (taxNumber.value && !/^\d*$/.test(taxNumber.value)) {
+                showFieldError(taxNumber, 'يجب أن يحتوي الرقم الضريبي على أرقام فقط');
+                isValid = false;
+            } else {
+                clearFieldError(taxNumber);
+            }
+            
+            // الهاتف (صيغة صحيحة)
+            const phone = document.getElementById('companyPhone');
+            if (phone.value && !/^[0-9+()-\s]*$/.test(phone.value)) {
+                showFieldError(phone, 'صيغة رقم الهاتف غير صحيحة');
+                isValid = false;
+            } else {
+                clearFieldError(phone);
+            }
+            
+            // البريد الإلكتروني (صيغة صحيحة)
+            const email = document.getElementById('companyEmail');
+            if (email.value && !/\S+@\S+\.\S+/.test(email.value)) {
+                showFieldError(email, 'صيغة البريد الإلكتروني غير صحيحة');
+                isValid = false;
+            } else {
+                clearFieldError(email);
+            }
+            
+            // نسبة الضريبة (بين 0 و 100)
+            const taxRate = document.getElementById('defaultTaxRate');
+            if (taxRate.value && (taxRate.value < 0 || taxRate.value > 100)) {
+                showFieldError(taxRate, 'يجب أن تكون نسبة الضريبة بين 0 و 100');
+                isValid = false;
+            } else {
+                clearFieldError(taxRate);
+            }
+            
+            return isValid;
+        }
+
+        function showFieldError(field, message) {
+            field.classList.add('is-invalid');
+            const errorElement = document.getElementById(field.id + 'Error');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            field.setAttribute('aria-invalid', 'true');
+        }
+
+        function clearFieldError(field) {
+            field.classList.remove('is-invalid');
+            const errorElement = document.getElementById(field.id + 'Error');
+            if (errorElement) {
+                errorElement.style.display = 'none';
+            }
+            field.setAttribute('aria-invalid', 'false');
+        }
+
+        // تحديث جميع الواجهات عند تغيير الإعدادات
+        function updateAllInterfaces() {
+            // تحديث العملة في جميع الصفحات
+            const currency = getCurrentCurrency();
+            const currencySymbol = getCurrencySymbol(currency);
+            
+            // تحديث العملة في لوحة التحكم
+            updateDashboardCurrency(currencySymbol);
+            
+            // تحديث العملة في قائمة المنتجات
+            updateProductsCurrency(currencySymbol);
+            
+            // تحديث العملة في الفواتير
+            updateInvoicesCurrency(currencySymbol);
+            
+            // تحديث الشعار في جميع الصفحات
+            updateLogoInAllPages();
+            
+            // مسح الذاكرة المؤقتة للتأكد من عرض أحدث البيانات
+            clearAllCaches();
+        }
+
+        function updateLogoInAllPages() {
+            const settings = getSettings();
+            // سنقوم بتحديث الشعار في جميع الصفحات عند تحميلها
+            // سيتم تنفيذ هذا عند تحميل كل صفحة
+        }
+
+        function clearAllCaches() {
+            // مسح أي بيانات مؤقتة قد تؤثر على عرض أحدث الإعدادات
+            if (window.caches) {
+                caches.keys().then(function(names) {
+                    for (let name of names) caches.delete(name);
+                });
+            }
+        }
+
+        // Save settings form
+        function saveSettingsForm(event) {
+            event.preventDefault();
+            
+            if (!validateSettingsForm()) {
+                showAlert('error', 'يرجى تصحيح الأخطاء في النموذج');
+                return;
+            }
+            
+            // تعطيل زر الحفظ أثناء المعالجة
+            const saveButton = document.getElementById('saveButton');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+            
+            const companySettings = {
+                company_name: document.getElementById('companyName').value,
+                company_tax_number: document.getElementById('companyTaxNumber').value,
+                company_address: document.getElementById('companyAddress').value,
+                company_phone: document.getElementById('companyPhone').value,
+                company_email: document.getElementById('companyEmail').value
+            };
+            
+            const appSettings = {
+                tax_rate: parseFloat(document.getElementById('defaultTaxRate').value) || 15,
+                invoice_prefix: document.getElementById('invoicePrefix').value,
+                currency: document.getElementById('currency').value,
+                currency_code: document.getElementById('currencyCode').value,
+                language: document.getElementById('language').value
+            };
+            
+            // محاكاة عملية غير متزامنة
+            setTimeout(() => {
+                const success = updateCompanySettings({ ...companySettings, ...appSettings });
+                
+                if (success) {
+                    showAlert('success', 'تم حفظ الإعدادات بنجاح');
+                    
+                    // تحديث الشعار في header إذا كان موجوداً
+                    updateHeaderLogo();
+                    
+                    // تحديث جميع الواجهات
+                    updateAllInterfaces();
+                } else {
+                    showAlert('error', 'حدث خطأ أثناء حفظ الإعدادات');
+                }
+                
+                // إعادة تمكين زر الحفظ
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fas fa-save"></i> حفظ الإعدادات';
+            }, 1000);
+        }
+
+        // Update logo in header
+        function updateHeaderLogo() {
+            const settings = getSettings();
+            const headerLogo = document.getElementById('headerLogo');
+            
+            if (settings.company_logo && headerLogo) {
+                headerLogo.src = settings.company_logo;
+            }
+        }
+
+        // Reset form to default values
+        function resetForm() {
+            if (confirm('هل تريد استعادة الإعدادات الافتراضية؟ سيتم فقدان جميع التغييرات غير المحفوظة.')) {
+                const defaultSettings = {
+                    company_name: 'شركتي',
+                    company_tax_number: '',
+                    company_address: '',
+                    company_phone: '',
+                    company_email: '',
+                    company_logo: '',
+                    tax_rate: 15,
+                    invoice_prefix: 'INV-',
+                    currency: 'ريال يمني',
+                    currency_code: 'ر.ي',
+                    language: 'ar'
+                };
+                
+                saveSettings(defaultSettings);
+                loadCompanySettings();
+                showAlert('success', 'تم استعادة الإعدادات الافتراضية');
+            }
+        }
+
+        // ===== Helper Functions =====
+        function checkAuth() {
+            const allowedPages = ['index.html', 'auth/', 'login.html'];
+            const currentPath = window.location.pathname;
+            
+            if (!isLoggedIn() && !allowedPages.some(page => currentPath.includes(page))) {
+                window.location.href = '../index.html';
+                return false;
+            }
+            return true;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mainSidebar');
+            const toggleButton = document.querySelector('.sidebar-toggle');
+            
+            if (sidebar) {
+                const isExpanded = sidebar.classList.toggle('show');
+                toggleButton.setAttribute('aria-expanded', isExpanded);
+                
+                // إضافة overlay على المحتوى الرئيسي عند فتح القائمة على الجوال
+                const mainContent = document.getElementById('mainContent');
+                if (window.innerWidth < 768) {
+                    if (isExpanded) {
+                        const overlay = document.createElement('div');
+                        overlay.className = 'sidebar-overlay';
+                        overlay.onclick = toggleSidebar;
+                        document.body.appendChild(overlay);
+                    } else {
+                        const overlay = document.querySelector('.sidebar-overlay');
+                        if (overlay) overlay.remove();
+                    }
+                }
+            }
+        }
+
+        // ===== Initialize Application =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStorage();
+            
+            if (!checkAuth()) return;
+            
+            loadUserData();
+            loadCompanySettings();
+            
+            // إضافة أحداث التحقق أثناء الكتابة
+            const formFields = document.querySelectorAll('input, select, textarea');
+            formFields.forEach(field => {
+                field.addEventListener('blur', function() {
+                    validateSettingsForm();
+                });
+            });
+            
+            // Initialize dropdowns
+            document.addEventListener('click', function(e) {
+                const dropdowns = document.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    if (!dropdown.contains(e.target)) {
+                        const menu = dropdown.querySelector('.dropdown-menu');
+                        menu.classList.remove('show');
+                        dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+                    }
+                });
+                
+                if (e.target.classList.contains('dropdown-toggle')) {
+                    const menu = e.target.parentElement.querySelector('.dropdown-menu');
+                    const isExpanded = menu.classList.toggle('show');
+                    e.target.setAttribute('aria-expanded', isExpanded);
+                }
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth < 768) {
+                    const sidebar = document.getElementById('mainSidebar');
+                    const toggleBtn = document.querySelector('.sidebar-toggle');
+                    
+                    if (sidebar.classList.contains('show') && 
+                        !sidebar.contains(e.target) && 
+                        !toggleBtn.contains(e.target)) {
+                        toggleSidebar();
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

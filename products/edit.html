@@ -1,41 +1,982 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>تعديل المنتجات</title>
-  <link rel="stylesheet" href="css/main.css"><link rel="stylesheet" href="css/components.css"><link rel="stylesheet" href="css/responsive.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل المنتج - المحاسب المالي</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/modules.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* تحسينات التنسيق الإضافية */
+        .module-form-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .module-form-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            padding: var(--space-6);
+            color: white;
+        }
+
+        .module-form-header h2 {
+            margin: 0;
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .module-form {
+            padding: var(--space-6);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-2);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group label .required {
+            color: var(--danger-color);
+            font-size: var(--text-lg);
+        }
+
+        .form-group .help-text {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+            font-style: italic;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            transition: var(--transition-normal);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(51, 102, 204, 0.1);
+        }
+
+        .form-group input:disabled,
+        .form-group select:disabled {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--space-4);
+            justify-content: flex-end;
+            margin-top: var(--space-8);
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .stock-warning {
+            color: var(--danger-color);
+            font-size: var(--text-sm);
+            margin-top: var(--space-1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .stock-info {
+            color: var(--info-color);
+            font-size: var(--text-sm);
+            margin-top: var(--space-1);
+        }
+
+        @media (max-width: 768px) {
+            .module-form-container {
+                margin: 0 var(--space-3);
+            }
+            
+            .module-form-header {
+                padding: var(--space-4);
+            }
+            
+            .module-form {
+                padding: var(--space-4);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+
+        /* تحسينات للوضع الليلي */
+        @media (prefers-color-scheme: dark) {
+            .module-form-container {
+                background: var(--bg-primary);
+                border: 1px solid var(--border-color);
+            }
+            
+            .module-form-header {
+                background: linear-gradient(135deg, var(--primary-dark) 0%, #2d3748 100%);
+            }
+        }
+
+        /* تحسينات لإمكانية الوصول */
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* تحسينات للشعار */
+        .logo img {
+            max-width: 40px;
+            max-height: 40px;
+            object-fit: contain;
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="تبديل القائمة الجانبية">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="logo">
+                <img src="../assets/images/logo.png" alt="شعار المحاسب المالي" id="headerLogo" onerror="handleLogoError(this)">
+                <span>المحاسب المالي</span>
+            </div>
 
-<header class="app-header">
-  <div class="brand">💼 Financial Accountant</div>
-  <nav>
-    <a href="index.html" class="">الرئيسية</a>
-    <a href="dashboard.html" class="">لوحة التحكم</a>
-    <a href="invoices/list.html">الفواتير</a>
-    <a href="customers/list.html">العملاء</a>
-    <a href="products/list.html">المنتجات</a>
-    <a href="expenses/list.html">المصروفات</a>
-    <a href="reports/financial.html">التقارير</a>
-    <a href="settings/company.html">الإعدادات</a>
-    <a href="auth/login.html" class="btn small">تسجيل الدخول</a>
-  </nav>
-</header>
+            <div class="header-actions">
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar" role="img" aria-label="صورة المستخدم"></div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" aria-label="قائمة المستخدم" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" role="menu">
+                            <a href="#" class="dropdown-item" onclick="logout()" role="menuitem">
+                                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
-  <main class="container">
+    <!-- Sidebar -->
+    <aside class="main-sidebar" id="mainSidebar">
+        <nav class="sidebar-nav" aria-label="القائمة الرئيسية">
+            <ul>
+                <li class="nav-item">
+                    <a href="../dashboard.html">
+                        <i class="fas fa-home"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../invoices/list.html">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>الفواتير</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../customers/list.html">
+                        <i class="fas fa-users"></i>
+                        <span>العملاء</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="list.html" aria-current="page">
+                        <i class="fas fa-box"></i>
+                        <span>المنتجات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../expenses/list.html">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>المصروفات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../reports/financial.html">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>التقارير</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../settings/company.html">
+                        <i class="fas fa-cog"></i>
+                        <span>الإعدادات</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 
-    <div data-entity="products" class="card">
-      <h2>تعديل المنتجات</h2>
-      <form id="form"></form>
-    </div>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1>تعديل المنتج/الخدمة</h1>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="window.history.back()" aria-label="رجوع إلى القائمة">
+                    <i class="fas fa-arrow-right"></i> رجوع
+                </button>
+            </div>
+        </div>
 
-  </main>
+        <!-- Product Form -->
+        <div class="module-form-container">
+            <div class="module-form-header">
+                <h2><i class="fas fa-edit"></i> تعديل المنتج/الخدمة</h2>
+            </div>
+            
+            <form class="module-form" id="productForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">
+                            اسم المنتج/الخدمة
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" id="name" name="name" required aria-required="true">
+                        <div class="help-text">اسم واضح ومعبر عن المنتج أو الخدمة</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="type">
+                            النوع
+                            <span class="required">*</span>
+                        </label>
+                        <select id="type" name="type" required aria-required="true" onchange="toggleStockField()">
+                            <option value="">اختر النوع</option>
+                            <option value="product">منتج</option>
+                            <option value="service">خدمة</option>
+                        </select>
+                    </div>
+                </div>
 
-<footer class="app-footer">
-  <small>© 2025 Financial Accountant App — إصدار تجريبي</small>
-</footer>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="price">
+                            السعر
+                            <span class="required">*</span>
+                        </label>
+                        <div class="input-icon">
+                            <input type="number" id="price" name="price" min="0" step="0.01" required aria-required="true">
+                            <span class="currency-symbol" id="currencySymbol"></span>
+                        </div>
+                        <div class="help-text">سعر البيع للمنتج أو الخدمة</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cost">التكلفة</label>
+                        <div class="input-icon">
+                            <input type="number" id="cost" name="cost" min="0" step="0.01">
+                            <span class="currency-symbol" id="costCurrencySymbol"></span>
+                        </div>
+                        <div class="help-text">تكلفة الشراء أو التصنيع (اختياري)</div>
+                    </div>
+                </div>
 
-  <script defer src="js/helpers.js"></script><script defer src="js/storage.js"></script><script defer src="js/main.js"></script><script defer src="js/products.js"></script>
+                <div class="form-row">
+                    <div class="form-group" id="stockField">
+                        <label for="stock">المخزون</label>
+                        <input type="number" id="stock" name="stock" min="0">
+                        <div class="help-text">الكمية المتاحة في المخزون (للمنتجات فقط)</div>
+                        <div class="stock-warning" id="lowStockWarning" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            المخزون منخفض
+                        </div>
+                        <div class="stock-info" id="stockInfo" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="unit">الوحدة</label>
+                        <input type="text" id="unit" name="unit" placeholder="مثال: قطعة، كيلو، متر">
+                        <div class="help-text">وحدة قياس المنتج (اختياري)</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">الفئة</label>
+                        <input type="text" id="category" name="category" placeholder="مثال: إلكترونيات، ملابس">
+                        <div class="help-text">التصنيف أو الفئة التي ينتمي إليها المنتج</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sku">رقم SKU</label>
+                        <input type="text" id="sku" name="sku" placeholder="SKU123456">
+                        <div class="help-text">رقم تعريف المخزون (Stock Keeping Unit)</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="description">الوصف</label>
+                        <textarea id="description" name="description" rows="4" placeholder="وصف تفصيلي للمنتج أو الخدمة..."></textarea>
+                        <div class="help-text">وصف كامل للمنتج أو الخدمة ومميزاتها</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="isActive">حالة المنتج</label>
+                        <div class="checkbox-container">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="isActive" name="isActive" checked>
+                                <span class="checkmark"></span>
+                                منتج نشط
+                            </label>
+                        </div>
+                        <div class="help-text">إظهار أو إخفاء المنتج من القوائم</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taxable">خاضع للضريبة</label>
+                        <div class="checkbox-container">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="taxable" name="taxable" checked>
+                                <span class="checkmark"></span>
+                                خاضع للضريبة
+                            </label>
+                        </div>
+                        <div class="help-text">تطبيق ضريبة القيمة المضافة على هذا المنتج</div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="confirmCancel()" aria-label="إلغاء التعديلات">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()" aria-label="حذف المنتج">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="validateAndUpdateProduct()" aria-label="حفظ التعديلات">
+                        <i class="fas fa-save"></i> حفظ التعديلات
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // ===== Authentication Functions =====
+        function isLoggedIn() {
+            return getCurrentUser() !== null;
+        }
+
+        function getCurrentUser() {
+            try {
+                return JSON.parse(localStorage.getItem('financial_app_current_user')) || null;
+            } catch (error) {
+                console.error('خطأ في تحميل بيانات المستخدم:', error);
+                return null;
+            }
+        }
+
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('financial_app_current_user');
+                window.location.href = '../index.html';
+            }
+        }
+
+        // ===== Alert Function =====
+        function showAlert(type, message, duration = 5000) {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.setAttribute('role', 'alert');
+            alert.setAttribute('aria-live', 'assertive');
+            alert.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" aria-label="إغلاق التنبيه">×</button>
+            `;
+            
+            // Add styles if not already added
+            if (!document.querySelector('#alert-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'alert-styles';
+                styles.textContent = `
+                    .alert {
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        color: white;
+                        font-weight: 500;
+                        z-index: 1000;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        min-width: 300px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        animation: slideDown 0.3s ease;
+                    }
+                    
+                    .alert-success { background-color: #28a745; }
+                    .alert-error { background-color: #dc3545; }
+                    .alert-warning { background-color: #ffc107; color: #000; }
+                    .alert-info { background-color: #17a2b8; }
+                    
+                    .alert button {
+                        background: none;
+                        border: none;
+                        color: inherit;
+                        font-size: 18px;
+                        cursor: pointer;
+                        margin-right: 10px;
+                    }
+                    
+                    @keyframes slideDown {
+                        from { transform: translate(-50%, -100%); opacity: 0; }
+                        to { transform: translate(-50%, 0); opacity: 1; }
+                    }
+                    
+                    @media (max-width: 480px) {
+                        .alert {
+                            min-width: auto;
+                            left: 20px;
+                            right: 20px;
+                            transform: none;
+                        }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+            
+            document.body.appendChild(alert);
+            
+            // Auto remove after duration
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.remove();
+                }
+            }, duration);
+        }
+
+        // ===== User Data Functions =====
+        function loadUserData() {
+            const user = getCurrentUser();
+            if (!user) return;
+            
+            // Create user avatar
+            const userAvatarElement = document.getElementById('userAvatar');
+            if (userAvatarElement) {
+                const initials = getUserInitials(user.fullName);
+                const randomColor = getRandomColor();
+                
+                userAvatarElement.innerHTML = initials;
+                userAvatarElement.style.backgroundColor = randomColor;
+                userAvatarElement.style.display = 'flex';
+                userAvatarElement.style.alignItems = 'center';
+                userAvatarElement.style.justifyContent = 'center';
+                userAvatarElement.style.color = 'white';
+                userAvatarElement.style.fontWeight = '600';
+                userAvatarElement.style.borderRadius = '50%';
+                userAvatarElement.style.width = '40px';
+                userAvatarElement.style.height = '40px';
+            }
+        }
+
+        function getUserInitials(name) {
+            if (!name) return 'U';
+            return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function getRandomColor() {
+            const colors = [
+                '#3366cc', '#dc3545', '#28a745', '#ffc107', 
+                '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // ===== Storage Functions =====
+        function initializeStorage() {
+            // Check if storage is already initialized
+            const isInitialized = localStorage.getItem('financial_app_initialized');
+            
+            if (!isInitialized) {
+                try {
+                    if (!localStorage.getItem('financial_app_users')) {
+                        localStorage.setItem('financial_app_users', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_customers')) {
+                        localStorage.setItem('financial_app_customers', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_products')) {
+                        localStorage.setItem('financial_app_products', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_invoices')) {
+                        localStorage.setItem('financial_app_invoices', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_expenses')) {
+                        localStorage.setItem('financial_app_expenses', JSON.stringify([]));
+                    }
+                    
+                    if (!localStorage.getItem('financial_app_settings')) {
+                        localStorage.setItem('financial_app_settings', JSON.stringify({
+                            currency: 'ريال يمني',
+                            currency_code: 'ر.ي',
+                            tax_rate: 15,
+                            company_name: 'شركتي',
+                            company_logo: '',
+                            company_tax_number: '',
+                            company_address: '',
+                            company_phone: '',
+                            company_email: '',
+                            invoice_prefix: 'INV-',
+                            language: 'ar'
+                        }));
+                    }
+                    
+                    localStorage.setItem('financial_app_initialized', 'true');
+                } catch (error) {
+                    console.error('خطأ في تهيئة التخزين المحلي:', error);
+                    showAlert('error', 'حدث خطأ في تهيئة النظام. يرجى تحديث الصفحة.');
+                }
+            }
+        }
+
+        function getData(key) {
+            try {
+                const itemName = `financial_app_${key}`;
+                const data = localStorage.getItem(itemName);
+                
+                if (!data) {
+                    console.warn(`البيانات لـ ${itemName} غير موجودة`);
+                    return key === 'settings' ? {} : [];
+                }
+                
+                return JSON.parse(data);
+                
+            } catch (error) {
+                console.error(`خطأ في تحميل البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في تحميل البيانات لـ ${key}`);
+                return key === 'settings' ? {} : [];
+            }
+        }
+
+        function saveData(key, data) {
+            try {
+                localStorage.setItem(`financial_app_${key}`, JSON.stringify(data));
+                return true;
+            } catch (error) {
+                console.error(`خطأ في حفظ البيانات لـ ${key}:`, error);
+                showAlert('error', `خطأ في حفظ البيانات لـ ${key}`);
+                return false;
+            }
+        }
+
+        // ===== Settings Functions =====
+        function getSettings() {
+            const settings = getData('settings');
+            return {
+                currency: 'ريال يمني',
+                currency_code: 'ر.ي',
+                tax_rate: 15,
+                company_name: 'شركتي',
+                company_logo: '',
+                company_tax_number: '',
+                company_address: '',
+                company_phone: '',
+                company_email: '',
+                invoice_prefix: 'INV-',
+                language: 'ar',
+                ...settings
+            };
+        }
+
+        function getCurrencySymbol() {
+            const settings = getSettings();
+            return settings.currency_code || 'ر.ي';
+        }
+
+        function formatCurrency(amount) {
+            const symbol = getCurrencySymbol();
+            
+            if (amount === undefined || amount === null || isNaN(amount)) {
+                return `0.00 ${symbol}`;
+            }
+            
+            // تنسيق الرقم مع فواصل الآلاف
+            const formattedAmount = parseFloat(amount).toLocaleString('ar-EG', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            return `${formattedAmount} ${symbol}`;
+        }
+
+        // ===== Logo Functions =====
+        function handleLogoError(img) {
+            img.onerror = null;
+            img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzNjZjYyIgLz48dGV4dCB4PSI5MCUiIHk9IjUwJSIgZHk9Ii4zNWVmIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjgiPuetlDwvdGV4dD48L3N2Zz4=';
+        }
+
+        // ===== Product Functions =====
+        let currentProduct = null;
+
+        function loadProductData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = parseInt(urlParams.get('id'));
+            
+            if (!productId || isNaN(productId)) {
+                showAlert('error', 'معرف المنتج غير صحيح');
+                setTimeout(() => window.location.href = 'list.html', 2000);
+                return null;
+            }
+            
+            const products = getData('products');
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                showAlert('error', 'المنتج/الخدمة غير موجود');
+                setTimeout(() => window.location.href = 'list.html', 2000);
+                return null;
+            }
+            
+            return product;
+        }
+
+        function loadProductForEdit() {
+            const product = loadProductData();
+            if (!product) return;
+            
+            currentProduct = product;
+            
+            // تعبئة البيانات في النموذج
+            document.getElementById('name').value = product.name || '';
+            document.getElementById('type').value = product.type || '';
+            document.getElementById('price').value = product.price || 0;
+            document.getElementById('cost').value = product.cost || '';
+            document.getElementById('stock').value = product.stock || '';
+            document.getElementById('unit').value = product.unit || '';
+            document.getElementById('category').value = product.category || '';
+            document.getElementById('sku').value = product.sku || '';
+            document.getElementById('description').value = product.description || '';
+            document.getElementById('isActive').checked = product.isActive !== false;
+            document.getElementById('taxable').checked = product.taxable !== false;
+            
+            // تحديث رموز العملة
+            document.getElementById('currencySymbol').textContent = getCurrencySymbol();
+            document.getElementById('costCurrencySymbol').textContent = getCurrencySymbol();
+            
+            // تحديث حالة حقل المخزون
+            toggleStockField();
+            
+            // تحديث معلومات المخزون
+            updateStockInfo();
+        }
+
+        function toggleStockField() {
+            const type = document.getElementById('type').value;
+            const stockField = document.getElementById('stockField');
+            
+            if (type === 'service') {
+                stockField.style.display = 'none';
+                document.getElementById('stock').value = '';
+            } else {
+                stockField.style.display = 'block';
+            }
+        }
+
+        function updateStockInfo() {
+            const stock = parseInt(document.getElementById('stock').value) || 0;
+            const warningElement = document.getElementById('lowStockWarning');
+            const infoElement = document.getElementById('stockInfo');
+            
+            if (stock === 0) {
+                warningElement.style.display = 'flex';
+                warningElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i> نفذ من المخزون';
+                infoElement.style.display = 'none';
+            } else if (stock < 10) {
+                warningElement.style.display = 'flex';
+                warningElement.innerHTML = `<i class="fas fa-exclamation-triangle"></i> المخزون منخفض (${stock} فقط)`;
+                infoElement.style.display = 'none';
+            } else if (stock < 50) {
+                warningElement.style.display = 'none';
+                infoElement.style.display = 'block';
+                infoElement.textContent = `المخزون متوسط (${stock} متاح)`;
+            } else {
+                warningElement.style.display = 'none';
+                infoElement.style.display = 'block';
+                infoElement.textContent = `المخزون مرتفع (${stock} متاح)`;
+            }
+        }
+
+        function validateAndUpdateProduct() {
+            if (!currentProduct) {
+                showAlert('error', 'لم يتم تحميل بيانات المنتج');
+                return;
+            }
+            
+            const formData = {
+                id: currentProduct.id,
+                name: document.getElementById('name').value.trim(),
+                type: document.getElementById('type').value,
+                price: parseFloat(document.getElementById('price').value) || 0,
+                cost: parseFloat(document.getElementById('cost').value) || 0,
+                stock: document.getElementById('stock').value ? parseInt(document.getElementById('stock').value) : null,
+                unit: document.getElementById('unit').value.trim(),
+                category: document.getElementById('category').value.trim(),
+                sku: document.getElementById('sku').value.trim(),
+                description: document.getElementById('description').value.trim(),
+                isActive: document.getElementById('isActive').checked,
+                taxable: document.getElementById('taxable').checked,
+                updatedAt: new Date().toISOString()
+            };
+            
+            // التحقق من صحة البيانات
+            if (!formData.name) {
+                showAlert('error', 'يرجى إدخال اسم المنتج/الخدمة');
+                document.getElementById('name').focus();
+                return;
+            }
+            
+            if (!formData.type) {
+                showAlert('error', 'يرجى اختيار نوع المنتج/الخدمة');
+                document.getElementById('type').focus();
+                return;
+            }
+            
+            if (formData.price <= 0) {
+                showAlert('error', 'يرجى إدخال سعر صحيح أكبر من الصفر');
+                document.getElementById('price').focus();
+                return;
+            }
+            
+            if (formData.cost < 0) {
+                showAlert('error', 'يرجى إدخال تكلفة صحيحة');
+                document.getElementById('cost').focus();
+                return;
+            }
+            
+            // إذا كان نوعه خدمة، إزالة المخزون
+            if (formData.type === 'service') {
+                formData.stock = null;
+            }
+            
+            // الحفاظ على البيانات الموجودة
+            formData.createdAt = currentProduct.createdAt || new Date().toISOString();
+            
+            updateProduct(formData);
+        }
+
+        function updateProduct(productData) {
+            const products = getData('products');
+            const index = products.findIndex(p => p.id === productData.id);
+            
+            if (index === -1) {
+                showAlert('error', 'المنتج غير موجود');
+                return;
+            }
+            
+            // تحديث المنتج
+            products[index] = { ...products[index], ...productData };
+            
+            if (saveData('products', products)) {
+                showAlert('success', 'تم تحديث المنتج/الخدمة بنجاح');
+                setTimeout(() => {
+                    window.location.href = 'list.html';
+                }, 1500);
+            } else {
+                showAlert('error', 'حدث خطأ أثناء حفظ التعديلات');
+            }
+        }
+
+        function confirmDelete() {
+            if (!currentProduct) return;
+            
+            const productType = currentProduct.type === 'service' ? 'الخدمة' : 'المنتج';
+            const message = `هل أنت متأكد من حذف ${productType} "${currentProduct.name}"؟\nهذا الإجراء لا يمكن التراجع عنه.`;
+            
+            if (confirm(message)) {
+                deleteProduct(currentProduct.id);
+            }
+        }
+
+        function deleteProduct(productId) {
+            const products = getData('products');
+            const updatedProducts = products.filter(p => p.id !== productId);
+            
+            if (saveData('products', updatedProducts)) {
+                showAlert('success', 'تم حذف المنتج/الخدمة بنجاح');
+                setTimeout(() => {
+                    window.location.href = 'list.html';
+                }, 1500);
+            } else {
+                showAlert('error', 'حدث خطأ أثناء الحذف');
+            }
+        }
+
+        function confirmCancel() {
+            if (confirm('هل تريد تجاهل التعديلات والعودة إلى القائمة؟')) {
+                window.location.href = 'list.html';
+            }
+        }
+
+        // ===== Helper Functions =====
+        function checkAuth() {
+            const allowedPages = ['index.html', 'auth/', 'login.html'];
+            const currentPath = window.location.pathname;
+            
+            if (!isLoggedIn() && !allowedPages.some(page => currentPath.includes(page))) {
+                window.location.href = '../index.html';
+                return false;
+            }
+            return true;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mainSidebar');
+            const toggleButton = document.querySelector('.sidebar-toggle');
+            
+            if (sidebar) {
+                const isExpanded = sidebar.classList.toggle('show');
+                toggleButton.setAttribute('aria-expanded', isExpanded);
+                
+                // إضافة overlay على المحتوى الرئيسي عند فتح القائمة على الجوال
+                const mainContent = document.getElementById('mainContent');
+                if (window.innerWidth < 768) {
+                    if (isExpanded) {
+                        const overlay = document.createElement('div');
+                        overlay.className = 'sidebar-overlay';
+                        overlay.onclick = toggleSidebar;
+                        document.body.appendChild(overlay);
+                    } else {
+                        const overlay = document.querySelector('.sidebar-overlay');
+                        if (overlay) overlay.remove();
+                    }
+                }
+            }
+        }
+
+        // Update logo in header
+        function updateHeaderLogo() {
+            const settings = getSettings();
+            const headerLogo = document.getElementById('headerLogo');
+            
+            if (settings.company_logo && headerLogo) {
+                headerLogo.src = settings.company_logo;
+            }
+        }
+
+        // ===== Initialize Application =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStorage();
+            
+            if (!checkAuth()) return;
+            
+            loadUserData();
+            updateHeaderLogo();
+            
+            // تحميل بيانات المنتج للتعديل
+            loadProductForEdit();
+            
+            // إضافة event listeners
+            document.getElementById('stock').addEventListener('input', updateStockInfo);
+            
+            // Initialize dropdowns
+            document.addEventListener('click', function(e) {
+                const dropdowns = document.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    if (!dropdown.contains(e.target)) {
+                        const menu = dropdown.querySelector('.dropdown-menu');
+                        if (menu) {
+                            menu.classList.remove('show');
+                            dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+                        }
+                    }
+                });
+                
+                if (e.target.classList.contains('dropdown-toggle')) {
+                    const menu = e.target.closest('.dropdown').querySelector('.dropdown-menu');
+                    if (menu) {
+                        const isExpanded = menu.classList.toggle('show');
+                        e.target.setAttribute('aria-expanded', isExpanded);
+                    }
+                }
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth < 768) {
+                    const sidebar = document.getElementById('mainSidebar');
+                    const toggleBtn = document.querySelector('.sidebar-toggle');
+                    
+                    if (sidebar && sidebar.classList.contains('show') && 
+                        !sidebar.contains(e.target) && 
+                        !toggleBtn.contains(e.target)) {
+                        toggleSidebar();
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

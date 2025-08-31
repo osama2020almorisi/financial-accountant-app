@@ -4,916 +4,1944 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - المحاسب المالي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/reports.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --success-color: #4cc9f0;
-            --danger-color: #f72585;
-            --warning-color: #f77f00;
-            --dark-color: #2b2d42;
-            --light-color: #f8f9fa;
-            --gray-color: #6c757d;
-            --border-color: #dee2e6;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+        /* أنماط مخصصة لقائمة إدارة البيانات */
+        .data-management-section {
+            margin: 20px 0;
+            padding: 0 15px;
         }
-
-        * {
+        
+        .data-management-card {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #ffd166;
+            margin-bottom: 20px;
+        }
+        
+        .data-management-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        
+        .data-management-header i {
+            font-size: 24px;
+            color: #856404;
+            margin-left: 10px;
+        }
+        
+        .data-management-header h3 {
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
+            color: #856404;
+            font-weight: 600;
         }
-
-        body {
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-            font-family: 'Cairo', sans-serif;
+        
+        .data-management-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
         }
-
-        .dashboard-page {
+        
+        .data-management-btn {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* تحسينات الهيدر */
-        .dashboard-header {
-            background-color: white;
-            box-shadow: var(--shadow);
-            padding: 0.75rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .sidebar-toggle {
-            display: flex;
-            flex-direction: column;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-            margin-left: 0.5rem;
-        }
-
-        .sidebar-toggle span {
-            width: 25px;
-            height: 3px;
-            background-color: var(--dark-color);
-            margin: 2px 0;
-            border-radius: 2px;
-            transition: var(--transition);
-        }
-
-        .sidebar-toggle.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .sidebar-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .sidebar-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -6px);
-        }
-
-        .header-logo h1 {
-            margin-bottom: 0;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-
-        .header-search {
-            flex: 1;
-            max-width: 400px;
-            margin: 0 1rem;
-            position: relative;
-        }
-
-        .header-search input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 2rem;
-            font-size: 0.9rem;
-            transition: var(--transition);
-        }
-
-        .header-search input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-btn {
-            position: relative;
-            background: none;
-            border: none;
-            cursor: pointer;
-            margin-left: 1rem;
-            font-size: 1.25rem;
-            color: var(--gray-color);
-            transition: var(--transition);
-        }
-
-        .notification-btn:hover {
-            color: var(--primary-color);
-        }
-
-        .badge {
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            background-color: var(--danger-color);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.75rem;
-            display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            margin-right: 0.5rem;
+            background: white;
+            border-radius: 10px;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #f8f9fa;
             cursor: pointer;
         }
-
-        .user-profile span {
-            margin-left: 0.5rem;
-            font-weight: 500;
-        }
-
-        .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--border-color);
-        }
-
-        /* تحسينات المحتوى الرئيسي */
-        .main-container {
-            display: flex;
-            flex: 1;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-
-        .overlay.active {
-            display: block;
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: var(--dark-color);
-            color: white;
-            padding: 1.5rem 0;
-            transition: var(--transition);
-            overflow-y: auto;
-        }
-
-        .sidebar-nav {
-            padding: 0 1rem;
-        }
-
-        .nav-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .nav-section h3 {
-            color: var(--gray-color);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-            padding: 0 1rem;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            color: white;
-            border-radius: 0.5rem;
-            margin-bottom: 0.25rem;
-            transition: var(--transition);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .nav-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-item.active {
-            background-color: var(--primary-color);
-        }
-
-        .nav-item .icon {
-            margin-left: 0.5rem;
-            font-size: 1.25rem;
-        }
-
-        .nav-item.logout {
-            color: var(--danger-color);
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 1.5rem;
-            background-color: #f8f9fa;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .page-header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-        }
-
-        .dashboard-content {
-            margin-top: 1.5rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: var(--shadow);
-            padding: 1.25rem;
-            display: flex;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .stat-card:hover {
+        
+        .data-management-btn:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #ffeaa7;
         }
-
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-left: 1rem;
-            color: var(--primary-color);
-            flex-shrink: 0;
+        
+        .data-management-btn i {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: #ffc107;
         }
-
-        .stat-info {
-            flex: 1;
+        
+        .data-management-btn.backup i {
+            color: #28a745;
         }
-
-        .stat-info h3 {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--gray-color);
-            font-weight: 500;
+        
+        .data-management-btn.restore i {
+            color: #17a2b8;
         }
-
-        .stat-value {
-            font-size: 1.5rem;
+        
+        .data-management-btn.check i {
+            color: #6f42c1;
+        }
+        
+        .data-management-btn.debug i {
+            color: #dc3545;
+        }
+        
+        .data-management-btn h4 {
+            margin: 0 0 8px 0;
+            color: #343a40;
+            font-weight: 600;
+        }
+        
+        .data-management-btn p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        
+        .data-management-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 193, 7, 0.3);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .data-stat {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            min-width: 120px;
+        }
+        
+        .data-stat h4 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #343a40;
             font-weight: 700;
-            margin-bottom: 0.25rem;
-            color: var(--dark-color);
         }
-
-        .stat-change {
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
+        
+        .data-stat p {
+            margin: 5px 0 0 0;
+            color: #6c757d;
+            font-size: 0.85rem;
         }
-
-        .stat-change.positive {
-            color: var(--success-color);
+        
+        /* تعديلات للوضع الليلي */
+        .dark-mode .data-management-card {
+            background: linear-gradient(135deg, #343a40 0%, #23272b 100%);
+            border-color: #555;
         }
-
-        .stat-change.negative {
-            color: var(--danger-color);
+        
+        .dark-mode .data-management-btn {
+            background: #2d3035;
+            border-color: #444;
         }
-
-        .charts-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+        
+        .dark-mode .data-management-btn h4 {
+            color: #f8f9fa;
         }
-
-        .chart-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: var(--shadow);
-            padding: 1.25rem;
+        
+        .dark-mode .data-stat {
+            background: #2d3035;
         }
-
-        .chart-card h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 1rem;
+        
+        .dark-mode .data-stat h4 {
+            color: #f8f9fa;
         }
-
-        .chart-placeholder {
-            height: 250px;
-            background-color: #f8f9fa;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray-color);
-            font-weight: 500;
-        }
-
-        .recent-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-
-        .recent-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: var(--shadow);
-            padding: 1.25rem;
-        }
-
-        .recent-card h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 1rem;
-        }
-
-        .table-container {
-            overflow-x: auto;
-            margin-bottom: 1rem;
-            border-radius: 0.5rem;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 500px;
-        }
-
-        .data-table th, .data-table td {
-            padding: 0.75rem;
-            text-align: right;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .data-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: var(--gray-color);
-        }
-
-        .data-table tr:hover {
-            background-color: rgba(67, 97, 238, 0.05);
-        }
-
-        .status {
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .status.paid {
-            background-color: rgba(76, 201, 240, 0.15);
-            color: var(--success-color);
-        }
-
-        .status.pending {
-            background-color: rgba(247, 127, 0, 0.15);
-            color: var(--warning-color);
-        }
-
-        .status.overdue {
-            background-color: rgba(247, 37, 133, 0.15);
-            color: var(--danger-color);
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .table-actions {
-            text-align: left;
-        }
-
-        .table-actions a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .table-actions a:hover {
-            color: var(--secondary-color);
-            text-decoration: underline;
-        }
-
-        /* تنسيقات الاستجابة للشاشات الصغيرة */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 220px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
+        
+        /* أنماط الاستجابة للشاشات المختلفة */
         @media (max-width: 768px) {
-            .header-search {
-                display: none;
-            }
-            
-            .sidebar {
-                position: fixed;
-                top: 0;
-                right: -280px;
-                height: 100vh;
-                z-index: 1000;
-                width: 280px;
-                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            }
-            
-            .sidebar.open {
-                right: 0;
-            }
-            
-            .stats-grid {
+            .data-management-actions {
                 grid-template-columns: 1fr;
             }
             
-            .charts-section,
-            .recent-section {
-                grid-template-columns: 1fr;
-            }
-            
-            .main-content {
-                padding: 1rem;
-            }
-            
-            .page-header {
+            .data-management-stats {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: center;
             }
             
-            .header-actions {
-                margin-top: 1rem;
+            .data-stat {
                 width: 100%;
-            }
-            
-            .page-header .btn-primary {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .header-logo h1 {
-                font-size: 1.25rem;
-            }
-            
-            .header-actions .user-profile span {
-                display: none;
-            }
-            
-            .stat-card {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .stat-icon {
-                margin-left: 0;
-                margin-bottom: 0.5rem;
-            }
-            
-            .chart-placeholder {
-                height: 200px;
-            }
-            
-            .data-table th, .data-table td {
-                padding: 0.5rem;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .header-container {
-                padding: 0 0.5rem;
-            }
-            
-            .header-logo h1 {
-                font-size: 1.1rem;
-            }
-            
-            .notification-btn {
-                margin-left: 0.5rem;
-            }
-            
-            .main-content {
-                padding: 0.75rem;
-            }
-            
-            .stat-card {
-                padding: 1rem;
-            }
-            
-            .chart-card, .recent-card {
-                padding: 1rem;
+                max-width: 200px;
             }
         }
     </style>
 </head>
-<body class="dashboard-page">
-    <header class="dashboard-header">
-        <div class="header-container">
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <span></span>
-                <span></span>
-                <span></span>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="تبديل القائمة الجانبية">
+                <i class="fas fa-bars"></i>
             </button>
             
-            <div class="header-logo">
-                <h1>المحاسب المالي</h1>
-            </div>
-
-            <div class="header-search">
-                <input type="text" placeholder="بحث...">
+            <div class="logo">
+                <img src="assets/images/logo.png" alt="شعار المحاسب المالي" id="headerLogo" onerror="handleLogoError(this)">
+                <span>المحاسب المالي</span>
             </div>
 
             <div class="header-actions">
-                <button class="notification-btn">
-                    <span class="icon">🔔</span>
-                    <span class="badge">3</span>
-                </button>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="بحث..." id="globalSearch" onkeyup="handleGlobalSearch(event)">
+                </div>
                 
-                <div class="user-profile">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM2Yzc1N2QiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMXYtMmE0IDQgMCAwIDAtNC00SDhhNCA0IDAgMCAwLTQgNHYyIj48L3BhdGg+PGNpcmNsZSBjeD0iMTIiIGN5PSI3IiByPSI0Ij48L2NpcmNsZT48L3N2Zz4=" alt="صورة المستخدم">
-                    <span>محمد أحمد</span>
+                <div class="notifications">
+                    <button class="notification-btn" onclick="toggleNotifications()" aria-label="الإشعارات">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count" id="notificationCount">0</span>
+                    </button>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h4>الإشعارات</h4>
+                            <button class="mark-all-read" onclick="markAllNotificationsAsRead()">تعيين الكل كمقروء</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <!-- سيتم ملؤه بالجافاسكريبت -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <div class="user-info">
+                        <span class="user-name" id="userName"></span>
+                        <span class="user-role" id="userRole">مالك</span>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" aria-label="قائمة المستخدم">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="profile.html" class="dropdown-item">
+                                <i class="fas fa-user"></i> الملف الشخصي
+                            </a>
+                            <a href="settings/account.html" class="dropdown-item">
+                                <i class="fas fa-cog"></i> الإعدادات
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" onclick="toggleDarkMode()">
+                                <i class="fas fa-moon"></i> الوضع الليلي
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="main-container">
-        <div class="overlay" id="overlay"></div>
-        <aside class="sidebar" id="sidebar">
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <h3>الرئيسية</h3>
-                    <a href="dashboard.html" class="nav-item active">
-                        <span class="icon">📊</span>
+    <!-- Sidebar -->
+    <aside class="main-sidebar" id="mainSidebar">
+        <nav class="sidebar-nav">
+            <div class="sidebar-search">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="بحث سريع..." id="sidebarSearch" onkeyup="handleSidebarSearch(event)">
+            </div>
+            
+            <ul id="sidebarMenu">
+                <li class="nav-item active">
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i>
                         <span>لوحة التحكم</span>
                     </a>
+                </li>
+                <li class="nav-item">
+                    <a href="invoices/list.html">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>الفواتير</span>
+                        <span class="badge" id="pendingInvoicesBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="customers/list.html">
+                        <i class="fas fa-users"></i>
+                        <span>العملاء</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="products/list.html">
+                        <i class="fas fa-box"></i>
+                        <span>المنتجات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="expenses/list.html">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>المصروفات</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports/financial.html">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>التقارير</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings/company.html">
+                        <i class="fas fa-cog"></i>
+                        <span>الإعدادات</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- قسم إدارة البيانات المطور -->
+        <div class="data-management-section">
+            <div class="data-management-card">
+                <div class="data-management-header">
+                    <i class="fas fa-database"></i>
+                    <h3>إدارة البيانات</h3>
                 </div>
-
-                <div class="nav-section">
-                    <h3>الفواتير</h3>
-                    <a href="invoices/list.html" class="nav-item">
-                        <span class="icon">🧾</span>
-                        <span>قائمة الفواتير</span>
-                    </a>
-                    <a href="invoices/create.html" class="nav-item">
-                        <span class="icon">➕</span>
-                        <span>إنشاء فاتورة</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <h3>العملاء</h3>
-                    <a href="customers/list.html" class="nav-item">
-                        <span class="icon">👥</span>
-                        <span>قائمة العملاء</span>
-                    </a>
-                    <a href="customers/create.html" class="nav-item">
-                        <span class="icon">➕</span>
-                        <span>إضافة عميل</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <h3>المنتجات</h3>
-                    <a href="products/list.html" class="nav-item">
-                        <span class="icon">📦</span>
-                        <span>قائمة المنتجات</span>
-                    </a>
-                    <a href="products/create.html" class="nav-item">
-                        <span class="icon">➕</span>
-                        <span>إضافة منتج</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <h3>المصروفات</h3>
-                    <a href="expenses/list.html" class="nav-item">
-                        <span class="icon">💸</span>
-                        <span>قائمة المصروفات</span>
-                    </a>
-                    <a href="expenses/create.html" class="nav-item">
-                        <span class="icon">➕</span>
-                        <span>إضافة مصروف</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <h3>التقارير</h3>
-                    <a href="reports/financial.html" class="nav-item">
-                        <span class="icon">📈</span>
-                        <span>تقارير مالية</span>
-                    </a>
-                    <a href="reports/sales.html" class="nav-item">
-                        <span class="icon">💰</span>
-                        <span>تقارير المبيعات</span>
-                    </a>
-                    <a href="reports/tax.html" class="nav-item">
-                        <span class="icon">📋</span>
-                        <span>تقارير الضرائب</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <h3>الإعدادات</h3>
-                    <a href="settings/company.html" class="nav-item">
-                        <span class="icon">🏢</span>
-                        <span>إعدادات الشركة</span>
-                    </a>
-                    <a href="settings/users.html" class="nav-item">
-                        <span class="icon">👤</span>
-                        <span>المستخدمين</span>
-                    </a>
-                    <a href="settings/preferences.html" class="nav-item">
-                        <span class="icon">⚙️</span>
-                        <span>التفضيلات</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <a href="auth/login.html" class="nav-item logout">
-                        <span class="icon">🚪</span>
-                        <span>تسجيل الخروج</span>
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
-        <main class="main-content">
-            <div class="page-header">
-                <h1>لوحة التحكم</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary">إنشاء فاتورة</button>
-                </div>
-            </div>
-
-            <div class="dashboard-content">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">💰</div>
-                        <div class="stat-info">
-                            <h3>الإيرادات</h3>
-                            <p class="stat-value">25,000 ر.س</p>
-                            <p class="stat-change positive">+12% عن الشهر الماضي</p>
-                        </div>
+                
+                <div class="data-management-actions">
+                    <div class="data-management-btn backup" onclick="backupData()">
+                        <i class="fas fa-download"></i>
+                        <h4>نسخ احتياطي</h4>
+                        <p>حفظ نسخة من جميع البيانات في ملف</p>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon">💸</div>
-                        <div class="stat-info">
-                            <h3>المصروفات</h3>
-                            <p class="stat-value">8,500 ر.س</p>
-                            <p class="stat-change negative">+5% عن الشهر الماضي</p>
-                        </div>
+                    
+                    <div class="data-management-btn restore" onclick="restoreData()">
+                        <i class="fas fa-upload"></i>
+                        <h4>استعادة البيانات</h4>
+                        <p>استعادة البيانات من نسخة احتياطية</p>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon">📊</div>
-                        <div class="stat-info">
-                            <h3>صافي الربح</h3>
-                            <p class="stat-value">16,500 ر.س</p>
-                            <p class="stat-change positive">+15% عن الشهر الماضي</p>
-                        </div>
+                    
+                    <div class="data-management-btn check" onclick="checkCurrentData()">
+                        <i class="fas fa-search"></i>
+                        <h4>فحص البيانات</h4>
+                        <p>فحص سلامة واكتمال البيانات</p>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon">🧾</div>
-                        <div class="stat-info">
-                            <h3>الفواتير</h3>
-                            <p class="stat-value">42 فاتورة</p>
-                            <p class="stat-change">8 فواتير معلقة</p>
-                        </div>
+                    
+                    <div class="data-management-btn debug" onclick="debugStorage()">
+                        <i class="fas fa-bug"></i>
+                        <h4>التصحيح</h4>
+                        <p>فحص وإصلاح مشاكل التخزين</p>
                     </div>
                 </div>
-
-                <div class="charts-section">
-                    <div class="chart-card">
-                        <h3>الإيرادات والمصروفات</h3>
-                        <div class="chart-placeholder">
-                            <p>رسم بياني سيظهر هنا</p>
-                        </div>
+                
+                <div class="data-management-stats">
+                    <div class="data-stat">
+                        <h4 id="totalStorageItems">0</h4>
+                        <p>عنصر مخزن</p>
                     </div>
-
-                    <div class="chart-card">
-                        <h3>أفضل العملاء</h3>
-                        <div class="chart-placeholder">
-                            <p>رسم بياني سيظهر هنا</p>
-                        </div>
+                    
+                    <div class="data-stat">
+                        <h4 id="storageSize">0KB</h4>
+                        <p>حجم التخزين</p>
                     </div>
-                </div>
-
-                <div class="recent-section">
-                    <div class="recent-card">
-                        <h3>آخر الفواتير</h3>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>رقم الفاتورة</th>
-                                        <th>العميل</th>
-                                        <th>التاريخ</th>
-                                        <th>المبلغ</th>
-                                        <th>الحالة</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>INV-2023-001</td>
-                                        <td>شركة التقنية المحدودة</td>
-                                        <td>2023-10-15</td>
-                                        <td>5,000 ر.س</td>
-                                        <td><span class="status paid">مدفوعة</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>INV-2023-002</td>
-                                        <td>أحمد محمد</td>
-                                        <td>2023-10-14</td>
-                                        <td>3,200 ر.س</td>
-                                        <td><span class="status pending">معلقة</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>INV-2023-003</td>
-                                        <td>مؤسسة النهضة</td>
-                                        <td>2023-10-13</td>
-                                        <td>7,800 ر.س</td>
-                                        <td><span class="status paid">مدفوعة</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>INV-2023-004</td>
-                                        <td>عبدالله سعيد</td>
-                                        <td>2023-10-12</td>
-                                        <td>2,500 ر.س</td>
-                                        <td><span class="status overdue">متأخرة</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="table-actions">
-                            <a href="invoices/list.html">عرض جميع الفواتير</a>
-                        </div>
-                    </div>
-
-                    <div class="recent-card">
-                        <h3>آخر المصروفات</h3>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>التاريخ</th>
-                                        <th>الوصف</th>
-                                        <th>المبلغ</th>
-                                        <th>الفئة</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>2023-10-15</td>
-                                        <td>فاتورة كهرباء</td>
-                                        <td>450 ر.س</td>
-                                        <td>مرافق</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-10-14</td>
-                                        <td>شراء مواد مكتبية</td>
-                                        <td>320 ر.س</td>
-                                        <td>مصاريف مكتب</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-10-13</td>
-                                        <td>إعلانات على الإنترنت</td>
-                                        <td>1,200 ر.س</td>
-                                        <td>تسويق</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-10-12</td>
-                                        <td>صيانة المعدات</td>
-                                        <td>650 ر.س</td>
-                                        <td>صيانة</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="table-actions">
-                            <a href="expenses/list.html">عرض جميع المصروفات</a>
-                        </div>
+                    
+                    <div class="data-stat">
+                        <h4 id="lastBackupStat">-</h4>
+                        <p>آخر نسخة احتياطية</p>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="system-status">
+                <div class="status-indicator" id="systemStatus"></div>
+                <span>حالة النظام</span>
+            </div>
+            <div class="app-version">الإصدار 1.2.0</div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1>لوحة التحكم</h1>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="refreshData()" title="تحديث البيانات">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+  
+                <button class="btn btn-primary" onclick="quickAdd('invoice')">
+                    <i class="fas fa-plus"></i> فاتورة جديدة
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalInvoicesCount">0</h3>
+                    <p>إجمالي الفواتير</p>
+                </div>
+                <div class="stat-trend" id="invoiceTrend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>0%</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalCustomersCount">0</h3>
+                    <p>عدد العملاء</p>
+                </div>
+                <div class="stat-trend" id="customerTrend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>0%</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalProductsCount">0</h3>
+                    <p>المنتجات/الخدمات</p>
+                </div>
+                <div class="stat-trend" id="productTrend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>0%</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalSalesAmount">0.00</h3>
+                    <p>إجمالي المبيعات</p>
+                </div>
+                <div class="stat-trend" id="salesTrend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- إضافة قسم للبيانات الفارغة -->
+        <div id="emptyDataMessage" style="display: none;">
+            <div class="empty-state">
+                <i class="fas fa-database"></i>
+                <h3>لا توجد بيانات حتى الآن</h3>
+                <p>ابدأ بإضافة عملاء ومنتجات وفواتير لرؤية الإحصائيات هنا</p>
+                <div class="action-buttons">
+                    <a href="customers/create.html" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> إضافة عميل
+                    </a>
+                    <a href="products/create.html" class="btn btn-secondary">
+                        <i class="fas fa-box"></i> إضافة منتج
+                    </a>
+                    <a href="invoices/create.html" class="btn btn-success">
+                        <i class="fas fa-file-invoice"></i> إنشاء فاتورة
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>الإيرادات والمصروفات</h3>
+                    <select id="chartPeriod" onchange="updateCharts()">
+                        <option value="week">أسبوع</option>
+                        <option value="month" selected>شهر</option>
+                        <option value="quarter">ربع سنة</option>
+                        <option value="year">سنة</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>حالة الفواتير</h3>
+                </div>
+                <div class="chart-container">
+                    <div id="invoiceStatusChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Charts Row -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>أحدث الفواتير</h3>
+                    <a href="invoices/list.html" class="view-all">عرض الكل</a>
+                </div>
+                <div class="recent-items" id="recentInvoices">
+                    <div class="empty-state">
+                        <i class="fas fa-file-invoice"></i>
+                        <p>لا توجد فواتير بعد</p>
+                        <a href="invoices/create.html" class="btn btn-primary">إنشاء فاتورة أولى</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>أفضل العملاء</h3>
+                </div>
+                <div class="chart-container">
+                    <div id="topCustomersChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="recent-activity">
+            <div class="activity-header">
+                <h3>أحدث النشاطات</h3>
+                <button class="btn btn-sm btn-secondary" onclick="loadRecentActivity()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="activity-list" id="activityList">
+                <div class="empty-state">
+                    <i class="fas fa-history"></i>
+                    <p>لا توجد نشاطات مسجلة بعد</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status Card -->
+        <div class="system-status-card">
+            <div class="status-header">
+                <h3>حالة النظام</h3>
+                <span class="status-badge online" id="systemStatusBadge">متصل</span>
+            </div>
+            <div class="status-info">
+                <div class="status-item">
+                    <span>مساحة التخزين</span>
+                    <div class="progress-bar">
+                        <div class="progress" id="storageProgress" style="width: 0%"></div>
+                    </div>
+                    <span id="storageUsage">0KB/5MB</span>
+                </div>
+                <div class="status-item">
+                    <span>آخر نسخة احتياطية</span>
+                    <span id="lastBackupDate">لم يتم بعد</span>
+                </div>
+                <div class="status-item">
+                    <span>وقت التشغيل</span>
+                    <span id="uptime">00:00:00</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2025 اسامه منصور المريسي. جميع الحقوق محفوظة.</p>
+            <div class="footer-links">
+                <a href="#">الشروط والأحكام</a>
+                <a href="#">سياسة الخصوصية</a>
+                <a href="#">الدعم</a>
+            </div>
+            <div class="system-info">
+                <span id="currentDateTime">--:--:--</span>
+                <span id="memoryUsage">ذاكرة: 0MB</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>جاري تحميل البيانات...</p>
     </div>
 
+    <!-- Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/main.js"></script>
+    
+    <!-- جميع أكواد Dashboard المضمنة مباشرة -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
+        // ===== دوال Dashboard الأساسية =====
+        let dashboardData = {
+            lastUpdate: null,
+            trends: {
+                invoices: 0,
+                customers: 0,
+                products: 0,
+                sales: 0
+            }
+        };
+
+        // ===== دوال إعدادات العملة والشعار =====
+        function getSettings() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('financial_app_settings')) || {};
+                return {
+                    currency: 'ريال يمني',
+                    currency_code: 'ر.ي',
+                    tax_rate: 15,
+                    company_name: 'شركتي',
+                    company_logo: '',
+                    company_tax_number: '',
+                    company_address: '',
+                    company_phone: '',
+                    company_email: '',
+                    invoice_prefix: 'INV-',
+                    language: 'ar',
+                    ...settings
+                };
+            } catch (error) {
+                console.error('خطأ في تحميل الإعدادات:', error);
+                return {
+                    currency: 'ريال يمني',
+                    currency_code: 'ر.ي',
+                    tax_rate: 15,
+                    company_name: 'شركتي',
+                    company_logo: '',
+                    company_tax_number: '',
+                    company_address: '',
+                    company_phone: '',
+                    company_email: '',
+                    invoice_prefix: 'INV-',
+                    language: 'ar'
+                };
+            }
+        }
+
+        function getCurrencySymbol() {
+            const settings = getSettings();
+            return settings.currency_code || 'ر.ي';
+        }
+
+        function formatCurrency(amount) {
+            const symbol = getCurrencySymbol();
             
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('active');
-                sidebarToggle.classList.toggle('active');
+            if (amount === undefined || amount === null || isNaN(amount)) {
+                return `0.00 ${symbol}`;
+            }
+            
+            // تنسيق الرقم مع فواصل الآلاف
+            const formattedAmount = parseFloat(amount).toLocaleString('ar-EG', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             });
             
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                sidebarToggle.classList.remove('active');
-            });
+            return `${formattedAmount} ${symbol}`;
+        }
+
+        function handleLogoError(img) {
+            img.onerror = null;
+            img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzNjZjYyIgLz48dGV4dCB4PSI5MCUiIHk9IjUwJSIgZHk9Ii4zNWVmIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjgiPuetlDwvdGV4dD48L3N2Zz4=';
+        }
+
+        function updateHeaderLogo() {
+            const settings = getSettings();
+            const headerLogo = document.getElementById('headerLogo');
             
-            // إغلاق القائمة عند النقر على رابط
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    if (window.innerWidth < 768) {
-                        sidebar.classList.remove('open');
-                        overlay.classList.remove('active');
-                        sidebarToggle.classList.remove('active');
-                    }
+            if (settings.company_logo && headerLogo) {
+                headerLogo.src = settings.company_logo;
+                // إضافة معالج خطأ للشعار
+                headerLogo.onerror = function() {
+                    handleLogoError(this);
+                };
+            }
+        }
+
+        // Load user data for header
+        function loadUserData() {
+            const userData = JSON.parse(localStorage.getItem('financial_app_current_user'));
+            if (!userData) return;
+            
+            // Update user name
+            const userNameElement = document.getElementById('userName');
+            if (userNameElement && userData.fullName) {
+                userNameElement.textContent = userData.fullName;
+            }
+            
+            // Update user role if exists
+            if (userData.role) {
+                document.getElementById('userRole').textContent = userData.role;
+            }
+            
+            // Create user avatar
+            const userAvatarElement = document.getElementById('userAvatar');
+            if (userAvatarElement && userData.fullName) {
+                const initials = getUserInitials(userData.fullName);
+                const randomColor = getRandomColor();
+                
+                userAvatarElement.innerHTML = initials;
+                userAvatarElement.style.backgroundColor = randomColor;
+                userAvatarElement.style.display = 'flex';
+                userAvatarElement.style.alignItems = 'center';
+                userAvatarElement.style.justifyContent = 'center';
+                userAvatarElement.style.color = 'white';
+                userAvatarElement.style.fontWeight = '600';
+            }
+        }
+
+        // Show loading overlay
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // Load dashboard statistics
+        function loadDashboardData() {
+            showLoading();
+            
+            console.log('جاري تحميل بيانات Dashboard...');
+            
+            const invoices = JSON.parse(localStorage.getItem('financial_app_invoices')) || [];
+            const customers = JSON.parse(localStorage.getItem('financial_app_customers')) || [];
+            const products = JSON.parse(localStorage.getItem('financial_app_products')) || [];
+            const expenses = JSON.parse(localStorage.getItem('financial_app_expenses')) || [];
+            
+            console.log('الفواتير:', invoices.length);
+            console.log('العملاء:', customers.length);
+            console.log('المنتجات:', products.length);
+            console.log('المصروفات:', expenses.length);
+            
+            // Calculate total sales
+            const totalSales = invoices.reduce((total, invoice) => {
+                return total + (parseFloat(invoice.totalAmount) || 0);
+            }, 0);
+            
+            // Calculate pending invoices
+            const pendingInvoices = invoices.filter(inv => inv.status === 'pending').length;
+            
+            // Update statistics cards
+            document.getElementById('totalInvoicesCount').textContent = invoices.length;
+            document.getElementById('totalCustomersCount').textContent = customers.length;
+            document.getElementById('totalProductsCount').textContent = products.length;
+            document.getElementById('totalSalesAmount').textContent = formatCurrency(totalSales);
+            
+            // Update pending invoices badge
+            document.getElementById('pendingInvoicesBadge').textContent = pendingInvoices;
+            
+            // Calculate trends (مثال مبسط)
+            updateTrends(invoices.length, customers.length, products.length, totalSales);
+            
+            // تحديث إحصائيات إدارة البيانات
+            updateDataManagementStats();
+            
+            // عرض رسالة البيانات الفارغة إذا لزم الأمر
+            const emptyMessage = document.getElementById('emptyDataMessage');
+            if (invoices.length === 0 && customers.length === 0 && products.length === 0) {
+                emptyMessage.style.display = 'block';
+            } else {
+                emptyMessage.style.display = 'none';
+            }
+            
+            // تحميل الفواتير الحديثة والنشاطات
+            loadRecentInvoices();
+            loadRecentActivity();
+            loadNotifications();
+            updateSystemStatus();
+            
+            // Update last update time
+            dashboardData.lastUpdate = new Date();
+            
+            hideLoading();
+        }
+
+        // Update trends for statistics
+        function updateTrends(invoiceCount, customerCount, productCount, salesAmount) {
+            // هذه دالة مبسطة، في التطبيق الحقيقي يجب مقارنة مع البيانات السابقة
+            const trends = {
+                invoices: Math.random() > 0.5 ? 1 : -1,
+                customers: Math.random() > 0.3 ? 1 : -1,
+                products: Math.random() > 0.4 ? 1 : -1,
+                sales: Math.random() > 0.6 ? 1 : -1
+            };
+            
+            // Update trend indicators
+            updateTrendIndicator('invoiceTrend', trends.invoices);
+            updateTrendIndicator('customerTrend', trends.customers);
+            updateTrendIndicator('productTrend', trends.products);
+            updateTrendIndicator('salesTrend', trends.sales);
+            
+            dashboardData.trends = trends;
+        }
+
+        // Update individual trend indicator
+        function updateTrendIndicator(elementId, trend) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            if (trend > 0) {
+                element.innerHTML = '<i class="fas fa-arrow-up"></i><span>12.5%</span>';
+                element.className = 'stat-trend up';
+            } else if (trend < 0) {
+                element.innerHTML = '<i class="fas fa-arrow-down"></i><span>5.2%</span>';
+                element.className = 'stat-trend down';
+            } else {
+                element.innerHTML = '<i class="fas fa-minus"></i><span>0%</span>';
+                element.className = 'stat-trend neutral';
+            }
+        }
+
+        // Load recent invoices
+        function loadRecentInvoices() {
+            const invoices = JSON.parse(localStorage.getItem('financial_app_invoices')) || [];
+            const recentContainer = document.getElementById('recentInvoices');
+            
+            if (!recentContainer) return;
+            
+            recentContainer.innerHTML = '';
+            
+            if (invoices.length === 0) {
+                recentContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-file-invoice"></i>
+                        <p>لا توجد فواتير بعد</p>
+                        <a href="invoices/create.html" class="btn btn-primary">إنشاء فاتورة أولى</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort invoices by date (newest first) and take latest 5
+            const sortedInvoices = invoices.sort((a, b) => 
+                new Date(b.createdAt || b.invoiceDate) - new Date(a.createdAt || a.invoiceDate)
+            ).slice(0, 5);
+            
+            sortedInvoices.forEach(invoice => {
+                const statusClass = getStatusClass(invoice.status);
+                const invoiceElement = document.createElement('div');
+                invoiceElement.className = 'recent-item';
+                invoiceElement.innerHTML = `
+                    <div class="recent-item-info">
+                        <div class="recent-item-icon ${statusClass}">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div class="recent-item-details">
+                            <h4>فاتورة #${invoice.invoiceNumber || 'غير معروف'}</h4>
+                            <p>${invoice.customerName || 'عميل'}</p>
+                        </div>
+                    </div>
+                    <div class="recent-item-amount">
+                        ${formatCurrency(invoice.totalAmount || 0)}
+                        <div class="recent-item-status ${statusClass}">${getStatusText(invoice.status)}</div>
+                    </div>
+                `;
+                invoiceElement.onclick = () => viewInvoice(invoice.id);
+                recentContainer.appendChild(invoiceElement);
+            });
+        }
+
+        // Load recent activity
+        function loadRecentActivity() {
+            const invoices = JSON.parse(localStorage.getItem('financial_app_invoices')) || [];
+            const customers = JSON.parse(localStorage.getItem('financial_app_customers')) || [];
+            const expenses = JSON.parse(localStorage.getItem('financial_app_expenses')) || [];
+            const products = JSON.parse(localStorage.getItem('financial_app_products')) || [];
+            
+            const activities = [];
+            
+            // جمع النشاطات من مختلف المصادر
+            invoices.forEach(invoice => {
+                activities.push({
+                    type: 'invoice',
+                    action: invoice.status === 'paid' ? 'دفع' : 'إنشاء',
+                    message: `تم ${invoice.status === 'paid' ? 'دفع' : 'إنشاء'} فاتورة #${invoice.invoiceNumber}`,
+                    time: invoice.updatedAt || invoice.createdAt || invoice.invoiceDate,
+                    icon: 'fa-file-invoice',
+                    color: invoice.status === 'paid' ? 'success' : 'primary'
                 });
             });
+            
+            customers.forEach(customer => {
+                activities.push({
+                    type: 'customer',
+                    action: 'إضافة',
+                    message: `تم إضافة عميل جديد: ${customer.name}`,
+                    time: customer.createdAt,
+                    icon: 'fa-user-plus',
+                    color: 'info'
+                });
+            });
+            
+            products.forEach(product => {
+                activities.push({
+                    type: 'product',
+                    action: 'إضافة',
+                    message: `تم إضافة ${product.type === 'service' ? 'خدمة' : 'منتج'}: ${product.name}`,
+                    time: product.createdAt,
+                    icon: product.type === 'service' ? 'fa-cog' : 'fa-box',
+                    color: 'warning'
+                });
+            });
+            
+            expenses.forEach(expense => {
+                activities.push({
+                    type: 'expense',
+                    action: 'إضافة',
+                    message: `تم تسجيل مصروف: ${expense.description}`,
+                    time: expense.createdAt,
+                    icon: 'fa-money-bill-wave',
+                    color: 'danger'
+                });
+            });
+            
+            // عرض النشاطات
+            const activityContainer = document.getElementById('activityList');
+            if (!activityContainer) return;
+            
+            activityContainer.innerHTML = '';
+            
+            if (activities.length === 0) {
+                activityContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <p>لا توجد نشاطات مسجلة بعد</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort activities by time (newest first) and take latest 10
+            const sortedActivities = activities.sort((a, b) => 
+                new Date(b.time) - new Date(a.time)
+            ).slice(0, 10);
+            
+            sortedActivities.forEach(activity => {
+                const activityElement = document.createElement('div');
+                activityElement.className = 'activity-item';
+                activityElement.innerHTML = `
+                    <div class="activity-icon ${activity.color}">
+                        <i class="fas ${activity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <p>${activity.message}</p>
+                        <div class="activity-time">${formatRelativeTime(activity.time)}</div>
+                    </div>
+                `;
+                activityContainer.appendChild(activityElement);
+            });
+        }
+
+        // Load and display notifications
+        function loadNotifications() {
+            const invoices = JSON.parse(localStorage.getItem('financial_app_invoices')) || [];
+            const notificationList = document.getElementById('notificationList');
+            const notificationCount = document.getElementById('notificationCount');
+            
+            if (!notificationList) return;
+            
+            notificationList.innerHTML = '';
+            
+            // إنشاء إشعارات للفواتير المستحقة
+            const today = new Date();
+            const dueInvoices = invoices.filter(invoice => {
+                if (invoice.status !== 'pending') return false;
+                const dueDate = new Date(invoice.dueDate);
+                const diffTime = dueDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays <= 3 && diffDays >= 0;
+            });
+            
+            // إضافة الإشعارات
+            dueInvoices.forEach(invoice => {
+                const dueDate = new Date(invoice.dueDate);
+                const diffTime = dueDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                const notificationItem = document.createElement('div');
+                notificationItem.className = 'notification-item unread';
+                notificationItem.innerHTML = `
+                    <div class="notification-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="notification-content">
+                        <p>فاتورة #${invoice.invoiceNumber} مستحقة خلال ${diffDays} أيام</p>
+                        <div class="notification-time">${formatRelativeTime(invoice.dueDate)}</div>
+                    </div>
+                    <button class="notification-dismiss" onclick="dismissNotification(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                notificationList.appendChild(notificationItem);
+            });
+            
+            // تحديث عداد الإشعارات
+            notificationCount.textContent = dueInvoices.length;
+            if (dueInvoices.length > 0) {
+                notificationCount.style.display = 'flex';
+            } else {
+                notificationCount.style.display = 'none';
+            }
+            
+            // إضافة رسالة إذا لم توجد إشعارات
+            if (dueInvoices.length === 0) {
+                notificationList.innerHTML = `
+                    <div class="notification-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>لا توجد إشعارات جديدة</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize charts
+        function initCharts() {
+            initRevenueChart();
+            initInvoiceStatusChart();
+            initTopCustomersChart();
+        }
+
+        // Initialize revenue chart
+        function initRevenueChart() {
+            const revenueCtx = document.getElementById('revenueChart');
+            if (!revenueCtx) return;
+            
+            // بيانات افتراضية للرسم البياني
+            const data = {
+                labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                revenue: [1500, 2200, 1800, 2500, 3000, 2800],
+                expenses: [800, 1200, 900, 1100, 1300, 1500]
+            };
+            
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'الإيرادات',
+                            data: data.revenue,
+                            borderColor: '#3366cc',
+                            backgroundColor: 'rgba(51, 102, 204, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'المصروفات',
+                            data: data.expenses,
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize invoice status chart
+        function initInvoiceStatusChart() {
+            const invoices = JSON.parse(localStorage.getItem('financial_app_invoices')) || [];
+            
+            const statusCounts = {
+                'paid': invoices.filter(i => i.status === 'paid').length,
+                'pending': invoices.filter(i => i.status === 'pending').length,
+                'overdue': invoices.filter(i => i.status === 'overdue').length,
+                'cancelled': invoices.filter(i => i.status === 'cancelled').length
+            };
+            
+            const options = {
+                series: Object.values(statusCounts),
+                chart: {
+                    type: 'donut',
+                    height: 350
+                },
+                labels: ['مدفوعة', 'قيد الانتظار', 'متأخرة', 'ملغاة'],
+                colors: ['#28a745', '#ffc107', '#dc3545', '#6c757d'],
+                legend: {
+                    position: 'bottom',
+                    horizontalAlign: 'center'
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            };
+            
+            const chart = new ApexCharts(document.querySelector("#invoiceStatusChart"), options);
+            chart.render();
+        }
+
+        // Initialize top customers chart
+        function initTopCustomersChart() {
+            const invoices = JSON.parse(localStorage.getItem('financial_app_invoices')) || [];
+            const customers = JSON.parse(localStorage.getItem('financial_app_customers')) || [];
+            
+            const customerSales = {};
+            invoices.forEach(invoice => {
+                if (invoice.customerId) {
+                    const customerId = invoice.customerId;
+                    if (!customerSales[customerId]) {
+                        customerSales[customerId] = 0;
+                    }
+                    customerSales[customerId] += invoice.totalAmount || 0;
+                }
+            });
+            
+            // الحصول على أفضل 5 عملاء
+            const topCustomers = Object.entries(customerSales)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            const customerNames = topCustomers.map(([customerId]) => {
+                const customer = customers.find(c => c.id === parseInt(customerId));
+                return customer ? customer.name : `عميل ${customerId}`;
+            });
+            
+            const salesData = topCustomers.map(([, amount]) => amount);
+            
+            const options = {
+                series: [{
+                    data: salesData
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: true,
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                xaxis: {
+                    categories: customerNames,
+                    labels: {
+                        formatter: function(val) {
+                            return formatCurrency(val);
+                        }
+                    }
+                },
+                colors: ['#3366cc']
+            };
+            
+            const chart = new ApexCharts(document.querySelector("#topCustomersChart"), options);
+            chart.render();
+        }
+
+        // Update charts when period changes
+        function updateCharts() {
+            initCharts();
+        }
+
+        // Update system status information
+        function updateSystemStatus() {
+            // حساب استخدام التخزين
+            let totalSize = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    totalSize += localStorage[key].length * 2; // تقدير الحجم بالبايت
+                }
+            }
+            const totalSizeKB = Math.round(totalSize / 1024);
+            const maxSizeKB = 5120; // 5MB
+            
+            const progressPercent = Math.min(100, (totalSizeKB / maxSizeKB) * 100);
+            document.getElementById('storageProgress').style.width = progressPercent + '%';
+            document.getElementById('storageUsage').textContent = `${totalSizeKB}KB/5MB`;
+            
+            // تحديث وقت التشغيل
+            updateUptime();
+            
+            // تحديث آخر نسخة احتياطية
+            const lastBackup = localStorage.getItem('last_backup_date');
+            document.getElementById('lastBackupDate').textContent = lastBackup ? formatDate(lastBackup) : 'لم يتم بعد';
+            
+            // تحديث التاريخ والوقت الحالي
+            updateDateTime();
+        }
+
+        // Update data management statistics
+        function updateDataManagementStats() {
+            // حساب عدد العناصر المخزنة
+            let totalItems = 0;
+            const keys = Object.keys(localStorage);
+            
+            for (let key of keys) {
+                if (key.startsWith('financial_app_')) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        if (Array.isArray(data)) {
+                            totalItems += data.length;
+                        }
+                    } catch (e) {
+                        console.error('Error parsing data for key:', key, e);
+                    }
+                }
+            }
+            
+            // حساب حجم التخزين
+            let totalSize = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    totalSize += localStorage[key].length * 2; // تقدير الحجم بالبايت
+                }
+            }
+            const totalSizeKB = Math.round(totalSize / 1024);
+            
+            // تحديث الإحصائيات
+            document.getElementById('totalStorageItems').textContent = totalItems;
+            document.getElementById('storageSize').textContent = `${totalSizeKB}KB`;
+            
+            // تحديث تاريخ آخر نسخة احتياطية
+            const lastBackup = localStorage.getItem('last_backup_date');
+            document.getElementById('lastBackupStat').textContent = lastBackup ? formatRelativeTime(lastBackup) : 'لم يتم';
+        }
+
+        // Update current date and time
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('currentDateTime').textContent = now.toLocaleString('ar-SA');
+            
+            // تحديث استخدام الذاكرة (قيمة افتراضية)
+            document.getElementById('memoryUsage').textContent = `ذاكرة: ${Math.round(Math.random() * 100)}MB`;
+        }
+
+        // Update system uptime
+        function updateUptime() {
+            // هذه دالة مبسطة، في التطبيق الحقيقي يجب حساب وقت التشغيل الفعلي
+            document.getElementById('uptime').textContent = '00:15:42';
+        }
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mainSidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+            }
+        }
+
+        // Toggle notifications dropdown
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+
+        // Mark all notifications as read
+        function markAllNotificationsAsRead() {
+            const notifications = document.querySelectorAll('.notification-item.unread');
+            notifications.forEach(notification => {
+                notification.classList.remove('unread');
+            });
+            document.getElementById('notificationCount').textContent = '0';
+            document.getElementById('notificationCount').style.display = 'none';
+        }
+
+        // Dismiss a notification
+        function dismissNotification(button) {
+            const notification = button.closest('.notification-item');
+            if (notification) {
+                notification.remove();
+                
+                // Update notification count
+                const remaining = document.querySelectorAll('.notification-item').length;
+                document.getElementById('notificationCount').textContent = remaining;
+                if (remaining === 0) {
+                    document.getElementById('notificationCount').style.display = 'none';
+                }
+            }
+        }
+
+        // Quick add functionality
+        function quickAdd(type) {
+            switch(type) {
+                case 'invoice':
+                    window.location.href = 'invoices/create.html';
+                    break;
+                case 'customer':
+                    window.location.href = 'customers/create.html';
+                    break;
+                case 'product':
+                    window.location.href = 'products/create.html';
+                    break;
+                case 'expense':
+                    window.location.href = 'expenses/create.html';
+                    break;
+            }
+        }
+
+        // View invoice details
+        function viewInvoice(invoiceId) {
+            window.location.href = `invoices/view.html?id=${invoiceId}`;
+        }
+
+        // Handle global search
+        function handleGlobalSearch(event) {
+            if (event.key === 'Enter') {
+                const query = event.target.value.trim();
+                if (query) {
+                    // البحث في جميع الصفحات (سيتم تنفيذه لاحقاً)
+                    showAlert('info', `جاري البحث عن: ${query}`);
+                }
+            }
+        }
+
+        // Handle sidebar search
+        function handleSidebarSearch(event) {
+            const query = event.target.value.toLowerCase();
+            const menuItems = document.querySelectorAll('#sidebarMenu .nav-item');
+            
+            menuItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('dark_mode', isDarkMode);
+            showAlert('success', `تم ${isDarkMode ? 'تفعيل' : 'تعطيل'} الوضع الليلي`);
+        }
+
+        // Check and apply dark mode
+        function applyDarkMode() {
+            const isDarkMode = localStorage.getItem('dark_mode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('financial_app_current_user');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ===== دوال مساعدة =====
+        
+        function getUserInitials(name) {
+            if (!name) return 'U';
+            return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function getRandomColor() {
+            const colors = ['#3366cc', '#dc3545', '#28a745', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'غير محدد';
+            try {
+                const date = new Date(dateString);
+                return new Intl.DateTimeFormat('ar-SA', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    calendar: 'gregory', // التأكد من استخدام التقويم الميلادي
+            timeZone: 'Asia/Riyadh'
+                }).format(date);
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        function formatRelativeTime(dateString) {
+            if (!dateString) return 'منذ وقت غير محدد';
+            
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffSecs = Math.floor(diffMs / 1000);
+            const diffMins = Math.floor(diffSecs / 60);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+            
+            if (diffSecs < 60) {
+                return 'الآن';
+            } else if (diffMins < 60) {
+                return `منذ ${diffMins} دقيقة`;
+            } else if (diffHours < 24) {
+                return `منذ ${diffHours} ساعة`;
+            } else if (diffDays < 7) {
+                return `منذ ${diffDays} يوم`;
+            } else {
+                return formatDate(dateString);
+            }
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'paid': return 'status-paid';
+                case 'pending': return 'status-pending';
+                case 'overdue': return 'status-overdue';
+                case 'cancelled': return 'status-cancelled';
+                default: return 'status-pending';
+            }
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'paid': return 'مدفوعة';
+                case 'pending': return 'قيد الانتظار';
+                case 'overdue': return 'متأخرة';
+                case 'cancelled': return 'ملغاة';
+                default: return 'قيد الانتظار';
+            }
+        }
+
+        function showAlert(type, message) {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            // Add styles if not already added
+            if (!document.querySelector('#alert-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'alert-styles';
+                styles.textContent = `
+                    .alert {
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        color: white;
+                        font-weight: 500;
+                        z-index: 1000;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        min-width: 300px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        animation: slideDown 0.3s ease;
+                    }
+                    .alert-success { background-color: #28a745; }
+                    .alert-error { background-color: #dc3545; }
+                    .alert-warning { background-color: #ffc107; color: #000; }
+                    .alert-info { background-color: #17a2b8; }
+                    .alert button {
+                        background: none;
+                        border: none;
+                        color: inherit;
+                        font-size: 18px;
+                        cursor: pointer;
+                        margin-right: 10px;
+                    }
+                    @keyframes slideDown {
+                        from { transform: translate(-50%, -100%); opacity: 0; }
+                        to { transform: translate(-50%, 0); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+            
+            document.body.appendChild(alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        function showConfirmation(message, callback) {
+            if (confirm(message)) {
+                callback();
+            }
+        }
+
+        function isLoggedIn() {
+            return localStorage.getItem('financial_app_current_user') !== null;
+        }
+
+        function checkAuth() {
+            if (!isLoggedIn() && !window.location.pathname.includes('auth/') && 
+                window.location.pathname !== '/index.html' && 
+                window.location.pathname !== '/') {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ===== دوال إدارة البيانات =====
+        
+        function debugStorage() {
+            console.log('=== فحص التخزين ===');
+            console.log('المستخدمون:', JSON.parse(localStorage.getItem('financial_app_users') || '[]'));
+            console.log('العملاء:', JSON.parse(localStorage.getItem('financial_app_customers') || '[]'));
+            console.log('المنتجات:', JSON.parse(localStorage.getItem('financial_app_products') || '[]'));
+            console.log('الفواتير:', JSON.parse(localStorage.getItem('financial_app_invoices') || '[]'));
+            console.log('المصروفات:', JSON.parse(localStorage.getItem('financial_app_expenses') || '[]'));
+            
+            showAlert('info', 'تم فحص التخزين. راجع console للتفاصيل.');
+        }
+
+        function checkCurrentData() {
+            const invoices = JSON.parse(localStorage.getItem('financial_app_invoices') || '[]');
+            const customers = JSON.parse(localStorage.getItem('financial_app_customers') || '[]');
+            const products = JSON.parse(localStorage.getItem('financial_app_products') || '[]');
+            
+            const message = `البيانات الحالية: ${invoices.length} فواتير, ${customers.length} عملاء, ${products.length} منتجات`;
+            showAlert('info', message);
+            console.log('فحص البيانات:', message);
+        }
+
+        function backupData() {
+            const backup = {
+                financial_app_users: JSON.parse(localStorage.getItem('financial_app_users') || '[]'),
+                financial_app_customers: JSON.parse(localStorage.getItem('financial_app_customers') || '[]'),
+                financial_app_products: JSON.parse(localStorage.getItem('financial_app_products') || '[]'),
+                financial_app_invoices: JSON.parse(localStorage.getItem('financial_app_invoices') || '[]'),
+                financial_app_expenses: JSON.parse(localStorage.getItem('financial_app_expenses') || '[]'),
+                financial_app_settings: JSON.parse(localStorage.getItem('financial_app_settings') || '{}'),
+                backup_date: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(backup, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `backup_${new Date().toISOString().split('T')[0]}.json`;
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            // حفظ تاريخ آخر نسخة احتياطية
+            localStorage.setItem('last_backup_date', new Date().toISOString());
+            
+            // تحديث الإحصائيات
+            updateDataManagementStats();
+            
+            showAlert('success', 'تم إنشاء نسخة احتياطية');
+        }
+
+        function restoreData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        const backup = JSON.parse(event.target.result);
+                        
+                        if (confirm('هل أنت متأكد من استعادة النسخة الاحتياطية؟ سيتم استبدال جميع البيانات الحالية.')) {
+                            // استعادة البيانات
+                            for (const key in backup) {
+                                if (backup.hasOwnProperty(key) && key.startsWith('financial_app_')) {
+                                    localStorage.setItem(key, JSON.stringify(backup[key]));
+                                }
+                            }
+                            
+                            showAlert('success', 'تم استعادة النسخة الاحتياطية بنجاح');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        }
+                    } catch (error) {
+                        showAlert('error', 'خطأ في تحميل ملف النسخة الاحتياطية');
+                        console.error('Restore error:', error);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // ===== تهيئة الصفحة =====
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('تهيئة لوحة التحكم...');
+            
+            if (!checkAuth()) return;
+            
+            applyDarkMode();
+            loadUserData();
+            updateHeaderLogo(); // تحديث الشعار من الإعدادات
+            loadDashboardData();
+            initCharts();
+            updateSystemStatus();
+            
+            // تحديث البيانات كل 30 ثانية
+            setInterval(updateSystemStatus, 30000);
+            
+            // تحديث التاريخ والوقت كل ثانية
+            setInterval(updateDateTime, 1000);
+            
+            // إعادة تحميل البيانات بعد تأخير بسيط للتأكد من اكتمال تحميل الصفحة
+            setTimeout(() => {
+                loadDashboardData();
+            }, 300);
         });
+
+        // إعادة تحميل البيانات يدوياً
+        function refreshData() {
+            loadDashboardData();
+            showAlert('info', 'تم تحديث البيانات');
+        }
     </script>
+    
+    <style>
+        /* أنماط إضافية */
+        .alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .alert-success { background-color: #28a745; }
+        .alert-error { background-color: #dc3545; }
+        .alert-warning { background-color: #ffc107; color: #000; }
+        .alert-info { background-color: #17a2b8; }
+        
+        .alert button {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 18px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #e9ecef;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .stat-trend.up {
+            color: #28a745;
+        }
+        
+        .stat-trend.down {
+            color: #dc3545;
+        }
+        
+        .stat-trend.neutral {
+            color: #6c757d;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3366cc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .notification-dropdown.show {
+            display: block;
+        }
+        
+        .notification-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #f8f9fa;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .notification-item.unread {
+            background-color: #f8f9fa;
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-icon {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-content p {
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .notification-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .notification-dismiss {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+        
+        .notification-empty {
+            padding: 2rem;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .system-status-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-badge.online {
+            background: #28a745;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem 0;
+        }
+        
+        .status-item:not(:last-child) {
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 0 1rem;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: #3366cc;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .system-info {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .dark-mode {
+            /* سيتم إضافة أنماط الوضع الليلي لاحقاً */
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons .btn {
+                width: 100%;
+            }
+            
+            .notification-dropdown {
+                width: 300px;
+                right: -50px;
+            }
+            
+            .system-info {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            
+            .status-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .progress-bar {
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
 </body>
 </html>

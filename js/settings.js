@@ -1,78 +1,62 @@
-// js/settings.js
+// Settings management functions
 
-// تهيئة صفحات الإعدادات
-function initSettings() {
-    console.log('تم تحميل صفحة الإعدادات');
+// Load settings page
+function loadSettings() {
+    const settings = getSettings();
     
-    // التحقق من تسجيل الدخول
-    if (!isUserLoggedIn()) {
-        window.location.href = '../auth/login.html';
-        return;
-    }
-    
-    // تحميل بيانات المستخدم
-    loadUserData();
-    
-    // تهيئة القائمة الجانبية
-    initSidebar();
-    
-    // تهيئة أحداث خاصة بصفحات الإعدادات
-    initSettingsEvents();
+    // تعبئة النموذج بالإعدادات الحالية
+    document.getElementById('companyName').value = settings.company_name || 'شركتي';
+    document.getElementById('companyTaxNumber').value = settings.company_tax_number || '';
+    document.getElementById('companyAddress').value = settings.company_address || '';
+    document.getElementById('companyPhone').value = settings.company_phone || '';
+    document.getElementById('defaultTaxRate').value = settings.tax_rate || 15;
+    document.getElementById('currency').value = settings.currency || 'ريال';
+    document.getElementById('language').value = settings.language || 'ar';
 }
 
-// تهيئة أحداث الإعدادات
-function initSettingsEvents() {
-    // تهيئة تبويبات الإعدادات
-    initSettingsTabs();
+// Save settings
+function saveSettingsForm(event) {
+    event.preventDefault();
     
-    // أحداث رفع الصور
-    const logoInput = document.getElementById('companyLogo');
-    if (logoInput) {
-        logoInput.addEventListener('change', handleLogoUpload);
-    }
+    const settings = {
+        company_name: document.getElementById('companyName').value,
+        company_tax_number: document.getElementById('companyTaxNumber').value,
+        company_address: document.getElementById('companyAddress').value,
+        company_phone: document.getElementById('companyPhone').value,
+        tax_rate: parseFloat(document.getElementById('defaultTaxRate').value) || 15,
+        currency: document.getElementById('currency').value,
+        language: document.getElementById('language').value
+    };
+    
+    saveSettings(settings);
+    showAlert('success', 'تم حفظ الإعدادات بنجاح');
 }
 
-// تهيئة تبويبات الإعدادات
-function initSettingsTabs() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-    
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            
-            // إزالة النشاط من جميع الأزرار
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            // إضافة النشاط للزر الحالي
-            this.classList.add('active');
-            
-            // إخفاء جميع المحتويات
-            tabPanes.forEach(pane => pane.classList.remove('active'));
-            // إظهار المحتوى المناسب
-            document.getElementById(tabId).classList.add('active');
-        });
-    });
-}
-
-// التعامل مع رفع الشعار
-function handleLogoUpload(e) {
-    const file = e.target.files[0];
-    const fileName = document.getElementById('logoFileName');
-    const preview = document.getElementById('logoPreview');
-    
-    if (file) {
-        fileName.textContent = file.name;
-        
-        // عرض معاينة الصورة
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result;
+// Reset to default settings
+function resetSettings() {
+    if (confirm('هل تريد استعادة الإعدادات الافتراضية؟')) {
+        const defaultSettings = {
+            company_name: 'شركتي',
+            company_tax_number: '',
+            company_address: '',
+            company_phone: '',
+            tax_rate: 15,
+            currency: 'ريال',
+            language: 'ar',
+            company_logo: ''
         };
-        reader.readAsDataURL(file);
-    } else {
-        fileName.textContent = 'لم يتم اختيار ملف';
+        
+        saveSettings(defaultSettings);
+        loadSettings();
+        showAlert('success', 'تم استعادة الإعدادات الافتراضية');
     }
 }
 
-// تهيئة صفحات الإعدادات عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', initSettings);
+// Initialize settings page
+function initSettingsPage() {
+    loadSettings();
+    
+    // إضافة event listeners
+    document.getElementById('settingsForm').addEventListener('submit', saveSettingsForm);
+    document.getElementById('resetBtn').addEventListener('click', resetSettings);
+}
