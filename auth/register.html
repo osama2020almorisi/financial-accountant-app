@@ -53,7 +53,7 @@
         
         .auth-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 520px;
         }
         
         .auth-card {
@@ -219,6 +219,135 @@
             color: var(--gray-color);
         }
         
+        /* تحميل الصور */
+        .image-upload-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .image-upload-card {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+            text-align: center;
+            background: var(--light-color);
+        }
+        
+        .image-upload-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .image-upload-card.active {
+            border-color: var(--primary-color);
+            border-style: solid;
+        }
+        
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-gray);
+            position: relative;
+            border: 2px solid var(--border-color);
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-preview i {
+            font-size: 2.5rem;
+            color: var(--gray-color);
+        }
+        
+        .image-upload-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .image-upload-text {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+            margin-bottom: 1rem;
+        }
+        
+        .image-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-upload:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-action {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+        
+        .btn-action:hover {
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.9);
+        }
+        
+        .upload-progress {
+            margin-top: 0.5rem;
+            height: 5px;
+            background: var(--light-gray);
+            border-radius: 3px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .upload-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
         .btn {
             display: inline-flex;
             align-items: center;
@@ -294,6 +423,10 @@
             .back-button {
                 top: -10px;
                 left: -10px;
+            }
+            
+            .image-upload-container {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -407,6 +540,69 @@
             </div>
 
             <form class="auth-form" id="registerForm">
+                <!-- قسم تحميل الصور -->
+                <div class="image-upload-container">
+                    <!-- تحميل شعار الشركة -->
+                    <div class="image-upload-card" id="logoCard">
+                        <div class="image-preview" id="logoPreview">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <span class="image-upload-label">شعار الشركة</span>
+                        <p class="image-upload-text">الحجم الأمثل: 300×100 بكسل</p>
+                        
+                        <input type="file" id="logoUpload" accept="image/*" style="display: none;">
+                        <button type="button" class="btn-upload" onclick="document.getElementById('logoUpload').click()">
+                            <i class="fas fa-upload"></i> رفع الشعار
+                        </button>
+                        
+                        <div class="image-actions" id="logoActions" style="display: none;">
+                            <button type="button" class="btn-action" onclick="rotateImage('logoPreview', -90)" title="تدوير عكس عقارب الساعة">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                            <button type="button" class="btn-action" onclick="rotateImage('logoPreview', 90)" title="تدوير مع عقارب الساعة">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                            <button type="button" class="btn-action" onclick="removeImage('logoPreview', 'logoUpload', 'logoCard', 'logoActions')" title="إزالة الصورة">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="upload-progress" id="logoUploadProgress">
+                            <div class="upload-progress-bar"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- تحميل صورة الملف الشخصي -->
+                    <div class="image-upload-card" id="avatarCard">
+                        <div class="image-preview" id="avatarPreview">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="image-upload-label">صورة الملف الشخصي</span>
+                        <p class="image-upload-text">الحجم الأمثل: 200×200 بكسل</p>
+                        
+                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                        <button type="button" class="btn-upload" onclick="document.getElementById('avatarUpload').click()">
+                            <i class="fas fa-upload"></i> رفع الصورة
+                        </button>
+                        
+                        <div class="image-actions" id="avatarActions" style="display: none;">
+                            <button type="button" class="btn-action" onclick="rotateImage('avatarPreview', -90)" title="تدوير عكس عقارب الساعة">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                            <button type="button" class="btn-action" onclick="rotateImage('avatarPreview', 90)" title="تدوير مع عقارب الساعة">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                            <button type="button" class="btn-action" onclick="removeImage('avatarPreview', 'avatarUpload', 'avatarCard', 'avatarActions')" title="إزالة الصورة">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="upload-progress" id="avatarUploadProgress">
+                            <div class="upload-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="fullName">الاسم الكامل</label>
                     <div class="input-icon">
@@ -467,6 +663,12 @@
     </div>
 
     <script>
+        // متغيرات لتخزين الصور
+        let logoDataUrl = '';
+        let avatarDataUrl = '';
+        let logoRotation = 0;
+        let avatarRotation = 0;
+        
         // دالة للتحقق من تسجيل الدخول
         function isLoggedIn() {
             try {
@@ -520,13 +722,155 @@
             }, 5000);
         }
         
+        // دالة لتحميل الصور
+        function handleImageUpload(event, previewId, progressId, cardId, actionsId, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // التحقق من نوع الملف
+            if (!file.type.match('image.*')) {
+                showNotification('الملف المحدد ليس صورة', 'error');
+                return;
+            }
+            
+            // إظهار شريط التقدم
+            const progressBar = document.getElementById(progressId);
+            progressBar.style.display = 'block';
+            
+            // تفعيل حالة البطاقة
+            document.getElementById(cardId).classList.add('active');
+            
+            // إظهار أزرار التحكم
+            document.getElementById(actionsId).style.display = 'flex';
+            
+            // محاكاة التقدم
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                progressBar.querySelector('.upload-progress-bar').style.width = `${progress}%`;
+                if (progress >= 70) clearInterval(progressInterval);
+            }, 100);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // إخفاء شريط التقدم
+                clearInterval(progressInterval);
+                progressBar.querySelector('.upload-progress-bar').style.width = '100%';
+                
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                    
+                    // حفظ الصورة وعرضها
+                    if (type === 'logo') {
+                        logoDataUrl = e.target.result;
+                        logoRotation = 0;
+                    } else {
+                        avatarDataUrl = e.target.result;
+                        avatarRotation = 0;
+                    }
+                    
+                    const preview = document.getElementById(previewId);
+                    preview.innerHTML = `<img src="${e.target.result}" alt="${type}" style="transform: rotate(0deg);">`;
+                    
+                    showNotification('تم تحميل الصورة بنجاح', 'success');
+                }, 500);
+            };
+            
+            reader.onerror = function() {
+                clearInterval(progressInterval);
+                progressBar.style.display = 'none';
+                showNotification('حدث خطأ أثناء تحميل الصورة', 'error');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // دالة لتدوير الصورة
+        function rotateImage(previewId, degrees) {
+            const preview = document.getElementById(previewId);
+            const img = preview.querySelector('img');
+            
+            if (!img) {
+                showNotification('لا توجد صورة لتدويرها', 'error');
+                return;
+            }
+            
+            if (previewId === 'logoPreview') {
+                logoRotation += degrees;
+                img.style.transform = `rotate(${logoRotation}deg)`;
+            } else {
+                avatarRotation += degrees;
+                img.style.transform = `rotate(${avatarRotation}deg)`;
+            }
+        }
+        
+        // دالة لإزالة الصورة
+        function removeImage(previewId, uploadId, cardId, actionsId) {
+            const preview = document.getElementById(previewId);
+            const upload = document.getElementById(uploadId);
+            
+            if (previewId === 'logoPreview') {
+                logoDataUrl = '';
+                logoRotation = 0;
+            } else {
+                avatarDataUrl = '';
+                avatarRotation = 0;
+            }
+            
+            preview.innerHTML = `<i class="fas fa-${previewId === 'logoPreview' ? 'building' : 'user'}"></i>`;
+            upload.value = '';
+            
+            // إلغاء تفعيل البطاقة
+            document.getElementById(cardId).classList.remove('active');
+            
+            // إخفاء أزرار التحكم
+            document.getElementById(actionsId).style.display = 'none';
+            
+            showNotification('تم إزالة الصورة', 'success');
+        }
+        
+        // دالة لضغط الصورة
+        function resizeImage(imageDataUrl, maxWidth, maxHeight, quality) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = function() {
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // حساب الأبعاد الجديدة مع الحفاظ على التناسب
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                    
+                    if (height > maxHeight) {
+                        width = (width * maxHeight) / height;
+                        height = maxHeight;
+                    }
+                    
+                    // إنشاء canvas لرسم الصورة المضغوطة
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // الحصول على الصورة المضغوطة
+                    const resizedImage = canvas.toDataURL('image/jpeg', quality);
+                    resolve(resizedImage);
+                };
+                img.src = imageDataUrl;
+            });
+        }
+        
         // دالة تسجيل المستخدم
-        function registerUser(fullName, email, password, confirmPassword, companyName) {
+        async function registerUser(fullName, email, password, confirmPassword, companyName) {
             const registerBtn = document.getElementById('registerBtn');
             registerBtn.classList.add('loading');
             
             // محاكاة عملية التسجيل (في التطبيق الحقيقي يجب الاتصال بالخادم)
-            setTimeout(() => {
+            setTimeout(async () => {
                 try {
                     // التحقق من تطابق كلمات المرور
                     if (password !== confirmPassword) {
@@ -557,6 +901,18 @@
                         return;
                     }
                     
+                    // ضغط الصور إذا كانت موجودة
+                    let compressedLogo = '';
+                    let compressedAvatar = '';
+                    
+                    if (logoDataUrl) {
+                        compressedLogo = await resizeImage(logoDataUrl, 300, 100, 0.8);
+                    }
+                    
+                    if (avatarDataUrl) {
+                        compressedAvatar = await resizeImage(avatarDataUrl, 200, 200, 0.8);
+                    }
+                    
                     // إنشاء مستخدم جديد
                     const newUser = {
                         id: Date.now(),
@@ -564,6 +920,7 @@
                         email,
                         password, // في التطبيق الحقيقي يجب تشفير كلمة المرور
                         companyName: companyName || '',
+                        avatar: compressedAvatar,
                         createdAt: new Date().toISOString(),
                         role: 'owner'
                     };
@@ -571,6 +928,14 @@
                     // إضافة المستخدم إلى القائمة
                     users.push(newUser);
                     localStorage.setItem('financial_app_users', JSON.stringify(users));
+                    
+                    // حفظ إعدادات الشركة إذا تم تحميل شعار
+                    if (compressedLogo) {
+                        const settings = JSON.parse(localStorage.getItem('financial_app_settings') || '{}');
+                        settings.company_name = companyName || '';
+                        settings.company_logo = compressedLogo;
+                        localStorage.setItem('financial_app_settings', JSON.stringify(settings));
+                    }
                     
                     // تسجيل الدخول تلقائياً
                     localStorage.setItem('financial_app_current_user', JSON.stringify(newUser));
@@ -599,6 +964,15 @@
                 window.location.href = '../dashboard.html';
                 return;
             }
+            
+            // إضافة event listeners لتحميل الصور
+            document.getElementById('logoUpload').addEventListener('change', (e) => {
+                handleImageUpload(e, 'logoPreview', 'logoUploadProgress', 'logoCard', 'logoActions', 'logo');
+            });
+            
+            document.getElementById('avatarUpload').addEventListener('change', (e) => {
+                handleImageUpload(e, 'avatarPreview', 'avatarUploadProgress', 'avatarCard', 'avatarActions', 'avatar');
+            });
             
             // إضافة event listener للنموذج
             const registerForm = document.getElementById('registerForm');
